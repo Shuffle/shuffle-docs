@@ -257,10 +257,10 @@ If ran locally with systemd:
 1. Open /etc/systemd/system/tenzir-node.service
 2. Find the line that says "ExecStart" and add ' --commands=web server --mode=dev --bind=0.0.0.0' to the end of it
 
-It should look like this: ExecStart=/opt/tenzir/bin/tenzir-node --commands=web server --mode=dev --bind=0.0.0.0
+It should look like this: ExecStart=/opt/tenzir/bin/tenzir-node "--commands=web server --mode=dev --bind=0.0.0.0"
 
 3. Save and close the file.
-4. daemon-reload & systemctl restart tenzir-node
+4. systemctl daemon-reload & systemctl restart tenzir-node
 5. Try to connect to it: curl http://localhost:5158/api/v0/ping
 ```
 
