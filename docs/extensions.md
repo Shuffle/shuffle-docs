@@ -267,16 +267,18 @@ It should look like this: ExecStart=/opt/tenzir/bin/tenzir-node "--commands=web 
 - **Control the Shuffle Tenzir node from Tenzir Cloud**: Go to [Tenzir Cloud](https://app.tenzir.com) and create a node configuration. Download the configuration file, then add the variables found in it to the following environment variables to Orborus: `TENZIR_PLUGINS__PLATFORM__API_KEY=<apikey>`, `TENZIR_PLUGINS__PLATFORM__CONTROL_ENDPOINT=<url>`, `TENZIR_PLUGINS__PLATFORM__TENANT_ID=<tenant>`
 
 ### Mounting the Tenzir Sigma location into Orborus
-TBD
+1. You need to mount in the folder that is going to store the sigma rules, controlled from within Shuffle
+2. The default location is /tmp/sigma_rules, so to mount it in, use `--volume "/tmp:/tmp"` in the Dockerfile.
+3. If you end up changing the storage location, use the `SHUFFLE_STORAGE_FOLDER` environment variable with the full path.
 
 ### Running the Tenzir Detection pipeline
-To run the detection pipeline, 
+- [Sigma Pipelines with Tenzir](https://docs.tenzir.com/tql2/operators/sigma)
 
 ### Running a sample Detection
 TBD
 
 ### Storing Tenzir logs in Opensearch
-TBD
+- [Tenzir -> Opensearch documentation](https://docs.tenzir.com/integrations/opensearch)
 
 ## KMS
 Shuffle by default allows you to store authentication tokens within Shuffle itself, which are encrypted in the database. Since February 2024, we additionally support the use of external KMS systems to handle authentication, which is based on [Native Actions](https://shuffler.io/docs/extensions#native-actions) and [Schemaless](https://github.com/frikky/schemaless). Native Actions run in the background to perform the "Get KMS key" action, and the run of the app is NOT stored. 
