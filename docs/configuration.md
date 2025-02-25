@@ -85,151 +85,19 @@ Shuffle is by default configured to be easy to start using. This means we've had
 
 ### Servers
 
-When setting up Shuffle for production, we always recommend using a minimum of two servers (VMs). This is because you don't want your executions to clog the webserver, which again clogs the executions (orborus). You can put Orborus on multiple servers with different environments to ensure better availability, or [talk to us about Kubernetes/Swarm](https://shuffler.io/contact). These are MINIMUM requirements, and we recommend adding more.
+When setting up Shuffle for production, we always recommend two or more servers (VMs), but it works fine with one to start with as well. These are MINIMUM requirements, and we recommend adding more.
 
-Basic network overview below. [Architecture](https://github.com/shuffle/Shuffle/raw/main/frontend/src/assets/img/shuffle_architecture.png).
-```
-- Shuffle backend starts a backend listener on port 5001 (default)
-- Orborus POLLS for Jobs. Orborus needs access to port 5001 on backend (default)
-- Orborus creates a worker for each job.
-- The Worker runs the workflow and sends the payload back to the backend on port 5001 (default)
-```
+![image](https://github.com/user-attachments/assets/7d356a10-9ea4-44e5-b1a8-d006029ed106)
 
-**Webserver**
 The webserver is where your users and our API is. Opensearch is RAM heavy as we're doing A LOT of caching to ensure scalability.
 
-- Services: Frontend, Backend, Opensearch (Database)
+- Services: Frontend, Backend, Orborus, Opensearch
 - CPU: 2vCPU
 - RAM: 8Gb
 - Disk: >100Gb (SSD)
 
-**Orborus**
-Runs all workflows and may be CPU heavy, along with Memory heavy when running at scale with gigabytes of data flowing through. If you do a lot of file transfers, deal with large API payloads, or memory analysis, make sure to add RAM accordingly. No persistent storage necessary.
-
-- Services: Orborus, Worker, Apps
-- CPU: 4vCPU
-- RAM: 4Gb
-- Disk: 10Gb (SSD)
-
 #### Docker configuration
-
-These are the Docker configurations for the two different servers described above. To use them, put the information in files called docker-compose.yml on each respective server, to start the containers.
-
-PS: The data below is based on [this docker-compose file](https://github.com/shuffle/Shuffle/blob/master/docker-compose.yml)
-
-**Orborus**
-Below is the Orborus configuration. make sure to change "BASE_URL" in the environment to match the external Shuffle backend URL. It can be modified to reduce or increase load, to add proxies, and much more. See [environment variables](#environment-variables) for all options.
-
-**PS**: Replace SHUFFLE-BACKEND with the IP of Shuffle backend in the specification below. Using Hostname MAY [cause issues](https://github.com/shuffle/Shuffle/issues/537) in certain environments.
-**PPS**: By default, the environments (executions) are NOT authenticated.
-
-```
-version: '3'
-services:
-  orborus:
-    #build: ./functions/onprem/orborus
-    image: ghcr.io/shuffle/shuffle-orborus:latest
-    container_name: shuffle-orborus
-    hostname: shuffle-orborus
-    networks:
-      - shuffle
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - BASE_URL=http://SHUFFLE-BACKEND:5001
-      - SHUFFLE_APP_SDK_VERSION=1.3.1
-      - SHUFFLE_WORKER_VERSION=latest
-      - ORG_ID=Shuffle
-      - ENVIRONMENT_NAME=Shuffle
-      - DOCKER_API_VERSION=1.40
-      - SHUFFLE_BASE_IMAGE_NAME=shuffle
-      - SHUFFLE_BASE_IMAGE_REGISTRY=ghcr.io
-      - SHUFFLE_BASE_IMAGE_TAG_SUFFIX="-1.0.0"
-      - CLEANUP=true
-      - SHUFFLE_ORBORUS_EXECUTION_TIMEOUT=600
-      - SHUFFLE_STATS_DISABLED=true
-    restart: unless-stopped
-networks:
-  shuffle:
-    driver: bridge
-```
-
-**Webserver**
-The webserver should run the Frontend, Backend and Database. Make sure [THIS .env file](https://github.com/frikky/Shuffle/blob/master/.env) exists in the same folder. Further, make sure that Opensearch the right access:
-
-```
-sudo sysctl -w vm.max_map_count=262144             # https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html
-sudo chown 1000:1000 -R shuffle-database         # Requires for Opensearch
-```
-
-docker-compose.yml:
-
-```
-version: '3'
-services:
-  frontend:
-    image: ghcr.io/shuffle/shuffle-frontend:latest
-    container_name: shuffle-frontend
-    hostname: shuffle-frontend
-    ports:
-      - "${FRONTEND_PORT}:80"
-      - "${FRONTEND_PORT_HTTPS}:443"
-    networks:
-      - shuffle
-    environment:
-      - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
-    restart: unless-stopped
-    depends_on:
-      - backend
-  backend:
-    image: ghcr.io/shuffle/shuffle-backend:latest
-    container_name: shuffle-backend
-    hostname: ${BACKEND_HOSTNAME}
-    # Here for debugging:
-    ports:
-      - "${BACKEND_PORT}:5001"
-    networks:
-      - shuffle
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${SHUFFLE_APP_HOTLOAD_LOCATION}:/shuffle-apps     
-      - ${SHUFFLE_FILE_LOCATION}:/shuffle-files
-      #- ${SHUFFLE_OPENSEARCH_CERTIFICATE_FILE}:/shuffle-files/es_certificate
-    env_file: .env
-    environment:
-      - SHUFFLE_APP_HOTLOAD_FOLDER=/shuffle-apps
-      - SHUFFLE_FILE_LOCATION=/shuffle-files
-    restart: unless-stopped
-    depends_on:
-      - opensearch
-  opensearch:
-    image: opensearchproject/opensearch:2.5.0
-    hostname: shuffle-opensearch
-    container_name: shuffle-opensearch
-    environment:
-      - bootstrap.memory_lock=true
-      - "OPENSEARCH_JAVA_OPTS=-Xms4096m -Xmx4096m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
-      - cluster.routing.allocation.disk.threshold_enabled=false
-      - cluster.name=shuffle-cluster
-      - node.name=shuffle-opensearch
-      - discovery.seed_hosts=shuffle-opensearch
-      - cluster.initial_master_nodes=shuffle-opensearch
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
-        hard: 65536
-    volumes:
-      - ${DB_LOCATION}:/usr/share/opensearch/data:rw
-    networks:
-      - shuffle
-    restart: unless-stopped
-networks:
-  shuffle:
-    driver: bridge
-```
+The [default docker-compose file](https://github.com/shuffle/Shuffle/blob/main/docker-compose.yml) works for a single server. To look into scaling across multiple servers, look at [Scaling Shuffle](#scaling_shuffle)
 
 ### Hybrid Cloud Configuration
 
