@@ -235,9 +235,10 @@ networks:
 * Cloud: If you want access to on-premises resources and API's, [set up extra Environments](/docs/organizations#environments)
 
 ## Scaling Shuffle
-Orborus can run in Docker-swarm mode, and in early 2023, with Kubernetes. This makes the workflow executions A LOT faster, use less resources, making it more scalable both on a single, as well as across multiple servers. Since September 2024, this has been open sourced, and can be achieved with changing environment variables in the "Orborus" container for Shuffle. [Click here for Kubernetes details](https://github.com/Shuffle/Shuffle/tree/2.0.0/functions/kubernetes#instructions).
+Orborus can run in Docker-swarm mode, and in early 2023, with Kubernetes. This makes the workflow executions **A LOT** faster, use less resources, making it more scalable both on a single, as well as across multiple servers. Since September 2024, scale has been partially open source, and can be achieved with changing environment variables in the "Orborus" container for Shuffle. [Click here for Kubernetes details](https://github.com/Shuffle/Shuffle/tree/2.0.0/functions/kubernetes#instructions). If you have received a licensed version, don't forget step 3 to load in the correct worker.
 
-PS: This is only available on the **nightly** version of Shuffle until Shuffle 2.0 is released.
+This setup also allows for horizontal scaling. The image below briefly explains it.
+![image](https://github.com/user-attachments/assets/adf2c0b8-3c42-4b6f-8e25-a1a834a4854b)
 
 Let's begin with setting up Docker, Docker Compose, and creating a Docker Swarm network with two manager nodes involves several steps. Below is a step-by-step guide to achieve this:
 
@@ -251,7 +252,17 @@ Docker Installation Guide: https://docs.docker.com/get-docker/
 Install Docker Compose on both machines by following the official Docker Compose installation guide.
 Docker Compose Installation Guide: https://docs.docker.com/compose/install/
 
-**Step 3: Configure Orborus Environment Variables:**
+Step 3: Load the license **(skip if not a customer)**
+
+You should have received a license from the Shuffle team, which comes in form of a URL. This URL can be used to download the licensed version of the Worker as many times as you want. After downloading it, you need to docker load the file. 
+```
+wget <url>
+docker load -i shuffle-worker.zip
+```
+
+After these have been ran, it should be clear what the docker image is. This docker image needs to be used in the `SHUFFLE_WORKER_IMAGE` environment variable in step 4. 
+
+**Step 4: Configure Orborus Environment Variables:**
 1. Add and change the following environment variables for Orborus in the docker-compose.yml file. `BASE_URL` is the external URL of the server you're running Shuffle on (the one you visit Shuffle with in your browser):
 ```
 # Required:
@@ -271,9 +282,12 @@ Docker Compose Installation Guide: https://docs.docker.com/compose/install/
     
 ```
 
+If this is configured properly, the "Status" and "Scale" section on your [Runtime Locations in the Admin panel](https://shuffler.io/admin?tab=locations) should show as "Running" and a green checkmark respectively.
+![image](https://github.com/user-attachments/assets/9fbfdf29-0a3f-4926-bf93-da70226e30b1)
+
 To make swarm work, Please make sure that [these ports are open](https://docs.docker.com/engine/swarm/swarm-tutorial/#open-protocols-and-ports-between-the-hosts) on all your machines (to at least, both of these machines internally): 2377, 7946 and 4789
 
-**It is recommended to make sure that these ports are ONLY open internally just to be sure that everything is secure.**
+**It is recommended to make sure that these ports are ONLY open internally to be sure that everything is secure.**
 
 2. When step 1 is configured, take down the stack and pull it back up AFTER initializing swarm:
 ```
@@ -287,7 +301,7 @@ PS: In certain scenarios you may need extra configurations, e.g. for network MTU
 
 ### Adding another machine to the swarm network:
 
-Again, Make sure docker works here. Then paste the output from the above last command. It adds the network in the docker swarm network as a manager (It is required to orchestrate the app containers).
+Start by making sure docker works here. Then paste the output from the previous docker command to `docker join`. It adds the network in the docker swarm network as a manager (It is required to orchestrate the app containers).
 
 It should look something like this:
 
