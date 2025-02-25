@@ -417,6 +417,7 @@ You can additionally add this do your docker compose with the following setting:
     container_name: shuffle-cache
     hostname: shuffle-cache
     mem_limit: 1024m
+    restart: unless-stopped
     environment:
       - MEMCACHED_MEMORY=1024
       - MEMCACHED_MAX_CONNECTIONS=2500
