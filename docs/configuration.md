@@ -30,7 +30,7 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 
 ## Introduction
 
-With Shuffle being Open Sourced, there is a need for a place to read about configuration. There are quite a few options, and this article aims to delve into those.
+With Shuffle being Open Source, there is a need for a place to read about configuration. There are quite a few options, and this article aims to delve into those.
 
 Shuffle is based on Docker and is started using docker-compose with configuration items in a .env file. .env has the configuration items to be used for default environment changes, database locations, port forwarding, github locations and more.
 
@@ -45,6 +45,8 @@ git clone https://github.com/shuffle/Shuffle
 cd Shuffle
 docker-compose up -d
 ```
+
+![image](https://user-images.githubusercontent.com/5719530/169809608-325b5e9f-af44-45ab-83e1-c2acbcaf206a.png)
 
 ## Updating Shuffle
 
@@ -67,11 +69,11 @@ docker-compose up -d
 
 To use a specific version of Shuffle, you'll need to manually edit the Docker-Compose.yml file to reflect the version - usually for the frontend and backend, but sometimes also the other containers. You can [see all our released versions here](https://github.com/orgs/Shuffle/packages). We recommend keeping the same version for the frontend and backend, and **not** to keep them separate, as seen in the image below.
 
-![image](https://user-images.githubusercontent.com/5719530/169809608-325b5e9f-af44-45ab-83e1-c2acbcaf206a.png)
-
 ## Production readiness
 
-Shuffle is by default configured to be easy to start using. This means we've had to make some tradeoffs which can be enabled/disabled to make it easier to use the first time. This part outlines a lot of what's necessary to make Shuffle's security, availability and scalability better.
+Shuffle is by default configured to be easy to start using. This means we've had to make some tradeoffs which can be enabled/disabled to make it easier to use the first time. This part outlines a lot of what's necessary to make Shuffle's security, availability and scalability better. 
+
+![image](https://github.com/user-attachments/assets/1bf288e0-fbd7-47c1-aba2-5269acaa4f8d)
 
 **Here are the things we'll dive into**
 
