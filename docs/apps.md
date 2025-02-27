@@ -25,7 +25,7 @@ Apps are the heavy lifters of [workflows](/docs/workflows) within Shuffle. They 
 
 A subset of available apps can be found at [https://shuffler.io/apps](https://shuffler.io/apps). 
 
-![Apps view 1](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-1.png?raw=true)
+![Apps view 1](https://github.com/user-attachments/assets/71b1fc24-a49b-46e3-bdc2-a4286c94498e)
 
 ## How they work
 Apps are the primary building blocks in workflows. Apps can be auto-generated from [OpenAPI](https://swagger.io/specification/) specifications or using Shuffle's app sdk. To enforce stability and usability, we use a versioning system to prevent sudden updates to apps.
@@ -37,9 +37,11 @@ PS: In a future iteration, focus will move to an optional hybrid execution model
 ### Actions
 An app can perform more than one task based on predefined actions. These actions are defined by the developer, and are reusable and modifiable by the user of the app. An action should (for now) be a one-to-one representation of the function to run, and usually has arguments for authentication with the target application. Actions can contain multiple arguments.
 
-You can see what actions an app has by going to /apps, then finding the app you're looking for. 
+You can view an app's actions by selecting the app and clicking the edit icon. 
 
-![Apps view 2](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-2.png?raw=true)
+![Apps view 2](https://github.com/user-attachments/assets/3c995872-2a86-4951-a794-5958863a36b5)
+
+![Actions View](https://github.com/user-attachments/assets/7ac431fa-be38-4f88-993a-95d45ed35aae)
 
 ### Arguments
 Arguments are the variables used to perform an action. Arguments with an orange dot next to them are required, with yellow ones being optional. Arguments should have example text to to indicate the expected value. The first arguments of an app are _usually_ related to authentication or the target URL, where we suggest using [variables](/docs/workflows#variables)
