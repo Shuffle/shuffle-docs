@@ -577,6 +577,8 @@ Datastore is a persistent storage mechanism you can use for workflows to talk to
 ### Add a key
 To add or edit a cache key use 
 
+To add a key to a specific category, add `"category": "name"` to the JSON body.
+
 Methods: POST, PUT
 
 ```
@@ -592,6 +594,8 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/set_cache -H "Authorization: Beare
 ### Get a key
 Search for a cache key. For keys set in a workflow, it may unavailable with the normal API, and require execution_id & authorization in the JSON body.
 
+To get a key from a specific category, add `"category": "name"` to the JSON body.
+ 
 Methods: POST
 
 ```
@@ -606,7 +610,14 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/get_cache -H "Authorization: Beare
 
 
 ### List all keys
-List existing datastore (cache) keys
+List existing datastore (cache) keys. By default, this will include the 50 last modified keys from any category. 
+
+To list keys from a specific category, ?category=<name> to the URL.
+
+Available queries:
+- top: default 50. How many keys to return.
+- cursor: to get the next page
+- category: the category to get
 
 Methods: GET
 
@@ -621,13 +632,14 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/list_cache -H "Authorization: Bear
 ```
 
 ### Delete a key
-Deletes a key, completely removing all references to it
+Deletes a key, completely removing all references to it. 
+
+To delete a key from a specific category, add `"category": "name"` to the JSON body.
 
 Methods: DELETE
 
 ```
-curl -XDELETE https://shuffler.io/api/v1/orgs/{org_id}/cache/{cache_key} -H "Authorization: Bearer APIKEY"
-
+curl https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
 ```
 
 
