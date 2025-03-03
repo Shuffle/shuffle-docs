@@ -49,10 +49,11 @@ When a release is decided, it is important to know what should be shared. Here a
 
 - Newsletter
 - Social media posting
-- Conferences
 - In-product
+- Webinar / Conferences
+- Videos (Youtube/Tiktok)
 
-This means it's vital to talk to the Marketing team about what we are building and why during the initial phases of a release. 
+This means it's vital to talk to the Marketing team about what we are building and why we are building it during the initial phases of a release. 
 
 **During the release itself**, the marketing team should have something for the following ready:
 - A blogpost (why is the release exciting and new? Hint about the future etc.) - [Articles](https://github.com/Shuffle/shuffle-docs/tree/master/articles), Medium & Linkedin crosspost?
