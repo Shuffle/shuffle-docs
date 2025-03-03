@@ -40,10 +40,9 @@ Here are the things to get done before any marketing material goes out:
 3. GCP & Local: Test the images generated in step #1 in the following ways: Normal Shuffle setup (docker), Scale setup (docker swarm), Kubernetes setup.
 4. GCP & Local: Test if the images run workflows correctly. Test if the containers work on **x86 AND ARM**. 
 5. Local: If all is good, tag all the images you tested to be "latest" instead of "nightly". Also add the tag "1.3.0".
-6. GCP: Make sure the Scale worker is pushed to Google Cloud Storage. 
-7. GCP: Release the backend to all other regions (canada, EU, Asia-pacific...)
-8. Github: Make a release for the new version in the https://github.com/shuffle/shuffle repo. 
-9. Tell marketing that all is ready to release what they got :)
+6. GCP: Release the backend to all other regions (canada, EU, Asia-pacific...)
+7. Github: Make a release for the new version in the https://github.com/shuffle/shuffle repo. 
+8. Tell marketing & sales that all is ready to release what they got :)
 
 ## Marketing
 When a release is decided, it is important to know what should be shared. Here are the things we do regularly:
@@ -56,9 +55,9 @@ When a release is decided, it is important to know what should be shared. Here a
 This means it's vital to talk to the Marketing team about what we are building and why during the initial phases of a release. 
 
 **During the release itself**, the marketing team should have something for the following ready:
-- A blogpost (why is the release exciting and new? Hint about the future etc.)
-- Discord information
-- Release information
+- A blogpost (why is the release exciting and new? Hint about the future etc.) - [Articles](https://github.com/Shuffle/shuffle-docs/tree/master/articles), Medium & Linkedin crosspost?
+- Discord information: Fred
+- Release information Github: Fred
 
 ## Support & Security Development
 Support goes along the same lines as marketing, and should be kept in the loop to not be blindsided.
