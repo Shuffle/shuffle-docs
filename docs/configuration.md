@@ -429,7 +429,7 @@ networks:
 
 You need to change the value of the environment `BASE_URL` of this Dockerfile, so it aims to the IP of your Shuffle frontend+backend node.
 
-## Kubernetes
+### Kubernetes
 
 Shuffle use with Kubernetes is now possible due to help from our contributors. You can read more about how it works on our [Github page](https://github.com/Shuffle/Shuffle/tree/main/functions/kubernetes), which includes extensive helm charts and configuration possibilities.
 
@@ -614,7 +614,7 @@ server {
 3. Add a folder called "certs" with **your certificates** named `cert.crt` and `cert.key`.
 4. Restart everything: `docker-compose down; docker-compose up -d`
 
-## Internal Certificate Authority
+### Internal Certificate Authority
 By default, certificates are not being verified when outbound traffic goes from Shuffle. This is due to the massive use of self-signed certificates when using internal services. You may ignore certificate warnings by adding `SHUFFLE_SKIPSSL_VERIFY=true` to the environment of each relevant service - most notably used for Orborus.  If you want to accept your Certificate Authority for all requests, there are a few ways to do this:
 
 1. Mount your CA certificates (recommended): Add the `./certs:/certs` mount to the Orborus service in your docker-compose.yml. Ensure that the shuffle directory contains a certs subdirectory with all the necessary certificate files. This will automatically append all certificates in `./certs` to the system's root CA.
@@ -675,7 +675,7 @@ registry-1.docker.io                            # Dockerhub registry (for apps)
 production.cloudflare.docker.com     # Protects of DockerHub
 ```
 
-## Incoming IP Whitelisting
+### Incoming IP Whitelisting
 
 When using Shuffle in the cloud (*.shuffler.io), the incoming IP to your services by default will be be from our cloud functions, if you are not using [Runtime Locations](/admin?tab=locations). The range is **not static**, and may wary based on region. Here's a list (mostly IPv6 as of 2025):
 
