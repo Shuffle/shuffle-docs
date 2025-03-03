@@ -80,11 +80,8 @@ Shuffle is by default configured to be easy to start using. This means we have h
 ![image](https://github.com/user-attachments/assets/1bf288e0-fbd7-47c1-aba2-5269acaa4f8d)
 
 **Here are the things we'll dive into**
-
-- [Servers](#servers)
 - [Hybrid Cloud Configuration](#hybrid-cloud-configuration)
-- [Environment Variables](#environment-variables)
-- [Proxies](#proxy-configuration)
+- [High Availability](#high-availability)
 
 ### Servers
 When setting up Shuffle for production, we always recommend two or more servers (VMs), but it works fine with one to start. These are MINIMUM requirements, and we recommend adding more to avoid congestion.
@@ -98,6 +95,11 @@ The webserver is where your users and Shuffle's API is. Opensearch is a RAM heav
 
 The [default docker-compose file](https://github.com/shuffle/Shuffle/blob/main/docker-compose.yml) works well to scale on a single server. 
 
+### Hybrid Cloud Configuration
+
+* Onprem: If you want to try using Hybrid Shuffle, see [Cloud sync documentation](/docs/organizations#cloud_synchronization)
+* Cloud: If you want access to on-premises resources and API's, [set up extra Environments](/docs/organizations#environments)
+
 ### High Availability
 When running Shuffle on multiple servers, you need to take multiple things into account. Among them are:
 - Can the servers talk to each other?
@@ -109,30 +111,21 @@ When running Shuffle on multiple servers, you need to take multiple things into 
 ![image](https://github.com/user-attachments/assets/5248417c-c47b-4397-95c5-b01e1f5b4082)
 
 Here is a breakdown of the previous High Availability image of Shuffle, and how it works:
-1. All the "Green" colored services are our providers, meaning they are built by someone else than Shuffle, but used in the Shuffle stack. Here is our recommendation on scaling these services:
+1. All the **Green** colored services are our providers, meaning they are built by someone else than Shuffle, but used in the Shuffle stack. Here is our recommendation on scaling these services:
    * [Opensearch (Database)](https://opensearch.org/docs/latest/tuning-your-cluster/). Elasticsearch also works. If you are using more than one entrypoint to Opensearch/Elasticsearch, [add the URL's comma separated in the .env file](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L104). 
-   * Memcached (Shared Memory): We recommend starting with memcached on a single server, and only scaling up as need be. When scaling, this memcached is only required for the Workers to communicate, and is not required for Shuffle itself to work. Add multiple [comma separated URL's here](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L84) to configure multiple instances.
+   * [Memcached (Shared Memory)](#distributed_caching): We recommend starting with memcached on a single server, and only scaling up as need be. When scaling, this memcached is only required for the Workers to communicate, and is not required for Shuffle itself to work. Add multiple [comma separated URL's here](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L84) to configure multiple instances.
   
-2. NFS is Network File Storage. This is for you to be able to store files across multiple servers. This is required if you are running multiple instances of the Shuffle backend, and for them to have consistent access to the Files that you store. Only configure this if you are storing files in Shuffle. When NFS is set up, [mount your NFS storage to ./shuffle-files](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/docker-compose.yml#L28).
+2. **NFS** is Network File Storage. This is for you to be able to store files across multiple servers. This is required if you are running multiple instances of the Shuffle backend, and for them to have consistent access to the Files that you store. Only configure this if you are storing files in Shuffle. When NFS is set up, [mount your NFS storage to ./shuffle-files](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/docker-compose.yml#L28).
 
-3. The Blue services are YOUR services. These can be in your Cloud, Onprem etc. The service in Shuffle that needs access to this are the `Apps`, which have their network configuration copied from the `Orborus` container. If you have on-premises services that Shuffle needs access to, set up an Orborus instance in the same network, which has access to your Shuffle instance + the service in question.
+3. The **Blue** services are YOUR services. These can be in your Cloud, Onprem etc. The service in Shuffle that needs access to this are the `Apps`, which have their network configuration copied from the `Orborus` container. If you have on-premises services that Shuffle needs access to, set up an Orborus instance in the same network, which has access to your Shuffle instance + the service in question.
 
-4. The orange services are Shuffle's containers. Here is a breakdown of what and how to use them:
-* Backend: 
+4. The **orange** services are Shuffle's containers. Below is a breakdown of what and how to use them.
+* **Backend:** Handles all of Shuffle's API requests, and are typically routed through the Frontend service. This means that it usually does NOT expose a port. **Scale across ALL available servers.** Available on shuffle-http://backend:5001 in the container network. 
+* **Frontend:** Handles frontend & backend routing, as well as the default certificates. **Scale across ALL available servers.** Available on http://shuffle-frontend:3001 or https://shuffle-frontend:3443 in the container network.
+* **Orborus / Worker / Apps:** Orborus is in charge of this stack, and is how you control all three services. Orborus receives jobs from the Backend, and does NOT expose any port. Read more about configuring, scaling and managing them in your instance on the [/admin?tab=locations](/admin?tab=locations) page, or in the next section.
 
-#### Docker configuration
-
-
-### Hybrid Cloud Configuration
-
-* Onprem: If you want to try using Hybrid Shuffle, see [Cloud sync documentation](/docs/organizations#cloud_synchronization)
-* Cloud: If you want access to on-premises resources and API's, [set up extra Environments](/docs/organizations#environments)
-
-## Scaling Shuffle
-Orborus can run in Docker-swarm mode, and in early 2023, with Kubernetes. This makes the workflow executions **A LOT** faster, use less resources, making it more scalable both on a single, as well as across multiple servers. Since September 2024, scale has been partially open source, and can be achieved with changing environment variables in the "Orborus" container for Shuffle. [Click here for Kubernetes details](https://github.com/Shuffle/Shuffle/tree/2.0.0/functions/kubernetes#instructions). If you have received a licensed version, don't forget step 3 to load in the correct worker.
-
-This setup also allows for horizontal scaling. The image below briefly explains it.
-![image](https://github.com/user-attachments/assets/adf2c0b8-3c42-4b6f-8e25-a1a834a4854b)
+### Scaling Runtime Locations
+Orborus can run in Docker-swarm mode, and in early 2023, with Kubernetes. This makes the workflow executions **A LOT** faster, use less resources, making it more scalable both on a single, as well as across multiple servers. Since September 2024, scale has been partially open source, and can be achieved with changing environment variables in the "Orborus" container for Shuffle. [Click here for Kubernetes details](https://github.com/Shuffle/Shuffle/tree/2.0.0/functions/kubernetes#instructions). If you have received a licensed version, don't forget step 3 to load in the correct worker. 
 
 Let's begin with setting up Docker, Docker Compose, and creating a Docker Swarm network with two manager nodes involves several steps. Below is a step-by-step guide to achieve this:
 
