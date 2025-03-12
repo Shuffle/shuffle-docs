@@ -250,7 +250,9 @@ When building is done, you may want to test the app that you've built. This can 
 
 ### Editing an app 
 You may want to change an app later. This can be done by using the /apps UI to find the app, selecting the app, then clicking the "Edit" button. 
-![Apps view 7](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-7.png?raw=true)
+![Apps view 7](https://github.com/Shuffle/shuffle-docs/blob/master/assets/app_edit_button.png?raw=true)
+
+
 
 ## Python - Building apps manually
 Apps using Python can do pretty much anything you can do on a computer. As an example, most utility functions of Shuffle itself are written with as functions of Python in the app "Shuffle-Tools"
@@ -637,7 +639,7 @@ Before releasing an app, it needs to be uploaded and available in Shuffle. OpenA
 3. Click publish.
 ```
 
-![App Creator](https://github.com/frikky/shuffle-docs/blob/master/assets/app_creator-1.png?raw=true)
+![App Creator](https://github.com/Shuffle/shuffle-docs/blob/master/assets/publishing_your_app.png?raw=true)
 
 **Python:**
 After making an app in Python, here's the steps to get it to everyone 
