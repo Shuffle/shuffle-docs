@@ -25,7 +25,7 @@ Apps are the heavy lifters of [workflows](/docs/workflows) within Shuffle. They 
 
 A subset of available apps can be found at [https://shuffler.io/apps](https://shuffler.io/apps). 
 
-![Apps view 1](https://github.com/user-attachments/assets/71b1fc24-a49b-46e3-bdc2-a4286c94498e)
+![Apps view 1](https://github.com/user-attachments/assets/71b1fc24-a49b-46e3-bdc2-a4286c94498e?raw=true)
 
 ## How they work
 Apps are the primary building blocks in workflows. Apps can be auto-generated from [OpenAPI](https://swagger.io/specification/) specifications or using Shuffle's app sdk. To enforce stability and usability, we use a versioning system to prevent sudden updates to apps.
@@ -39,9 +39,9 @@ An app can perform more than one task based on predefined actions. These actions
 
 You can view an app's actions by selecting the app and clicking the edit icon. 
 
-![Apps view 2](https://github.com/user-attachments/assets/3c995872-2a86-4951-a794-5958863a36b5)
+![Apps view 2](https://github.com/Shuffle/shuffle-docs/blob/master/assets/app_edit_button.png?raw=true)
 
-![Actions View](https://github.com/user-attachments/assets/7ac431fa-be38-4f88-993a-95d45ed35aae)
+![Actions View](https://github.com/user-attachments/assets/7ac431fa-be38-4f88-993a-95d45ed35aae?raw=true)
 
 ### Arguments
 Arguments are the variables used to perform an action. Arguments with an orange dot next to them are required, with yellow ones being optional. Arguments should have example text to to indicate the expected value. The first arguments of an app are _usually_ related to authentication or the target URL, where we suggest using [variables](/docs/workflows#variables)
@@ -64,7 +64,7 @@ When the modal opens, there are two buttons:
 ## Searching for apps
 When you set up Shuffle for the first time, it should provide you with >100 existing Apps. These are gathered from [shuffle-apps](https://github.com/frikky/shuffle-apps), and will grow over time. Searching for apps is done by going to /apps and writing your search term. In the example below, we searched for "TheHive", which ends in TheHive being shown. 
 
-![Apps view 4](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-4.png?raw=true)
+![Apps view 4](https://github.com/Shuffle/shuffle-docs/blob/master/assets/search_by_appname.png?raw=true)
 
 A goal for Shuffle is to make it possible to search outside the apps you currently have. This is an [open issue](https://github.com/frikky/Shuffle/issues/24) as of 23.05.2020, but will be worked on.
 
@@ -88,7 +88,7 @@ Read more about how to make an app [here](/docs/app_creation)
 * Click the "Create from scratch" button, then [use the editor.](/docs/apps#edit_openapi_app)
 
 
-![Apps view 5](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-5.png?raw=true)
+![Apps view 5](https://github.com/Shuffle/shuffle-docs/blob/master/assets/create_from_openapi.png?raw=true)
 
 ## Edit OpenAPI app
 Creating or editing an app in Shuffle is made to be as simple as possible
@@ -108,14 +108,14 @@ Required permissions (either or):
 * Admin
 * App owner / creator
 
-![Apps view 7](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-7.png?raw=true)
+![Apps view 7](https://github.com/Shuffle/shuffle-docs/blob/master/assets/app_edit_button.png?raw=true)
 TBD
 
 
 ## Finding apps 
 If the app you're looking for exists, it will be available on [https://shuffler.io](https://shuffler.io) or [Github](https://github.com/frikky/shuffle-apps). Apps available on the Shuffle website, can further be clicked then exported or tested directly.
 
-![Apps view search 16](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-16.png?raw=true)
+![Apps view search 16](https://github.com/Shuffle/shuffle-docs/blob/master/assets/searchengine_app.png?raw=true)
 
 ## Testing apps 
 After you've found a public or private app on [https://shuffler.io](https://shuffler.io/apps/c051cc46559dd040d963e0cdf19b7d9b), it's possible to test it directly. The view you get access to has the fully featured app included, meaning you won't need to build a workflow to test it.
@@ -126,12 +126,12 @@ After you've found a public or private app on [https://shuffler.io](https://shuf
 - Executing the action
 - Exploring the result
 
-![Apps view search 16](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-16.png?raw=true)
+![Apps view search 16](https://github.com/Shuffle/shuffle-docs/blob/master/assets/searchengine_app.png?raw=true)
 
 ## Downloading apps 
 Apps can be downloaded or exported from your local instance or [https://shuffler.io](https://shuffler.io) as long as it's either your private app, or a public one AND is OpenAPI. If you find the "download" icon in any part of Shuffle, that means the item is exportable.
 
-![Apps view activation 18](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-18.png?raw=true)
+![Apps view activation 18](https://github.com/Shuffle/shuffle-docs/blob/master/assets/download_app.png?raw=true)
 
 ## Importing apps
 If you have an OpenAPI specification, either exported from Shuffle or otherwise, it can be imported in the [/apps](https://shuffler.io/apps) view. You need to be logged in.
