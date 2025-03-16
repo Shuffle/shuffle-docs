@@ -481,6 +481,42 @@ To **DISABLE** proxy for **internal** Shuffle traffic, add the following environ
 
 Follow this guide from Docker: https://docs.docker.com/network/proxy/
 
+### Internal Proxy settings
+
+The main proxy issues may arise with the "Backend", along with 3the "Orborus" container, which runs workflows. This has to do with how this server can contact the backend (Orborus), along with how apps can be downloaded (Worker), down to how apps engage with external systems (Apps).
+
+Environment variables to be sent to the Orborus container:
+
+```
+# Configures a HTTP proxy to use when talking to the Shuffle Backend
+HTTP_PROXY=     
+# Configures a HTTPS proxy when speaking to the Shuffle Backend
+HTTPs_PROXY=     
+
+# Decides if the Worker should use the same proxy as Orborus (HTTP_PROXY). Default=true
+SHUFFLE_PASS_WORKER_PROXY=true
+
+# Decides if the Apps should use the same proxy as Orborus (HTTP_PROXY). Default=false
+SHUFFLE_PASS_WORKER_PROXY=true
+```
+
+Environment variables for the Backend container:
+
+```
+# A proxy to be used if Opensearch / Elasticsearch (database) is behind a proxy.
+SHUFFLE_OPENSEARCH_PROXY
+
+# Configures a HTTP proxy for external downloads
+HTTP_PROXY=     
+# Configures a HTTPS proxy for external downloads
+HTTPs_PROXY=     
+```
+
+### Opensearch / Elasticsearch proxies
+Connections from Shuffle's backend to the Opensearch database **does NOT** follow normal HTTP_PROXY and NOPROXY environment variables. 
+
+Opensearch and Elasticsearch proxy configuration can be set using the `SHUFFLE_OPENSEARCH_PROXY` environment variable. 
+
 #### Individual container proxy
 
 To set up proxies in individual containers, open docker-compose.yml and add the following lines with your proxy settings (http://my-proxy.com:8080 in my case).
@@ -698,36 +734,6 @@ Architecture connecting from cloud to onprem (hybrid):
 ![image](https://github.com/user-attachments/assets/7f0b6146-ebae-4133-bbc7-8b158d48c3a9)
 
 
-## Proxy settings
-
-The main proxy issues may arise with the "Backend", along with 3the "Orborus" container, which runs workflows. This has to do with how this server can contact the backend (Orborus), along with how apps can be downloaded (Worker), down to how apps engage with external systems (Apps).
-
-Environment variables to be sent to the Orborus container:
-
-```
-# Configures a HTTP proxy to use when talking to the Shuffle Backend
-HTTP_PROXY=     
-# Configures a HTTPS proxy when speaking to the Shuffle Backend
-HTTPs_PROXY=     
-
-# Decides if the Worker should use the same proxy as Orborus (HTTP_PROXY). Default=true
-SHUFFLE_PASS_WORKER_PROXY=true
-
-# Decides if the Apps should use the same proxy as Orborus (HTTP_PROXY). Default=false
-SHUFFLE_PASS_WORKER_PROXY=true
-```
-
-Environment variables for the Backend container:
-
-```
-# A proxy to be used if Opensearch / Elasticsearch (database) is behind a proxy.
-SHUFFLE_OPENSEARCH_PROXY
-
-# Configures a HTTP proxy for external downloads
-HTTP_PROXY=     
-# Configures a HTTPS proxy for external downloads
-HTTPs_PROXY=     
-```
 
 ### Manual Docker image transfers
 
