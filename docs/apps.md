@@ -75,43 +75,6 @@ Apps may fail at times, usually due to bad coding on the creators' side. This me
 
 More about this in the [app creation](/docs/app_creation#debugging) debugging section
 
-## Create apps
-Apps in Shuffle can be made using the App Creator or with Python directly.
-
-Read more about how to make an app [here](/docs/app_creation)
-
-**If you have an OpenAPI config already**
-* Click the "Generate from OpenAPI", paste the URL or data for your OpenAPI specification, then validate, before submitting. This should show you the app creator.
-...
-
-**If you want to create an app**
-* Click the "Create from scratch" button, then [use the editor.](/docs/apps#edit_openapi_app)
-
-
-![Apps view 5](https://github.com/Shuffle/shuffle-docs/blob/master/assets/create_from_openapi.png?raw=true)
-
-## Edit OpenAPI app
-Creating or editing an app in Shuffle is made to be as simple as possible
-
-Prerequisite knowledge:
-* HTTP - POST, GET etc.
-
-App creator:
-* Add name, description, authentication, endpoint etc..
-* Create Actions.
-* Save.
-![Apps view 6](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-6.png?raw=true)
-
-If you've created an app using the editor, or uploaded an OpenAPI specification, it's changeable. Find the app you created by searching for it, then click the "Edit app" button as seen below. You can also delete it.
-
-Required permissions (either or):
-* Admin
-* App owner / creator
-
-![Apps view 7](https://github.com/Shuffle/shuffle-docs/blob/master/assets/app_edit_button.png?raw=true)
-TBD
-
-
 ## Finding apps 
 If the app you're looking for exists, it will be available on [https://shuffler.io](https://shuffler.io) or [Github](https://github.com/frikky/shuffle-apps). Apps available on the Shuffle website, can further be clicked then exported or tested directly.
 
