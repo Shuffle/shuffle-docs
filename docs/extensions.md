@@ -182,6 +182,38 @@ Finally go back to shuffle and use SSO button to login.
 
 ![shuffle SSO](https://user-images.githubusercontent.com/31187099/162689445-8db0766c-6f18-4463-8a92-f6ae62213918.png?raw=true)
 
+### Assigning a Role from Keycloak to Shuffle for a New User
+
+If you want to assign a Shuffle organization role (`admin`, `user`, `org-reader`) from your Keycloak client, you can achieve this using the following method:
+
+Steps to Assign Roles
+
+1. In your Keycloak client, create three new roles with the names `shuffle-admin`, `shuffle-user`, and `shuffle-org-reader`, as shown in the image below:
+
+   ![image](https://github.com/user-attachments/assets/e8a1f344-73c9-453d-b119-aef4643610b4)
+
+2. After creating the roles, assign them to the users you want. The `shuffle-admin`, `shuffle-user`, and `shuffle-org-reader` roles in Keycloak correspond to the `admin`, `user`, and `org-reader` roles in Shuffle.
+
+3. Once the roles are assigned to users, navigate to:
+
+   **Client Scopes** → **Roles** → **Mapper** → **Client Roles**
+
+   On the **Client Roles** page:
+
+   - Update the `Token Claim Name` to `roles`
+   - Enable the option **"Add to ID Token"** so that the roles are included in the response.
+
+   ![image](https://github.com/user-attachments/assets/09582542-efa1-429b-9d45-e0a3796c6fbd)
+
+ Important Notes:
+
+- After completing these settings, all newly created users will be assigned roles based on their Keycloak roles. If no role is assigned, the default role will be `user`.
+- As of now, role assignment is only applied to newly generated users. If a user already exists in Shuffle, changing their role in Keycloak will **not** update their role in Shuffle.  
+  In this case, you can manually change the user's role from the `https://shuffler.io/admin?tab=users` page.
+- You can achieve this behavior starting from Shuffle version 2.0.1 or later. Make sure you are using this version or a newer one
+
+  
+
 ### Azure AD
 To use OpenID with Azure AD, Shuffle supports OpenID connect with the use of Client IDs and Client secrets. To set up OpenID Connect with Azure, we use "ID_token" authentication. This entails a few normal steps regarding app creation in Azure App Registration.
 
@@ -226,6 +258,37 @@ https://github.com/user-attachments/assets/8c3474a5-bfdd-4c68-bd59-0b7b1ddb2b0c
 https://github.com/user-attachments/assets/0a927283-d39e-4200-8ba3-654ef6f1b9c1
 
 **Note**: Ensure that the "email" field is included in the SSO response from your SSO provider. If this field is empty, you may encounter errors. The email from your SSO provider will be assigned as the username in Shuffle.
+
+
+
+### How to Assign a Role to a New User from an SSO Provider (OpenID Connect) in Shuffle  
+
+If you want to assign a role to a user from an SSO provider, you can do so using the following method:  
+
+1. Create three roles in your SSO application/client:  
+   - `shuffle-admin`  
+   - `shuffle-user`  
+   - `shuffle-org-reader`  
+
+2. Assign one of these roles to new users when granting them access to the application/client.  
+   - The `shuffle-admin`, `shuffle-user`, and `shuffle-org-reader` roles in your SSO provider correspond to the `admin`, `user`, and `org-reader` roles in Shuffle.  
+
+3. Ensure that the `roles` claim is included in the **ID token** response from your SSO provider.  
+
+After completing these steps, all newly created users will be assigned roles in Shuffle based on their assigned role in the SSO provider.  
+
+- If none of the specified roles are assigned, or if the `roles` claim is missing, the user will be assigned the default role: **`user`** in Shuffle.  
+
+Important Notes  
+
+1. Currently, this feature is only available for **OpenID Connect**. Support for **SAML SSO** may be added in the future.  
+2. At this time, role assignments only apply to newly created users. If a user already exists in Shuffle, changing their role in the SSO provider **will not** update their role in Shuffle.  
+   - To manually update an existing user’s role in Shuffle, please visit the **Shuffle Admin Page**:  
+     [Shuffle Admin Page](https://shuffler.io/admin?tab=users)
+3. You can achieve this behavior starting from Shuffle version 2.0.1 or later. Make sure you are using this version or a newer one.
+
+If you have any questions or need further assistance, please feel free to reach out to us at **[support@shuffler.io](mailto:support@shuffler.io)**. 
+
 
 ## Detection Manager
 The Shuffle Detection Manager is a system introduced in beta in December 2024, allowing Shuffle to work with platforms like Tenzir and other systems to help with Detection Engineering. The goal of the system is not to replace actual detection systems themselves, but to offer a centralized way to control Detection rules across tenants and different tools. As an example, **below is a focus on Sigma rules with Tenzir**. The system is tested with Yara rules, Email detection rules and custom rule systems.  
