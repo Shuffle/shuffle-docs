@@ -182,7 +182,7 @@ Finally go back to shuffle and use SSO button to login.
 
 ![shuffle SSO](https://user-images.githubusercontent.com/31187099/162689445-8db0766c-6f18-4463-8a92-f6ae62213918.png?raw=true)
 
-Assigning a Role from Keycloak to Shuffle for a New User
+### Assigning a Role from Keycloak to Shuffle for a New User
 
 If you want to assign a Shuffle organization role (`admin`, `user`, `org-reader`) from your Keycloak client, you can achieve this using the following method:
 
@@ -210,6 +210,7 @@ Steps to Assign Roles
 - After completing these settings, all newly created users will be assigned roles based on their Keycloak roles. If no role is assigned, the default role will be `user`.
 - As of now, role assignment is only applied to newly generated users. If a user already exists in Shuffle, changing their role in Keycloak will **not** update their role in Shuffle.  
   In this case, you can manually change the user's role from the `https://shuffler.io/admin?tab=users` page.
+- You can achieve this behavior starting from Shuffle version 2.0.1 or later. Make sure you are using this version or a newer one
 
   
 
@@ -283,7 +284,8 @@ Important Notes
 1. Currently, this feature is only available for **OpenID Connect**. Support for **SAML SSO** may be added in the future.  
 2. At this time, role assignments only apply to newly created users. If a user already exists in Shuffle, changing their role in the SSO provider **will not** update their role in Shuffle.  
    - To manually update an existing user’s role in Shuffle, please visit the **Shuffle Admin Page**:  
-     [Shuffle Admin Page](https://shuffler.io/admin?tab=users)  
+     [Shuffle Admin Page](https://shuffler.io/admin?tab=users)
+3. You can achieve this behavior starting from Shuffle version 2.0.1 or later. Make sure you are using this version or a newer one.
 
 If you have any questions or need further assistance, please feel free to reach out to us at **[support@shuffler.io](mailto:support@shuffler.io)**. 
 
