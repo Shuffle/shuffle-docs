@@ -877,6 +877,10 @@ As Shuffle has a lot of individual parts, debugging can be quite tricky. To get 
 | app sdk                                     | appname_appversion_id | Python           | Used by Apps to talk to the backend                                                                        |
 | worker-8a666e4f-e544-440e-bf0f-4220e7cc9e25 |                       |                  |                                                                                                            |
 
+### Disabling Image downloads
+There are cases where automatic image downloads may occur, such as when you restart Orborus. You can disable this with `SHUFFLE_AUTO_IMAGE_DOWNLOAD=false`
+
+
 ### Execution debugging
 
 Execution debugging might be the most notable issue you might explain. This is because there are a ton of reasons that it might crash. Before going into techniques to find what's going on, you'll need to understand what exactly happens when you click the big execution button.
