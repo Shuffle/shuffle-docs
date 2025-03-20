@@ -76,7 +76,10 @@ Shuffle responses follow the response codes listed below. The data you can expec
 Workflows are used to execute your automations, and has endpoints related to creation, triggers, saving and deleting, aborting and listing.
 
 ### List all workflows
-Return a list of all existing workflows
+Return a list of all existing workflows. 
+
+Disable truncating (since 2.0.2)**: Add the `truncate=false` header, and we will directly return the list without modifications IF it is less than 32Mb in size. 
+We may otherwise truncate the data, and add the `X-SHUFFLE_TRUNCATED=true` response header if the data is sufficiently large.
 
 Method: GET
 
