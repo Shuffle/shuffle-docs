@@ -27,7 +27,11 @@ Shuffle Installation models:
 ## Architecture overview
 The platform is split into two main parts: Server and Workers. The server acts as the host of everything from API activity to Workflow validation, while the Workers are another standalone unit, working in a microservice-esque way. The top and bottom part can be installed on different hosts and be clustered.
 
-![Architecture](https://github.com/frikky/shuffle-docs/blob/master/assets/shuffle_architecture.png?raw=true)
+Single Server installation:
+![Single Server installation](https://github.com/user-attachments/assets/a51b3973-9849-4b68-b1b5-a1259bb9a4c0)
+
+Simplified:
+![Simplified Architecture](https://github.com/frikky/shuffle-docs/blob/master/assets/shuffle_architecture.png?raw=true)
 
 ## Frameworks
 Shuffle uses and is built upon existing, well established frameworks to help the Security community move forward, rather than just increase complexity. 
