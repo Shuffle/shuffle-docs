@@ -546,8 +546,7 @@ HTTP_PROXY=<external proxy>                     # used by default for everything
 SHUFFLE_INTERNAL_HTTP_PROXY=<internal proxy>     # Overrides HTTP_PROXY, making internal services in Shuffle use this proxy instead of HTTP_PROXY.
 ```
 
-**PS: This is in beta. Reach out to support@shuffler.io if you have any trouble with this.
-**
+**PS: This is in beta. Reach out to support@shuffler.io if you have any trouble with this.**
 
 ### HTTPS
 
@@ -738,7 +737,8 @@ Environment page:
 Architecture connecting from cloud to onprem (hybrid):
 ![image](https://github.com/user-attachments/assets/7f0b6146-ebae-4133-bbc7-8b158d48c3a9)
 
-
+### Static inbound IPs for cloud
+Please contact support@shuffler.io and we can provide a static IP range with secondary domains that can be used for cloud routing. This may incur additional cost depending. 
 
 ### Manual Docker image transfers
 
