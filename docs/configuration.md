@@ -738,7 +738,7 @@ Architecture connecting from cloud to onprem (hybrid):
 ![image](https://github.com/user-attachments/assets/7f0b6146-ebae-4133-bbc7-8b158d48c3a9)
 
 ### Static inbound IPs for cloud
-As a customer of Shuffle we can provide you with a static **IP range** with secondary domains that can be used for cloud routing. 
+As a customer of Shuffle we can provide you with a static **IP range** with secondary domains that can be used for cloud routing. Contact support@shuffler.io for more info
 
 ### Manual Docker image transfers
 
