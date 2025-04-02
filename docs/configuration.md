@@ -80,8 +80,21 @@ Shuffle is by default configured to be easy to start using. This means we have h
 ![image](https://github.com/user-attachments/assets/1bf288e0-fbd7-47c1-aba2-5269acaa4f8d)
 
 **Here are the things we'll dive into**
-- [Hybrid Cloud Configuration](#hybrid-cloud-configuration)
+- [Environment Variables](#environment_variables)
 - [High Availability](#high-availability)
+
+### Environment Variables
+With Shuffle being a very technical system, it is important to understand that you have a lot of control mechanisms available to you in your local installation. 
+
+[Check the .env file on your server](https://github.com/Shuffle/Shuffle/blob/main/.env) to see what the default values are. They are broadly split into the following:
+
+- Setup Configuration (default usernames & download locations for easy deployments)
+- Network Configuration (e.g. how does the frontend route to the correct backend, or Orborus->Frontend->Backend through Nginx)
+- Container Control (Registries, Docker & K8s-specific configs etc.)
+- Health and Stability (Enable/Disable health checks, Log forwarding, automatic Reruns and Aborts etc.)
+- Opensearch Configuration (Networking, password & security systems etc)
+
+**PS:** Most of our environment variables start with `SHUFFLE_`
 
 ### Servers
 When setting up Shuffle for production, we always recommend two or more servers (VMs), but it works fine with one to start. These are MINIMUM requirements, and we recommend adding more to avoid congestion.
