@@ -781,8 +781,14 @@ docker load shuffle_tools.tar
 ```
 
 ### No Internet Install
-
 This procedure will help you export what you need to run Shuffle on a no internet host.
+
+**The following features will not work without internet:**
+- Cloud Sync
+- Automatic Health System (/health page)
+- UI app activations
+- Automatic App generation AI
+- Depending on your network: Search engine. This is a frontend feature, if you are in a no-internet zone, it will stop working. 
 
 1. Prerequise
 * Both machines has Docker and Docker Compose installed already
