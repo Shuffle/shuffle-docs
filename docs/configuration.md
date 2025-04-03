@@ -591,17 +591,14 @@ After changing certificates, you can rebuild the entire frontend by running (./f
 Make sure that the output image is the same in your docker-compose.yml file. This should work seemlessly for you next.
 
 ### App Certificates
-As of November 2023, it's now possible to mount folders into apps. This is in order for you to have better control of what Shuffle Apps can do, with the main reason being to manage certificates. 
+As of November 2023, it is possible to mount folders into apps. This is in order for you to have better control of what Shuffle Apps can do, with the main reason being to manage certificates or dynamic, large files. 
 
-To mount in certificates, add the following environment variable to the "Orborus" container, but change the source and destination folder. The item BEFORE the colon (:) is the source folder on your machine, with the one AFTER the colon (:) being for the destination folder in the app itself.
+To mount in certificates to ALL App containers, add the following environment variable to the "Orborus" container, but change the source and destination folder. The item BEFORE the colon (:) is the source folder on your machine, with the one AFTER the colon (:) being for the destination folder in the app itself.
 
-If you want more folders mounted, add them with a comma.
+If you want more multiple folders mounted, add them with a comma. Folders MUST exist, otherwise apps may not run, and the Worker will throw an error in the logs with Workflow Runs not finishing.
 ```
-SHUFFLE_VOLUME_BINDS="/etc/ssl/certs:/usr/local/share/ca-certificates,srcfolder2:dstfolder2"
+SHUFFLE_VOLUME_BINDS="/etc/ssl/certs:/usr/local/share/ca-certificates,srcfolder=dstfolder"
 ```
-
-**PS: This is in beta. Reach out to support@shuffler.io if you have any trouble with this.
-**
 
 ### Using the Nginx Reverse Proxy for TLS/SSL
 If you intend to use Nginx as a Reverse Proxy, the main steps are below. [Here is a basic single-server architecture for it](https://jamboard.google.com/d/1zJU8yMzbsu-XWeZnch_5MoDwmMNkkN8ZmoGNLCaHPlU/edit?usp=sharing). The Docker version is further down.
