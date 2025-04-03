@@ -595,9 +595,9 @@ As of November 2023, it is possible to mount folders into apps. This is in order
 
 To mount in certificates to ALL App containers, add the following environment variable to the "Orborus" container, but change the source and destination folder. The item BEFORE the colon (:) is the source folder on your machine, with the one AFTER the colon (:) being for the destination folder in the app itself.
 
-If you want more multiple folders mounted, add them with a comma. Folders MUST exist, otherwise apps may not run, and the Worker will throw an error in the logs with Workflow Runs not finishing.
+If you want more multiple folders mounted, add them with a comma. Folders MUST exist, otherwise apps may not run, and the Worker will throw an error in the logs with Workflow Runs not finishing. If you are in production, we recommend trying this feature in a separate Runtime Location. 
 ```
-SHUFFLE_VOLUME_BINDS="/etc/ssl/certs:/usr/local/share/ca-certificates,srcfolder=dstfolder"
+SHUFFLE_VOLUME_BINDS="/etc/ssl/certs:/usr/local/share/ca-certificates,/srcfolder:/dstfolder"
 ```
 
 ### Using the Nginx Reverse Proxy for TLS/SSL
