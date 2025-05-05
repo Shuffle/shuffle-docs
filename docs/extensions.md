@@ -1,5 +1,5 @@
 # Shuffle extensions
-This is documentation for integrating and sending data from third-party services to Shuffle. Not to be confused with [apps](/apps) and [workflows](/workflows)
+This is documentation for integrating and sending data from third-party services to Shuffle, along with being a brief overview of our Research & Development (R&D) activities. Not to be confused with [apps](/apps) and [workflows](/workflows)
 
 ## Table of contents
 * [Introduction](#introduction)
@@ -12,9 +12,11 @@ This is documentation for integrating and sending data from third-party services
   * [Azure AD - OpenID](#azure-ad)
   * [Other SSO providers](#other)
   * [Testing SSO](#sso-testing)
+* [Singul](#singul)
+* [AI Agents](#ai-agents)
+* [CACAO](#cacao)
 * [Detection Manager](#detection-manager)
 * [KMS](#KMS)
-* [Native Actions](#native-actions)
 * [Webhooks](#webhooks)
   * [Wazuh Webhook](#wazuh)
   * [TheHive Webhook](#thehive)
@@ -290,6 +292,37 @@ Important Notes
 If you have any questions or need further assistance, please feel free to reach out to us at **[support@shuffler.io](mailto:support@shuffler.io)**. 
 
 
+## Singul
+Singul are a new way Shuffle interacts with data, built brick by brick since introducing Shuffle's Integration Layer API in early 2023. The goal of Singul is to enable ourselves and others to be able to perform actions towards a specific API, without necessarily know how to do it specifically for that system. 
+
+As of early 2024, this system is in active development, and we will implement features with it and help third party platforms do the same throughout the next few years.
+
+**Example usecases:**
+- Listing assets from your asset management system/CMDB to make a list of assets, without needing to know the Assets' API
+- Blocking an Endpoint without knowing how to use the EDR API. Add this as a button to the list from the previous usecase
+- Shuffle Notification Workflow: Get notifications directly to your ticketing system with minimal configuration
+
+<img width="736" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/d9c5831c-af53-4bd2-9b34-7dd8c2daab32">
+
+The Singul system is based on [generative AI for automatic mapping of fields (Schemaless)](https://github.com/frikky/schemaless), uses Github to [store configurations (Standards)](https://github.com/shuffle/standards), and uses [Shuffle's Integration Layer API](https://shuffler.io/docs/API#integration-layer) to run the actions. 
+
+## AI Agents
+AI Agents are in active development as of April 2025. They take input(s) and automatically do the tasks for you, running in unison with [Singul](#singul) to perform tasks. This will be published to everyone as soon as it:
+1. Has an interface allowing interactivity
+2. Works with local models + Shuffle AI inference (for open sourcing)
+3. Has good reasoning capabilities to handle decisionmaking 
+
+<img width="850" alt="image" src="https://github.com/user-attachments/assets/3e23b4d9-fe6f-44f0-b595-59923f51b45a" />
+
+## CACAO
+CACAO is a standardization framework for playbooks. It is still lacking significantly in capabilities as compared to Shuffle's own workflow system, but may be a good way to handle interoperability. 
+
+The goals are as follows:
+1. ✅ Ensure [CACAO playbook imports work](https://github.com/shuffle/cacao)
+3. Ensure Shuffle Workflow -> CACAO playbook exports work well
+
+Shuffle may in the future be based on CACAO playbooks to make workflow documentation work better. 
+
 ## Detection Manager
 The Shuffle Detection Manager is a system introduced in beta in December 2024, allowing Shuffle to work with platforms like Tenzir and other systems to help with Detection Engineering. The goal of the system is not to replace actual detection systems themselves, but to offer a centralized way to control Detection rules across tenants and different tools. As an example, **below is a focus on Sigma rules with Tenzir**. The system is tested with Yara rules, Email detection rules and custom rule systems.  
 
@@ -401,20 +434,6 @@ KMS is supported for any system as long as the sections above are covered. It ha
 - Github
 - AliCloud
 - ... and more! Ask if you need help.
-
-## Native Actions
-Native Actions are a new way Shuffle interacts with data, built brick by brick since introducing Shuffle's Integration Layer API in late 2022. The goal of Native Actions is to enable ourselves and others to be able to perform actions towards a specific API, without necessarily know how to do it specifically for that system. 
-
-As of early 2024, this system is in active development, and we will implement features with it and help third party platforms do the same throughout the next few years.
-
-**Example usecases:**
-- Listing assets from your asset management system/CMDB to make a list of assets, without needing to know the Assets' API
-- Blocking an Endpoint without knowing how to use the EDR API. Add this as a button to the list from the previous usecase
-- Shuffle Notification Workflow: Get notifications directly to your ticketing system with minimal configuration
-
-<img width="736" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/d9c5831c-af53-4bd2-9b34-7dd8c2daab32">
-
-The Native Actions system is based on [generative AI for automatic mapping of fields (Schemaless)](https://github.com/frikky/schemaless), uses Github to [store configurations (Standards)](https://github.com/shuffle/standards), and uses [Shuffle's Integration Layer API](https://shuffler.io/docs/API#integration-layer) to run the actions. 
 
 ## Inbound Webhooks
 This section describes inbound webhooks to Shuffle, and how to set them up in many commonly used third-party systems. If your system support outbound Webhooks, it can also forward to Shuffle as a GET or POST request. [More about webhook triggers](/triggers/#webhooks)
