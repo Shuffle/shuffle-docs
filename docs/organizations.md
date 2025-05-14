@@ -5,6 +5,7 @@ Documentation for the Admin view of Shuffle. Best used by administrators.
 * [Introduction](#introduction)
 * [Organization Overview](#organization_overview)
 * [Cloud Synchronization](#cloud_synchronization)
+* [App runs management for Suborgs (Enterprise)](#app_runs_management_suborg)
 * [Data collection](#data_collection)
 * [Pricing](#pricing)
 * [Licensing](#licensing)
@@ -28,6 +29,7 @@ The organization overview gives access to these things:
 * Description Change
 * Image change
 * Cloud synchronization
+* App runs management for suborg
 * Hybrid Feature overview
 * Single Signon options
 * Notification Workflows
@@ -59,6 +61,19 @@ Setting up cloud synchronization requires two things:
 ![Cloud sync local](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-5.png?raw=true)
 4. See the features you get access to.
 ![Cloud sync local features](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-6.png?raw=true)
+
+### App Runs Management for Suborg (Enterprise)
+Starting from version 2.0.2, enterprise users can manage suborg app run limits from the parent organization. The maximum limit that can be assigned to a suborg is equal to the app run limit of the parent organization. For example, if the parent org has an app run limit of 300k, the maximum limit that can be assigned to each suborg is also 300k.
+
+This feature is currently available to [Enterprise users](https://shuffler.io/pricing) only. If you have any questions or need assistance, please reach out to us at support@shuffler.io.
+
+**Steps to assign app run limits to a suborg from the parent org:**
+1. Log in to your Shuffle account and visit the [Billing tab](https://shuffler.io/admin?admin_tab=billingstats) on the admin page.
+2. Scroll down to the *Utilization and Stats* section. There, you’ll find the *Child Organization* tab, where you can manage suborg app run limits.
+![image](https://github.com/user-attachments/assets/a54a6b03-f787-4c3d-bd8c-eab4bef9496a)
+3. Click the edit icon next to the *App Execution Limit*. A pop-up will appear where you can assign the app execution run limit for each suborg. You can follow the same process to assign workflow run execution limits.  
+![image](https://github.com/user-attachments/assets/d9faf8dd-5663-4381-9e4a-71d244b2d9df)
+
 
 ## Hybrid Features 
 Updated November 14th, 2022
