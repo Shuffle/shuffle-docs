@@ -34,9 +34,9 @@ The organization overview gives access to these things:
 * Single Signon options
 * Notification Workflows
 * Priorities & Notifications
-* Licensing (Beta until v1.4.0)
-* Statistics (Beta until v1.4.0)
-* Branding (Beta until v1.4.0)
+* Licensing 
+* Statistics
+* Branding (Beta)
 
 This view outlines the basic details of your organizations, which any Admin can change at any time. It can tell you about new updates, features and more that we have in store. The view is slightly different from the cloud version to the on-premises version. Here's how:
 * The **cloud** version shows you an API-key. This can be used in the open source version.
