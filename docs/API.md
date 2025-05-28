@@ -969,7 +969,7 @@ curl -XPOST https://shuffler.io/api/v1/orgs/{org_id}/create_sub_org -H "Authoriz
 
 **Success response** 
 ```
-{"success": true, "reason": "Successfully created new sub-org"}
+{"success": true, "id": "<new org uuid>", "reason": "Successfully created new sub-org"}
 ```
 
 ### Change current Organization
