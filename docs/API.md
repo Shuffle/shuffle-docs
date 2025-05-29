@@ -886,7 +886,12 @@ Notifications can be manually created, and will show up on the /admin?tab=priori
 Methods: POST 
 
 ```
-curl -XPOST https://shuffler.io/api/v1/notifications -H "Authorization: Bearer APIKEY" -d '{"org_id": "YOUR ORGID", "title": "The title", "description": "The description of the notification", "reference_url": "URL for where to go when the user clicks explore"}'
+curl -XPOST https://shuffler.io/api/v1/notifications -H "Authorization: Bearer APIKEY" -d '{
+	"org_id": "YOUR ORGID",
+	"title": "The title",
+	"description": "The description of the notification",
+	"reference_url": "URL for where to go when the user clicks explore"
+}'
 ```
 
 
