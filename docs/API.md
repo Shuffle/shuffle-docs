@@ -163,7 +163,7 @@ curl -XPUT https://shuffler.io/api/v1/workflows/WORKFLOW_ID -H "Authorization: B
 ```
 
 **Success response** 
-```
+```json
 {"success": true}
 ```
 
@@ -185,12 +185,15 @@ curl -XDELETE https://shuffler.io/api/v1/workflows/apcb3cc6-f343-4511-827f-b6055
 
 
 ### Execute workflow
-Executes a given workflow with optional arguments "execution_argument" and "start". Start is the node to execute from.  
+Executes a given workflow with optional arguments "execution_argument" and "start". Start is an optional node to start from. [See Additional Optional Arguments](https://github.com/Shuffle/shuffle-shared/blob/57b211816d87b47acde1481084b187fda13d05ba/structs.go#L126).
 
 Methods: POST, GET
 
 ```bash
-curl -XPOST https://shuffler.io/api/v1/workflows/{workflow_id}/execute -H "Authorization: Bearer APIKEY" -d '{"execution_argument": "DATA TO EXECUTE WITH", "start": ""}'
+curl -XPOST https://shuffler.io/api/v1/workflows/{workflow_id}/execute -H "Authorization: Bearer APIKEY" -d '{
+	"execution_argument": "DATA TO EXECUTE WITH",
+	"start": ""
+}'
 ```
 
 Additional info:
@@ -211,7 +214,10 @@ Gets an execution based on results from [Execute workflow](/docs/api#execute_wor
 Methods: POST
 
 ```bash
-curl -XPOST https://shuffler.io/api/v1/streams/results -d '{"execution_id": "ad9baac7-dc30-42da-bb1f-18b84309cfb7", "authorization": "62b3de56-9de0-4983-ad72-e63c42d123f8"}'
+curl -XPOST https://shuffler.io/api/v1/streams/results -d '{
+	"execution_id": "ad9baac7-dc30-42da-bb1f-18b84309cfb7",
+	"authorization": "62b3de56-9de0-4983-ad72-e63c42d123f8"
+}'
 ```
 
 **Success response** 
@@ -291,7 +297,7 @@ Methods: POST
 curl https://shuffler.io/api/v1/apps/upload -H "Authorization: Bearer APIKEY" -F 'shuffle_file=@./your_file/file_path/app.zip'
 ```
 **Success response** 
-```
+```json
 {"success": true, "id": "798f1234c4fb8b4a6300da3c546af45a"}
 ```
 
@@ -376,7 +382,7 @@ curl https://shuffler.io/api/v1/orgs/{ORG_ID}/stats  -H "Authorization: Bearer A
 ```
 
 **Success response**
-```
+```json
 {"success": true, "reason": "Cache incremented by 6"}
 ```
 
@@ -403,7 +409,7 @@ curl https://shuffler.io/api/v1/apps/authentication -H "Authorization: Bearer AP
 ```
 
 **Success response** 
-```
+```json
 {"success": true, "data": []}
 ```
 
@@ -418,7 +424,7 @@ curl -XPOST https://shuffler.io/api/v1/apps/authentication/{authentication_id}/c
 ```
 
 **Success response**
-```
+```json
 {"success": true}
 ```
 
@@ -433,7 +439,7 @@ curl -XPOST https://shuffler.io/api/v1/apps/authentication/{authentication_id}/c
 ```
 
 **Success response**
-```
+```json
 {"success": true}
 ```
 
@@ -447,7 +453,7 @@ curl https://shuffler.io/api/v1/apps/authentication/{authentication_id} -H "Auth
 ```
 
 **Success response** 
-```
+```json
 {"success": true}
 ```
 
@@ -480,7 +486,7 @@ curl -XPUT https://shuffler.io/api/v1/apps/authentication -H "Authorization: Bea
 ```
 
 **Success response** 
-```
+```json
 {"success": true, "id": "app_id"}
 ```
 
@@ -496,7 +502,7 @@ curl https://shuffler.io/api/v1/apps/search -H "Authorization: Bearer APIKEY" -d
 ```
 
 **Success response** 
-```
+```json
 {"success": true, "reason": [{apps here}]}
 ```
 
@@ -530,7 +536,7 @@ curl https://shuffler.io/api/v1/users/register -H "Authorization: Bearer APIKEY"
 
 
 **Success response** 
-```
+```json
 {"success": true}
 ```
 
@@ -549,7 +555,7 @@ curl https://shuffler.io/api/v1/users/updateuser -H "Authorization: Bearer APIKE
 
 
 **Success response** 
-```
+```json
 {"success": true}
 ```
 
@@ -564,7 +570,7 @@ curl -XDELETE https://shuffler.io/api/v1/users/{userid} -H "Authorization: Beare
 
 
 **Success response** 
-```
+```json
 {"success": true}
 ```
 
@@ -579,7 +585,7 @@ curl https://shuffler.io/api/v1/users/generateapikey -H "Authorization: Bearer A
 
 
 **Success response** 
-```
+```json
 {"success": true, "username": "username", "verified": false, "apikey": "new apikey"}
 ```
 
@@ -599,7 +605,7 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/set_cache -H "Authorization: Beare
 
 
 **Success response** 
-```
+```json
 {"success": true}
 ```
 
@@ -616,7 +622,7 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/get_cache -H "Authorization: Beare
 
 
 **Success response** 
-```
+```json
 {"success":false,"workflow_id":"99951014-f0b1-473d-a474-4dc9afecaa75","execution_id":"f0b2b4e9-90ca-4835-bdd4-2889ef5f926f","org_id":"2e7b6a08-b63b-4fc2-bd70-718091509db1","key":"hi","value":"1234"}
 ```
 
@@ -639,7 +645,7 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/list_cache -H "Authorization: Bear
 
 
 **Success response** 
-```
+```json
 {"success":true,"keys":[{"success":false,"workflow_id":"99951014-f0b1-473d-a474-4dc9afecaa75","execution_id":"f0b2b4e9-90ca-4835-bdd4-2889ef5f926f","org_id":"2e7b6a08-b63b-4fc2-bd70-718091509db1","key":"hi","value":"1234"}]}
 ```
 
@@ -656,7 +662,7 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: B
 
 
 **Success response** 
-```
+```json
 {"success": true}
 ```
 
@@ -674,7 +680,7 @@ curl https://shuffler.io/api/v1/files/create -H "Authorization: Bearer APIKEY" -
 
 
 **Success response** 
-```
+```json
 {"success": true, "id": "e19cffe4-e2da-47e9-809e-904f5cb03687"}
 ```
 
@@ -689,7 +695,7 @@ curl https://shuffler.io/api/v1/files/{file}/upload -H "Authorization: Bearer AP
 
 
 **Success response** 
-```
+```json
 {"success": true, "id": "e19cffe4-e2da-47e9-809e-904f5cb03687"}
 ```
 
@@ -749,7 +755,7 @@ curl -XDELETE https://shuffler.io/api/v1/files/{id} -H "Authorization: Bearer AP
 
 
 **Success response** 
-```
+```json
 {"success": true}
 ```
 
@@ -764,7 +770,7 @@ curl -XPUT https://shuffler.io/api/v1/files/{id}/edit -H "Authorization: Bearer 
 
 
 **Success response** 
-```
+```json
 {"success": true}
 ```
 
@@ -778,7 +784,7 @@ curl https://shuffler.io/api/v1/files/namespaces/{category} -H "Authorization: B
 ```
 
 **?id=true**
-```
+```json
 {"success": True, "list": [{
 	"name": "Filename",
 	"id": "file_uuid",
@@ -809,7 +815,7 @@ curl https://shuffler.io/api/v1/workflows/schedules -H "Authorization: Bearer AP
 
 
 **Success response** 
-```
+```json
 [{"id":"cabaaffc-db53-4e19-ad8b-4f5fc0dc49c9","start_node":"","seconds":0,"workflow_id":"7b8ffd74-5e67-4700-bf79-751d1ac7e5e4","argument":"{\"start\":\"\",\"execution_source\":\"schedule\",\"execution_argument\":\"{\\\"example\\\": {\\\"json\\\": \\\"is cool\\\"}}\"}","wrapped_argument":"{\"start\":\"\",\"execution_source\":\"schedule\",\"execution_argument\":\"{\\\"example\\\": {\\\"json\\\": \\\"is cool\\\"}}\"}","appinfo":{"sourceapp":{"foldername":"","name":"","id":"","description":"","action":""},"destinationapp":{"foldername":"","name":"","id":"","description":"","action":""}},"finished":false,"base_app_location":"","org":"37217426-f794-429c-a0f9-548f7055af45","createdby":"","availability":"","creationtime":1641573762,"lastmodificationtime":1641573762,"lastruntime":1641573762,"frequency":"*/15 * * * *","environment":""}]
 ```
 
@@ -830,7 +836,7 @@ curl -XPOST https://shuffler.io/api/v1/workflows/{workflow_id}/schedule -H "Auth
 
 
 **Success response** 
-```
+```json
 {"success":true}
 ```
 
@@ -845,7 +851,7 @@ curl -XDELETE https://shuffler.io/api/v1/workflows/{workflow_id}/schedule/{sched
 
 
 **Success response** 
-```
+```json
 {"success":true}
 ```
 
@@ -864,7 +870,7 @@ curl -XPOST https://shuffler.io/api/v1/hooks -H "Authorization: Bearer APIKEY" -
 
 
 **Success response** 
-```
+```json
 {"success":true}
 ```
 
@@ -879,7 +885,7 @@ curl -XDELETE https://shuffler.io/api/v1/hooks/{webhook_id} -H "Authorization: B
 
 
 **Success response** 
-```
+```json
 {"success":true, "reason": "Stopped webhook"}
 ```
 
@@ -903,7 +909,7 @@ curl -XPOST https://shuffler.io/api/v1/notifications -H "Authorization: Bearer A
 
 
 **Success response** 
-```
+```json
 {"success":true}
 ```
 
@@ -919,7 +925,7 @@ curl https://shuffler.io/api/v1/notifications -H "Authorization: Bearer APIKEY"
 
 
 **Success response** 
-```
+```json
 {"success":true,"notifications":[{"image":"","created_at":1638898114,"updated_at":1638898114,"title":"Error in Workflow \"Shuffle Workflow helloooo\"","description":"Node shuffle_tools_1 in Workflow Shuffle Workflow Winner announcement was found to have an error. Click to investigate","org_id":"","user_id":"","tags":null,"amount":1,"id":"057bf2b5-d29d-4bb4-bf2f-d8a6ee882dfe","reference_url":"/workflows/1693bf4a-b0f4-46dd-8257-448cbc6b0e9b?execution_id=74adf061-f949-4392-9e2d-1fd5e3381037\u0026view=executions\u0026node=ef683a39-4c2b-4c83-ad2d-d28a922e44b4","org_notification_id":"60a22356-1028-4226-b755-51804e3a25a2","dismissable":true,"personal":true,"read":false}]}
 ```
 
@@ -934,7 +940,7 @@ curl https://shuffler.io/api/v1/notifications/clear -H "Authorization: Bearer AP
 
 
 **Success response** 
-```
+```json
 {"success":true}
 ```
 
@@ -949,7 +955,7 @@ curl https://shuffler.io/api/v1/notifications/{notificationId}/markasread -H "Au
 
 
 **Success response** 
-```
+```json
 {"success":true}
 ```
 
@@ -967,7 +973,7 @@ curl https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer APIKEY"
 
 
 **Success response** 
-```
+```json
 {"name":"Testing","description":"Description","company_type":"","image": "base64 image", "id":"583816e5-40ab-4212-8c7a-e54c8edd6b51","org":"new suborg","users":[],"role":"","roles":["admin","user"],"active_apps":["eb6b633ebbb77575ad17789eecf36cdf"],"cloud_sync":false,"cloud_sync_active":true,"sync_config":{"interval":0,"api_key":"","source":""},"sync_features": {}, "invites":null,"child_orgs":[],"manager_orgs":null,"creator_org":"PARENT_ORG_ID","disabled":false,"partner_info":{"reseller":false,"reseller_level":""},"sso_config":{"sso_entrypoint":"","sso_certificate":"","client_id":"","client_secret":"","openid_authorization":"","openid_token":""},"main_priority":"","region":"","region_url":"","tutorials":[]} 
 ```
 
@@ -981,7 +987,7 @@ curl -XPOST https://shuffler.io/api/v1/orgs/{org_id}/create_sub_org -H "Authoriz
 ```
 
 **Success response** 
-```
+```json
 {"success": true, "id": "<new org uuid>", "reason": "Successfully created new sub-org"}
 ```
 
@@ -995,7 +1001,7 @@ curl -XPOST https://shuffler.io/api/v1/orgs/{CURRENT_ORG_ID}/change -H "Authoriz
 ```
 
 **Success response** 
-```
+```json
 {"success": true, "reason": "Changed Organization", "region_url": "New API endpoint IF applicable"}
 ```
 
@@ -1009,7 +1015,7 @@ curl -XPOST https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer A
 ```
 
 **Success response** 
-```
+```json
 {"success": true, "reason": "Changed Organization", "region_url": "New API endpoint IF applicable"}
 ```
 
@@ -1039,7 +1045,7 @@ curl -XDELETE https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer
 ```
 
 **Success response** 
-```
+```json
 {"success": true}
 ```
 
