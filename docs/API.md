@@ -44,13 +44,13 @@ Shuffle uses [Bearer auth](https://swagger.io/docs/specification/authentication/
 While logged in, you can go to https://shuffler.io/settings or /settings in your local instance to get your APIkey. Keep this safe. 
 
 **Get all apps example**
-```
+```bash
 curl https://shuffler.io/api/v1/apps -H "Authorization: Bearer APIKEY"
 ```
 
 **Authentication failure**
 Status code: 401
-```
+```json
 {"success": false}
 ```
 
@@ -58,7 +58,7 @@ Status code: 401
 ## Responses
 Shuffle responses follow the response codes listed below. The data you can expect is mostly in the following json form, whether success or failure.
 
-```
+```json
 {
 	"success": <true/false>,
 	"reason": "You failed to do something"
@@ -85,7 +85,7 @@ We may otherwise truncate the data, and add the `X-SHUFFLE_TRUNCATED=true` respo
 
 Method: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/workflows -H "Authorization: Bearer APIKEY"
 ```
 
@@ -95,12 +95,13 @@ Returns a list of executions for a given workflow. Use "top=10" to get 10 last r
 
 Method: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/workflows/{workflow_id}/executions -H "Authorization: Bearer APIKEY"
 ```
 
 **Success response**
-```
+
+```json
 {
   "success": true,
   "executions": [],
@@ -113,12 +114,13 @@ Returns a list of executions for a given workflow
 
 Method: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/workflows/{workflow_id}/executions -H "Authorization: Bearer APIKEY"
 ```
 
 **Success response**
-```
+
+```json
 []
 ```
 
@@ -128,7 +130,7 @@ Returns a given workflow. This is the same as exporting the workflow.
 
 Method: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/workflows/{workflow_id} -H "Authorization: Bearer APIKEY"
 ```
 
@@ -138,12 +140,13 @@ Creates a basic workflow with a given name and description. Returns a startpoint
 
 Method: POST
 
-```
+```bash
 curl -XPOST https://shuffler.io/api/v1/workflows -H "Authorization: Bearer APIKEY" -d '{"name": "Example API workflow", "description": "Description for the workflow"}'
 ```
 
 **Success response**
-```
+
+```json
 {"actions":[],"branches":[],"triggers":[],"schedules":null,"id":"25cb3cc6-f343-4511-827f-b60557043327","is_valid":true,"name":"Example API workflow","description":"Description for the workflow","start":"","owner":"4669463f-f98e-4d86-891d-76edac4356c6","sharing":"private","execution_org":{"name":"","org":"","users":null,"id":""},"workflow_variables":null}
 ```
 
@@ -155,7 +158,7 @@ Saves a workflow with a given WORKFLOW_ID. Requires WORKFLOW_ID from [Create new
 
 Method: PUT
 
-```
+```bash
 curl -XPUT https://shuffler.io/api/v1/workflows/WORKFLOW_ID -H "Authorization: Bearer APIKEY" --data '{"actions":[],"branches":[],"triggers":[],"schedules":null,"id":"WORKFLOW_ID","is_valid":true,"name":"Example workflow","description":"Description for the workflow","start":"","owner":"4669463f-f98e-4d86-891d-76edac4356c6","sharing":"private","execution_org":{"name":"","org":"","users":null,"id":""},"workflow_variables":null}'
 ```
 
@@ -170,12 +173,13 @@ Deletes a workflow with a given ID.
 
 Method: DELETE
 
-```
+```bash
 curl -XDELETE https://shuffler.io/api/v1/workflows/apcb3cc6-f343-4511-827f-b60557043327 -H "Authorization: Bearer APIKEY" 
 ```
 
 **Success response** 
-```
+
+```json
 {"success": true}
 ```
 
@@ -185,7 +189,7 @@ Executes a given workflow with optional arguments "execution_argument" and "star
 
 Methods: POST, GET
 
-```
+```bash
 curl -XPOST https://shuffler.io/api/v1/workflows/{workflow_id}/execute -H "Authorization: Bearer APIKEY" -d '{"execution_argument": "DATA TO EXECUTE WITH", "start": ""}'
 ```
 
@@ -195,7 +199,8 @@ Additional info:
 - If you want to run the workflow with a different environment, use the "environment" header with the name. Example: 'environment: cloud'. The environment needs to be the name of an existing environment.
 
 **Success response** 
-```
+
+```json
 {"success": true, "execution_id": "6e58639e-a24f-4af8-b62b-d6fcc2bc10f4", "authorization": "26fb304f-92c9-4ca5-9735-9173ce80569e"}
 ```
 
@@ -205,12 +210,13 @@ Gets an execution based on results from [Execute workflow](/docs/api#execute_wor
 
 Methods: POST
 
-```
+```bash
 curl -XPOST https://shuffler.io/api/v1/streams/results -d '{"execution_id": "ad9baac7-dc30-42da-bb1f-18b84309cfb7", "authorization": "62b3de56-9de0-4983-ad72-e63c42d123f8"}'
 ```
 
 **Success response** 
-```
+
+```json
 {"type":"workflow","status":"ABORTED","start":"","execution_argument":"DATA TO EXECUTE WITH","execution_id":"ad9baac7-dc30-42da-bb1f-18b84309cfb7","workflow_id":"8f3c6a10-f5ca-432c-aef9-c5e038166c45","last_node":"","authorization":"62b3de56-9de0-4983-ad72-e63c42d123f8","result":"","started_at":1591074812,"completed_at":1591074857,"project_id":"shuffle","locations":["europe-west2"],"workflow":{"actions":[{"app_name":"testing","app_version":"1.0.0","app_id":"c567fc10-9c15-403e-b72c-6550e9e76bc8","errors":null,"id":"de10798e-2c66-4e0c-bfdd-8b645a8e3748","is_valid":true,"isStartNode":true,"sharing":true,"private_id":"","label":"testing_1","small_image":"","large_image":"","environment":"Shuffle","name":"repeat_back_to_me","parameters":[{"description":"message to repeat","id":"","name":"call","example":"","value":"232.21.10.12","multiline":true,"action_field":"","variant":"STATIC_VALUE","required":true,"schema":{"type":"string"}}],"position":{"x":-326.750381666118,"y":52.50022245682308},"priority":0},{"app_name":"Virustotal","app_version":"1.0.0","app_id":"e5d625cee91f5f8328f2f4ef09ef313e","errors":null,"id":"bdec0a1c-381c-4e90-ba04-db40db98406c","is_valid":true,"isStartNode":false,"sharing":false,"private_id":"e5d625cee91f5f8328f2f4ef09ef313e","label":"Virustotal_1","small_image":"","large_image":"","environment":"Shuffle","name":"get_ip_report","parameters":[{"description":"The apikey to use","id":"","name":"apikey","example":"","value":"","multiline":false,"action_field":"VT APIKEY","variant":"WORKFLOW_VARIABLE","required":true,"schema":{"type":"string"}},{"description":"Generated by shuffler.io OpenAPI","id":"","name":"ip","example":"","value":"128.0.0.11","multiline":false,"action_field":"","variant":"STATIC_VALUE","required":true,"schema":{"type":"string"}}],"position":{"x":-657.9998647811465,"y":52.000953074820615},"priority":0}],"branches":[{"destination_id":"bdec0a1c-381c-4e90-ba04-db40db98406c","id":"7ad84769-3e7f-48af-af73-802bc93b5c2c","source_id":"de10798e-2c66-4e0c-bfdd-8b645a8e3748","label":"","has_errors":false,"conditions":null}],"triggers":null,"schedules":null,"id":"8f3c6a10-f5ca-432c-aef9-c5e038166c45","is_valid":true,"name":"VT testing","description":"Helo","start":"de10798e-2c66-4e0c-bfdd-8b645a8e3748","owner":"4669463f-f98e-4d86-891d-76edac4356c6","sharing":"private","execution_org":{"name":"","org":"","users":null,"id":""},"workflow_variables":[{"description":"","id":"ec16e9a6-5d13-46ba-8613-ebf301569f44","name":"VT APIKEY","value":""}]},"results":null}
 ```
 
@@ -221,12 +227,13 @@ Aborts an execution based on a WORKFLOW_ID and EXECUTION_ID. Can only be done wh
 
 Methods: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/workflows/{workflow_id}/executions/{execution_id}/abort -H "Authorization: Bearer APIKEY"
 ```
 
 **Success response** 
-```
+
+```json
 {"success": true}
 ```
 
@@ -245,7 +252,7 @@ Returns a list of existing apps that you have access to, including private ones.
 
 Methods: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/apps -H "Authorization: Bearer APIKEY"
 ```
 
@@ -254,7 +261,7 @@ Deletes an app if you have access to delete it.
 
 Methods: DELETE
 
-```
+```bash
 curl -XDELETE https://shuffler.io/api/v1/apps/{app_id} -H "Authorization: Bearer APIKEY"
 ```
 
@@ -280,7 +287,7 @@ app.zip
 
 Methods: POST
 
-```
+```bash
 curl https://shuffler.io/api/v1/apps/upload -H "Authorization: Bearer APIKEY" -F 'shuffle_file=@./your_file/file_path/app.zip'
 ```
 **Success response** 
@@ -306,7 +313,7 @@ Returns the statistics for an organisation
 
 Method: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/orgs/{ORG_ID}/stats  -H "Authorization: Bearer APIKEY"
 ```
 
@@ -364,7 +371,7 @@ Use the "Count Stats" action in Shuffle tools to do this in a Workflow
 
 Method: POST
 
-```
+```bash
 curl https://shuffler.io/api/v1/orgs/{ORG_ID}/stats  -H "Authorization: Bearer APIKEY" -d '{"key": "tickets", "value": 6}'
 ```
 
@@ -391,7 +398,7 @@ Get a list of all app authentication. These are all the authentication currently
 
 Methods: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/apps/authentication -H "Authorization: Bearer APIKEY"
 ```
 
@@ -405,7 +412,7 @@ When you have an authentication available, it is possible to set it everywhere u
 
 Methods: POST
 
-```
+```bash
 curl -XPOST https://shuffler.io/api/v1/apps/authentication/{authentication_id}/config -H "Authorization: Bearer APIKEY" -d '{"action"
 : "assign_everywhere", "id": "authentication_id"}'
 ```
@@ -420,7 +427,7 @@ Parent organizations have the option to allow child orgs to use the same auth. T
 
 Methods: POST
 
-```
+```bash
 curl -XPOST https://shuffler.io/api/v1/apps/authentication/{authentication_id}/config -H "Authorization: Bearer APIKEY" -d '{"action"
 : "suborg_distribute", "id": "authentication_id"}'
 ```
@@ -435,7 +442,7 @@ Delete an authentication. PS: This does NOT change the ID of every workflow that
 
 Methods: DELETE
 
-```
+```bash
 curl https://shuffler.io/api/v1/apps/authentication/{authentication_id} -H "Authorization: Bearer APIKEY"
 ```
 
@@ -456,7 +463,7 @@ You can find the fields following these steps:
 
 Method: PUT
 
-```
+```bash
 curl -XPUT https://shuffler.io/api/v1/apps/authentication -H "Authorization: Bearer APIKEY" '{
 	"label":"Auth for Jira",
 	"app": {
@@ -484,7 +491,7 @@ Example: {"search": "secure"} will match both "secureworks" and "Cisco openVuln"
 
 Methods: POST
 
-```
+```bash
 curl https://shuffler.io/api/v1/apps/search -H "Authorization: Bearer APIKEY" -d '{"search": "APPNAME"}'
 ```
 
@@ -505,7 +512,7 @@ Lists all available users. Requires admin rights.
 
 Methods: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/users/getusers -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -517,7 +524,7 @@ Registers a user based on the username and password provided. If it's the first 
 
 Methods: POST
 
-```
+```bash
 curl https://shuffler.io/api/v1/users/register -H "Authorization: Bearer APIKEY" -d '{"username": "username", "password": "P@ssw0rd"}'
 ```
 
@@ -536,7 +543,7 @@ Supported fields:
 
 Methods: PUT
 
-```
+```bash
 curl https://shuffler.io/api/v1/users/updateuser -H "Authorization: Bearer APIKEY" -d '{"user_id": "USERID", "role": "user"}'
 ```
 
@@ -551,7 +558,7 @@ Deactivates a user. This exists instead of a deletion method. Requires admin rig
 
 Method: DELETE 
 
-```
+```bash
 curl -XDELETE https://shuffler.io/api/v1/users/{userid} -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -566,7 +573,7 @@ Re-generates a new apikey. Requires admin for POST. GET changes YOUR apikey. The
 
 Methods: GET, POST (admin)
 
-```
+```bash
 curl https://shuffler.io/api/v1/users/generateapikey -H "Authorization: Bearer APIKEY" -d '{"user_id": "id"}'
 ```
 
@@ -586,7 +593,7 @@ To add a key to a specific category, add `"category": "name"` to the JSON body.
 
 Methods: POST, PUT
 
-```
+```bash
 curl https://shuffler.io/api/v1/orgs/{org_id}/set_cache -H "Authorization: Bearer APIKEY" -d '{"key":"hi", "value":"1234"}'
 ```
 
@@ -603,7 +610,7 @@ To get a key from a specific category, add `"category": "name"` to the JSON body
  
 Methods: POST
 
-```
+```bash
 curl https://shuffler.io/api/v1/orgs/{org_id}/get_cache -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
 ```
 
@@ -626,7 +633,7 @@ Available queries:
 
 Methods: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/orgs/{org_id}/list_cache -H "Authorization: Bearer APIKEY"
 ```
 
@@ -643,7 +650,7 @@ To delete a key from a specific category, add `"category": "name"` to the JSON b
 
 Methods: DELETE
 
-```
+```bash
 curl https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
 ```
 
@@ -661,7 +668,7 @@ Creating a file is necessary before uploading one. This is to prepare the file l
 
 Methods: POST 
 
-```
+```bash
 curl https://shuffler.io/api/v1/files/create -H "Authorization: Bearer APIKEY" -d '{"filename": "file.txt", "org_id": "your_organization", "workflow_id": "workflow_id", "namespace": "category", "labels": ["label1", "label2"]}'
 ```
 
@@ -676,7 +683,7 @@ Uploads a file to an ID created with the "Create a file" API function. This is o
 
 Methods: POST 
 
-```
+```bash
 curl https://shuffler.io/api/v1/files/{file}/upload -H "Authorization: Bearer APIKEY" -F 'shuffle_file=@./your_file/file_path/with_a_file.txt'
 ```
 
@@ -691,7 +698,7 @@ Gets the meta for all files (up to 1000)
 
 Methods: GET 
 
-```
+```bash
 curl https://shuffler.io/api/v1/files -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -706,7 +713,7 @@ Gets the file CONTENT of a file
 
 Methods: GET 
 
-```
+```bash
 curl https://shuffler.io/api/v1/files/{id}/content -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -721,7 +728,7 @@ Gets metadata for a file, as well as some security relevant info like MD5 and Sh
 
 Methods: POST 
 
-```
+```bash
 curl https://shuffler.io/api/v1/files/{id} -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -736,7 +743,7 @@ Deletes a file. The file meta is left intact, but the file itself is removed fro
 
 Methods: DELETE
 
-```
+```bash
 curl -XDELETE https://shuffler.io/api/v1/files/{id} -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -751,7 +758,7 @@ Edit an active file with existing content (/upload) for first uploads. The file 
 
 Methods: PUT
 
-```
+```bash
 curl -XPUT https://shuffler.io/api/v1/files/{id}/edit -H "Authorization: Bearer APIKEY" -d 'this is the new content of the file'
 ```
 
@@ -766,7 +773,7 @@ Gets all files in a namespace zipped. The point of this function is to be able t
 
 Methods: GET
 
-```
+```bash
 curl https://shuffler.io/api/v1/files/namespaces/{category} -H "Authorization: Bearer APIKEY"
 ```
 
@@ -796,7 +803,7 @@ Get all schedules
 
 Methods: GET 
 
-```
+```bash
 curl https://shuffler.io/api/v1/workflows/schedules -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -811,7 +818,7 @@ Schedule a workflow to run at certain intervals. The node in the workflow must e
 
 Methods: POST 
 
-```
+```bash
 curl -XPOST https://shuffler.io/api/v1/workflows/{workflow_id}/schedule -H "Authorization: Bearer APIKEY" -d '{
 	"name":"Schedule",
 	"frequency":"*/25 * * * *",
@@ -832,7 +839,7 @@ Stop a schedule from running
 
 Methods: DELETE 
 
-```
+```bash
 curl -XDELETE https://shuffler.io/api/v1/workflows/{workflow_id}/schedule/{schedule_id} -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -847,7 +854,7 @@ Start a new webhook
 
 Methods: POST 
 
-```
+```bash
 curl -XPOST https://shuffler.io/api/v1/hooks -H "Authorization: Bearer APIKEY" -d '{"name":"Webhook_1","type":"webhook","id":"db434f8c-a9cb-47ec-abf8-ad8fb10e5809","workflow":"7b8ffd74-5e67-4700-bf79-751d1ac7e5e4","start":"6601f07f-92f2-45d3-88bf-328db7bfdfa0","environment":"cloud","auth":""}'
 ```
 
@@ -866,7 +873,7 @@ Stop a running webhook from being available
 
 Methods: DELETE 
 
-```
+```bash
 curl -XDELETE https://shuffler.io/api/v1/hooks/{webhook_id} -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -885,7 +892,7 @@ Notifications can be manually created, and will show up on the /admin?tab=priori
 
 Methods: POST 
 
-```
+```bash
 curl -XPOST https://shuffler.io/api/v1/notifications -H "Authorization: Bearer APIKEY" -d '{
 	"org_id": "YOUR ORGID",
 	"title": "The title",
@@ -906,7 +913,7 @@ Get all notifications assigned to your user from your organizations
 
 Methods: GET 
 
-```
+```bash
 curl https://shuffler.io/api/v1/notifications -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -921,7 +928,7 @@ Clears all notifications
 
 Methods: GET 
 
-```
+```bash
 curl https://shuffler.io/api/v1/notifications/clear -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -936,7 +943,7 @@ Marks a single notification as read
 
 Methods: GET 
 
-```
+```bash
 curl https://shuffler.io/api/v1/notifications/{notificationId}/markasread -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -954,7 +961,7 @@ Get an Organization by its ID
 
 Methods: GET 
 
-```
+```bash
 curl https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -968,7 +975,8 @@ curl https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer APIKEY"
 Creates an organization that will be the child of your current organization. Can not be done from a existing Child org. Required fields: org_id and name. OrgId needs to match your CURRENT organization.
 
 Methods: POST 
-```
+
+```bash
 curl -XPOST https://shuffler.io/api/v1/orgs/{org_id}/create_sub_org -H "Authorization: Bearer APIKEY" -d '{"org_id": "org_id", "name": "Child Org Name"}'
 ```
 
@@ -981,7 +989,8 @@ curl -XPOST https://shuffler.io/api/v1/orgs/{org_id}/create_sub_org -H "Authoriz
 Shuffle is based on your CURRENT organization. This means you have to swap between your Organizations to get the the relevant information. If you want access to force the usage of another organization than your currently active one, use "Org-Id=<org_id>" as a Header. This is a further outlined in the Authentication section.
 
 Methods: POST 
-```
+
+```bash
 curl -XPOST https://shuffler.io/api/v1/orgs/{CURRENT_ORG_ID}/change -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG TO CHANGE TO"}'
 ```
 
@@ -994,7 +1003,8 @@ curl -XPOST https://shuffler.io/api/v1/orgs/{CURRENT_ORG_ID}/change -H "Authoriz
 Edit an Organization. Each field is individually managed, except org_id which is required.
 
 Methods: POST 
-```
+
+```bash
 curl -XPOST https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer APIKEY" -d '{"org_id": "current org id", "name": "New Organization Name", "image": "Base64 image", "description": "New Description"}'
 ```
 
@@ -1008,7 +1018,7 @@ Lists the available organizations to your account
 
 Methods: GET 
 
-```
+```bash
 curl https://shuffler.io/api/v1/orgs -H "Authorization: Bearer APIKEY" 
 ```
 
@@ -1024,7 +1034,7 @@ Deletes an organization. Only possible for sub-organizations.
 
 Methods: DELETE 
 
-```
+```bash
 curl -XDELETE https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer APIKEY" 
 ```
 
