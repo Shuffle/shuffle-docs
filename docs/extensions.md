@@ -12,6 +12,10 @@ This is documentation for integrating and sending data from third-party services
   * [Azure AD - OpenID](#azure-ad)
   * [Other SSO providers](#other)
   * [Testing SSO](#sso-testing)
+  * [SSO Required for Org](#sso-required-for-org)
+  * [Auto Provisioning](#auto-provisioning)
+  * [Role Base Restriction](#role-base-restriction)
+  * [Skip SSO for admin in suborgs](#skip-sso-for-admin-in-suborgs)
 * [Singul](#singul)
 * [AI Agents](#ai-agents)
 * [CACAO](#cacao)
@@ -209,9 +213,7 @@ Steps to Assign Roles
 
  Important Notes:
 
-- After completing these settings, all newly created users will be assigned roles based on their Keycloak roles. If no role is assigned, the default role will be `user`.
-- As of now, role assignment is only applied to newly generated users. If a user already exists in Shuffle, changing their role in Keycloak will **not** update their role in Shuffle.  
-  In this case, you can manually change the user's role from the `https://shuffler.io/admin?tab=users` page.
+- After completing these settings, if valide role is present in roles claim during sso login then that user will be assign role from sso provider. If no role is assigned, the default role will be `user`.
 - You can achieve this behavior starting from Shuffle version 2.0.1 or later. Make sure you are using this version or a newer one
 
   
@@ -277,20 +279,36 @@ If you want to assign a role to a user from an SSO provider, you can do so using
 
 3. Ensure that the `roles` claim is included in the **ID token** response from your SSO provider.  
 
-After completing these steps, all newly created users will be assigned roles in Shuffle based on their assigned role in the SSO provider.  
-
 - If none of the specified roles are assigned, or if the `roles` claim is missing, the user will be assigned the default role: **`user`** in Shuffle.  
 
 Important Notes  
 
 1. Currently, this feature is only available for **OpenID Connect**. Support for **SAML SSO** may be added in the future.  
-2. At this time, role assignments only apply to newly created users. If a user already exists in Shuffle, changing their role in the SSO provider **will not** update their role in Shuffle.  
-   - To manually update an existing user’s role in Shuffle, please visit the **Shuffle Admin Page**:  
-     [Shuffle Admin Page](https://shuffler.io/admin?tab=users)
+2. After completing these settings, if valide role is present in roles claim during sso login then that user will be assign role from sso provider. If no role is    assigned, the default role will be `user` for new users.
 3. You can achieve this behavior starting from Shuffle version 2.0.1 or later. Make sure you are using this version or a newer one.
 
-If you have any questions or need further assistance, please feel free to reach out to us at **[support@shuffler.io](mailto:support@shuffler.io)**. 
+If you have any questions or need further assistance, please feel free to reach out to us at **[support@shuffler.io](mailto:support@shuffler.io)**.
 
+
+### SSO Required for Org
+In Shuffle, user can configure whether Single Sign-On (SSO) is **required** or **optional** for an organization.
+By default, SSO is optional. However, when the **"Require SSO"** option is enabled from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, all users within that organization must log in through SSO.
+If SSO is required for an organization and a user logs in using their username and password (not SSO), then switches to a non-SSO organization, they can access it without SSO. However, if they later switch back to the SSO-required organization and the session has changed or expired, they will be required to authenticate via SSO again.
+
+### Auto Provisioning
+In Shuffle, users can configure whether **auto-provisioning** is enabled or disabled for an organization.
+By default, auto-provisioning is **enabled**, meaning that if SSO is configured for the organization, a new user account will be automatically created using the email address provided by the SSO provider—even if the user does not already exist in the organization.
+However, when the **"Disable Auto Provisioning"** option is enabled from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, new user accounts will **not** be created automatically. In this case, only users who already exist in the organization will be allowed to log in through SSO.
+
+### Role-Based Restriction
+In Shuffle, you can now [assign roles to users](https://shuffler.io/docs/extensions#how-to-assign-a-role-to-a-new-user-from-an-sso-provider-(openid-connect)-in-shuffle) directly from the SSO provider. This functionality is currently supported **only** for SSO providers using **OpenID Connect**.
+By default, if no valid role is passed from the SSO provider during login, the user is automatically assigned the **user** role.
+If you want to restrict login for users who do not receive a valid role from the SSO provider, you can enable the **"Restrict user login if no valid role is assigned"** option from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel. When this option is enabled, only users with a valid role received from the SSO provider will be allowed to log in. 
+
+### Skip SSO for Admins in Suborganizations
+In Shuffle, you can now allow parent organization admins to **skip SSO login** when switching to suborganizations.
+By default, all users are required to authenticate via SSO when switching to a suborganization if SSO is required for that suborg and the user's session has changed or expired.
+However, by enabling the **"Skip SSO for Admin"** option from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, users with an **admin role in the parent organization** can bypass the SSO login when switching to a suborganization, even if SSO is required there and user session is changed or expired.
 
 ## Singul
 Singul are a new way Shuffle interacts with data, built brick by brick since introducing Shuffle's Integration Layer API in early 2023. The goal of Singul is to enable ourselves and others to be able to perform actions towards a specific API, without necessarily know how to do it specifically for that system. 
