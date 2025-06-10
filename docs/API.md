@@ -1093,6 +1093,27 @@ curl https://shuffler.io/api/v1/apps/categories -H "Authorization: Bearer APIKEY
 ```
 
 
+### How to debug Singul executions
+- Go to https://shuffler.io/workflows/debug
+- You should see something like this:
 
 
+<img src="../assets/singul-debugger.png"> 
 
+
+As you can see, I triggered this Singul execution through the Singul app (not the SDK). However, even if you were using the SDK, you would find such executions.
+
+- Click on the icon below "Explore":
+
+<img src="../assets/explore-singul.png">
+
+- You will see the full result of the execution. Click on the arrow
+
+<img src="../assets/singul-debugging-step1.png">
+
+- To see the body that Singul translated to, scroll and find the "Body" 
+
+<img src="../assets/singul-debugging-step2.png">
+
+
+Based on the output, and the input mentioned in "Body", you should be able to figure out what is going on here.
