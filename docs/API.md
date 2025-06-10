@@ -1136,22 +1136,22 @@ curl https://shuffler.io/api/v1/apps/categories -H "Authorization: Bearer APIKEY
 - You should see something like this:
 
 
-<img src="../assets/singul-debugger.png"> 
+<img src="https://github.com/frikky/shuffle-docs/blob/master/assets/singul-debugger.png?raw=true"> 
 
 
 As you can see, I triggered this Singul execution through the Singul app (not the SDK). However, even if you were using the SDK, you would find such executions.
 
 - Click on the icon below "Explore":
 
-<img src="../assets/explore-singul.png">
+<img src="https://github.com/frikky/shuffle-docs/blob/master/assets/explore-singul.png?raw=true">
 
 - You will see the full result of the execution. Click on the arrow
 
-<img src="../assets/singul-debugging-step1.png">
+<img src="https://github.com/frikky/shuffle-docs/blob/master/assets/singul-debugging-step1.png?raw=true">
 
 - To see the body that Singul translated to, scroll and find the "Body" 
 
-<img src="../assets/singul-debugging-step2.png">
+<img src="https://github.com/frikky/shuffle-docs/blob/master/assets/singul-debugging-step2.png?raw=true">
 
 
 Based on the output, and the input mentioned in "Body", you should be able to figure out what is going on here.
