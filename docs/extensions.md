@@ -1,5 +1,5 @@
 # Shuffle extensions
-This is documentation for integrating and sending data from third-party services to Shuffle. Not to be confused with [apps](/apps) and [workflows](/workflows)
+This is documentation for integrating and sending data from third-party services to Shuffle, along with being a brief overview of our Research & Development (R&D) activities. Not to be confused with [apps](/apps) and [workflows](/workflows)
 
 ## Table of contents
 * [Introduction](#introduction)
@@ -12,9 +12,15 @@ This is documentation for integrating and sending data from third-party services
   * [Azure AD - OpenID](#azure-ad)
   * [Other SSO providers](#other)
   * [Testing SSO](#sso-testing)
+  * [SSO Required for Org](#sso-required-for-org)
+  * [Auto Provisioning](#auto-provisioning)
+  * [Role Base Restriction](#role-base-restriction)
+  * [Skip SSO for admin in suborgs](#skip-sso-for-admin-in-suborgs)
+* [Singul](#singul)
+* [AI Agents](#ai-agents)
+* [CACAO](#cacao)
 * [Detection Manager](#detection-manager)
 * [KMS](#KMS)
-* [Native Actions](#native-actions)
 * [Webhooks](#webhooks)
   * [Wazuh Webhook](#wazuh)
   * [TheHive Webhook](#thehive)
@@ -182,6 +188,36 @@ Finally go back to shuffle and use SSO button to login.
 
 ![shuffle SSO](https://user-images.githubusercontent.com/31187099/162689445-8db0766c-6f18-4463-8a92-f6ae62213918.png?raw=true)
 
+### Assigning a Role from Keycloak to Shuffle for a New User
+
+If you want to assign a Shuffle organization role (`admin`, `user`, `org-reader`) from your Keycloak client, you can achieve this using the following method:
+
+Steps to Assign Roles
+
+1. In your Keycloak client, create three new roles with the names `shuffle-admin`, `shuffle-user`, and `shuffle-org-reader`, as shown in the image below:
+
+   ![image](https://github.com/user-attachments/assets/e8a1f344-73c9-453d-b119-aef4643610b4)
+
+2. After creating the roles, assign them to the users you want. The `shuffle-admin`, `shuffle-user`, and `shuffle-org-reader` roles in Keycloak correspond to the `admin`, `user`, and `org-reader` roles in Shuffle.
+
+3. Once the roles are assigned to users, navigate to:
+
+   **Client Scopes** → **Roles** → **Mapper** → **Client Roles**
+
+   On the **Client Roles** page:
+
+   - Update the `Token Claim Name` to `roles`
+   - Enable the option **"Add to ID Token"** so that the roles are included in the response.
+
+   ![image](https://github.com/user-attachments/assets/09582542-efa1-429b-9d45-e0a3796c6fbd)
+
+ Important Notes:
+
+- After completing these settings, if valide role is present in roles claim during sso login then that user will be assign role from sso provider. If no role is assigned, the default role will be `user`.
+- You can achieve this behavior starting from Shuffle version 2.0.1 or later. Make sure you are using this version or a newer one
+
+  
+
 ### Azure AD
 To use OpenID with Azure AD, Shuffle supports OpenID connect with the use of Client IDs and Client secrets. To set up OpenID Connect with Azure, we use "ID_token" authentication. This entails a few normal steps regarding app creation in Azure App Registration.
 
@@ -227,6 +263,84 @@ https://github.com/user-attachments/assets/0a927283-d39e-4200-8ba3-654ef6f1b9c1
 
 **Note**: Ensure that the "email" field is included in the SSO response from your SSO provider. If this field is empty, you may encounter errors. The email from your SSO provider will be assigned as the username in Shuffle.
 
+
+
+### How to Assign a Role to a New User from an SSO Provider (OpenID Connect) in Shuffle  
+
+If you want to assign a role to a user from an SSO provider, you can do so using the following method:  
+
+1. Create three roles in your SSO application/client:  
+   - `shuffle-admin`  
+   - `shuffle-user`  
+   - `shuffle-org-reader`  
+
+2. Assign one of these roles to new users when granting them access to the application/client.  
+   - The `shuffle-admin`, `shuffle-user`, and `shuffle-org-reader` roles in your SSO provider correspond to the `admin`, `user`, and `org-reader` roles in Shuffle.  
+
+3. Ensure that the `roles` claim is included in the **ID token** response from your SSO provider.  
+
+- If none of the specified roles are assigned, or if the `roles` claim is missing, the user will be assigned the default role: **`user`** in Shuffle.  
+
+Important Notes  
+
+1. Currently, this feature is only available for **OpenID Connect**. Support for **SAML SSO** may be added in the future.  
+2. After completing these settings, if valide role is present in roles claim during sso login then that user will be assign role from sso provider. If no role is    assigned, the default role will be `user` for new users.
+3. You can achieve this behavior starting from Shuffle version 2.0.1 or later. Make sure you are using this version or a newer one.
+
+If you have any questions or need further assistance, please feel free to reach out to us at **[support@shuffler.io](mailto:support@shuffler.io)**.
+
+
+### SSO Required for Org
+In Shuffle, user can configure whether Single Sign-On (SSO) is **required** or **optional** for an organization.
+By default, SSO is optional. However, when the **"Require SSO"** option is enabled from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, all users within that organization must log in through SSO.
+If SSO is required for an organization and a user logs in using their username and password (not SSO), then switches to a non-SSO organization, they can access it without SSO. However, if they later switch back to the SSO-required organization and the session has changed or expired, they will be required to authenticate via SSO again.
+
+### Auto Provisioning
+In Shuffle, users can configure whether **auto-provisioning** is enabled or disabled for an organization.
+By default, auto-provisioning is **enabled**, meaning that if SSO is configured for the organization, a new user account will be automatically created using the email address provided by the SSO provider—even if the user does not already exist in the organization.
+However, when the **"Disable Auto Provisioning"** option is enabled from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, new user accounts will **not** be created automatically. In this case, only users who already exist in the organization will be allowed to log in through SSO.
+
+### Role-Based Restriction
+In Shuffle, you can now [assign roles to users](https://shuffler.io/docs/extensions#how-to-assign-a-role-to-a-new-user-from-an-sso-provider-(openid-connect)-in-shuffle) directly from the SSO provider. This functionality is currently supported **only** for SSO providers using **OpenID Connect**.
+By default, if no valid role is passed from the SSO provider during login, the user is automatically assigned the **user** role.
+If you want to restrict login for users who do not receive a valid role from the SSO provider, you can enable the **"Restrict user login if no valid role is assigned"** option from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel. When this option is enabled, only users with a valid role received from the SSO provider will be allowed to log in. 
+
+### Skip SSO for Admins in Suborganizations
+In Shuffle, you can now allow parent organization admins to **skip SSO login** when switching to suborganizations.
+By default, all users are required to authenticate via SSO when switching to a suborganization if SSO is required for that suborg and the user's session has changed or expired.
+However, by enabling the **"Skip SSO for Admin"** option from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, users with an **admin role in the parent organization** can bypass the SSO login when switching to a suborganization, even if SSO is required there and user session is changed or expired.
+
+## Singul
+Singul are a new way Shuffle interacts with data, built brick by brick since introducing Shuffle's Integration Layer API in early 2023. The goal of Singul is to enable ourselves and others to be able to perform actions towards a specific API, without necessarily know how to do it specifically for that system. 
+
+As of early 2024, this system is in active development, and we will implement features with it and help third party platforms do the same throughout the next few years.
+
+**Example usecases:**
+- Listing assets from your asset management system/CMDB to make a list of assets, without needing to know the Assets' API
+- Blocking an Endpoint without knowing how to use the EDR API. Add this as a button to the list from the previous usecase
+- Shuffle Notification Workflow: Get notifications directly to your ticketing system with minimal configuration
+
+<img width="736" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/d9c5831c-af53-4bd2-9b34-7dd8c2daab32">
+
+The Singul system is based on [generative AI for automatic mapping of fields (Schemaless)](https://github.com/frikky/schemaless), uses Github to [store configurations (Standards)](https://github.com/shuffle/standards), and uses [Shuffle's Integration Layer API](https://shuffler.io/docs/API#integration-layer) to run the actions. 
+
+## AI Agents
+AI Agents are in active development as of April 2025. They take input(s) and automatically do the tasks for you, running in unison with [Singul](#singul) to perform tasks. This will be published to everyone as soon as it:
+1. Has an interface allowing interactivity
+2. Works with local models + Shuffle AI inference (for open sourcing)
+3. Has good reasoning capabilities to handle decisionmaking 
+
+<img width="850" alt="image" src="https://github.com/user-attachments/assets/3e23b4d9-fe6f-44f0-b595-59923f51b45a" />
+
+## CACAO
+CACAO is a standardization framework for playbooks. It is still lacking significantly in capabilities as compared to Shuffle's own workflow system, but may be a good way to handle interoperability. 
+
+The goals are as follows:
+1. ✅ Ensure [CACAO playbook imports work](https://github.com/shuffle/cacao)
+3. Ensure Shuffle Workflow -> CACAO playbook exports work well
+
+Shuffle may in the future be based on CACAO playbooks to make workflow documentation work better. 
+
 ## Detection Manager
 The Shuffle Detection Manager is a system introduced in beta in December 2024, allowing Shuffle to work with platforms like Tenzir and other systems to help with Detection Engineering. The goal of the system is not to replace actual detection systems themselves, but to offer a centralized way to control Detection rules across tenants and different tools. As an example, **below is a focus on Sigma rules with Tenzir**. The system is tested with Yara rules, Email detection rules and custom rule systems.  
 
@@ -251,16 +365,34 @@ To solve the pipeline issue shown in the previous image, we have to do two thing
 Tenzir setup configuration:
 - **Adding a custom storage folder for Sigma rules:** Mount in the folder you want to control into the Orborus command. Then add the environment variable `SHUFFLE_STORAGE_FOLDER=/tmp/foldername` to Orborus. The default is `/tmp/`. 
 - **Connecting to an external Tenzir node:** Add the following environment variable to the Orborus command: ``. This requires that [the web API is enabled](https://docs.tenzir.com/rest-api) on the node.
+
+```
+If ran locally with systemd:
+1. Open /etc/systemd/system/tenzir-node.service
+2. Find the line that says "ExecStart" and add ' --commands=web server --mode=dev --bind=0.0.0.0' to the end of it
+
+It should look like this: ExecStart=/opt/tenzir/bin/tenzir-node "--commands=web server --mode=dev --bind=0.0.0.0"
+
+3. Save and close the file.
+4. systemctl daemon-reload & systemctl restart tenzir-node
+5. Try to connect to it: curl http://localhost:5158/api/v0/ping
+```
+
 - **Control the Shuffle Tenzir node from Tenzir Cloud**: Go to [Tenzir Cloud](https://app.tenzir.com) and create a node configuration. Download the configuration file, then add the variables found in it to the following environment variables to Orborus: `TENZIR_PLUGINS__PLATFORM__API_KEY=<apikey>`, `TENZIR_PLUGINS__PLATFORM__CONTROL_ENDPOINT=<url>`, `TENZIR_PLUGINS__PLATFORM__TENANT_ID=<tenant>`
 
+### Mounting the Tenzir Sigma location into Orborus
+1. You need to mount in the folder that is going to store the sigma rules, controlled from within Shuffle
+2. The default location is /tmp/sigma_rules, so to mount it in, use `--volume "/tmp:/tmp"` in the Dockerfile.
+3. If you end up changing the storage location, use the `SHUFFLE_STORAGE_FOLDER` environment variable with the full path.
+
 ### Running the Tenzir Detection pipeline
-To run the detection pipeline, 
+- [Sigma Pipelines with Tenzir](https://docs.tenzir.com/tql2/operators/sigma)
 
 ### Running a sample Detection
 TBD
 
 ### Storing Tenzir logs in Opensearch
-TBD
+- [Tenzir -> Opensearch documentation](https://docs.tenzir.com/integrations/opensearch)
 
 ## KMS
 Shuffle by default allows you to store authentication tokens within Shuffle itself, which are encrypted in the database. Since February 2024, we additionally support the use of external KMS systems to handle authentication, which is based on [Native Actions](https://shuffler.io/docs/extensions#native-actions) and [Schemaless](https://github.com/frikky/schemaless). Native Actions run in the background to perform the "Get KMS key" action, and the run of the app is NOT stored. 
@@ -320,20 +452,6 @@ KMS is supported for any system as long as the sections above are covered. It ha
 - Github
 - AliCloud
 - ... and more! Ask if you need help.
-
-## Native Actions
-Native Actions are a new way Shuffle interacts with data, built brick by brick since introducing Shuffle's Integration Layer API in late 2022. The goal of Native Actions is to enable ourselves and others to be able to perform actions towards a specific API, without necessarily know how to do it specifically for that system. 
-
-As of early 2024, this system is in active development, and we will implement features with it and help third party platforms do the same throughout the next few years.
-
-**Example usecases:**
-- Listing assets from your asset management system/CMDB to make a list of assets, without needing to know the Assets' API
-- Blocking an Endpoint without knowing how to use the EDR API. Add this as a button to the list from the previous usecase
-- Shuffle Notification Workflow: Get notifications directly to your ticketing system with minimal configuration
-
-<img width="736" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/d9c5831c-af53-4bd2-9b34-7dd8c2daab32">
-
-The Native Actions system is based on [generative AI for automatic mapping of fields (Schemaless)](https://github.com/frikky/schemaless), uses Github to [store configurations (Standards)](https://github.com/shuffle/standards), and uses [Shuffle's Integration Layer API](https://shuffler.io/docs/API#integration-layer) to run the actions. 
 
 ## Inbound Webhooks
 This section describes inbound webhooks to Shuffle, and how to set them up in many commonly used third-party systems. If your system support outbound Webhooks, it can also forward to Shuffle as a GET or POST request. [More about webhook triggers](/triggers/#webhooks)

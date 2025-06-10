@@ -2,7 +2,8 @@
 Documentation for using [Liquid formatting](https://shopify.github.io/liquid/) inside Shuffle, including examples and most-used parts.
 
 You can learn more about liquid formatting in this Youtube video:
-[![Liquid formatting video](https://img.youtube.com/vi/DA11pREbuyo/0.jpg)](https://www.youtube.com/watch?v=DA11pREbuyo)
+[![Liquid formatting video](https://img.youtube.com/vi/DA11pREbuyo/maxresdefault.jpg)](https://www.youtube.com/watch?v=DA11pREbuyo)
+
 
 ## Table of contents
 * [Introduction](#introduction)

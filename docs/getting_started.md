@@ -29,16 +29,21 @@ Shuffle is an open-source automation platform designed specifically for the secu
 - **[Old Training Videos](https://drive.google.com/drive/folders/1MtVfkCXDMSZ9yBwLDiVb0lj1H-oAK5RZ?usp=sharing)**  
   In case you would like to watch older on-demand training videos. The platform however has significantly improved since then and the [current training](https://shuffler.io/training) would be a better match.
 
-### Usecases
-[Usecases are a collection of Workflows](/usecases) that perform a task together. This can be things like handling SIEM alerts, or doing phishing analysis. 
+## Workflow Development
+Workflows run the automated processes in Shuffle by connecting Triggers and Actions/APIs. 
 
-### Workflows
+If you want some practice, check out our [default intro to Workflow development](https://github.com/Shuffle/shuffle-docs/blob/master/handbook/engineering/workflow_development.md)
+
+### Finding Usecases
+[Usecases are auto-generated workflows](/usecases) that perform a task together. This can be things like handling EDR alerts, doing phishing analysis or using detection rules with Sigma with your SIEM. 
+
+### Finding Workflows
 [Workflows](/docs/workflows) connect [Apps](/docs/apps) together to perform an action, typically getting and setting data with API's and using Shuffle's built in tools like Shuffle Tools to modify or format the data. They can be ran and stopped according to your needs, and typically have one starting point and multiple outputs. 
 
-### Apps
+### Finding Apps
 [Apps](/docs/apps) are API's or Python scripts, and can be [modified and built by anyone](https://shuffler.io/docs/app_creation). To use an existing public app in a Workflow, you must first activate it. Public apps can be forked, meaning you can have your own version of them.
 
-### Blogposts
+### Introduction Blogposts
 * [1. Introducing Shuffle - an Open Source SOAR platform](https://medium.com/security-operation-capybara/introducing-shuffle-an-open-source-soar-platform-part-1-58a529de7d12)
 * [2. Getting started with Shuffle](https://medium.com/@Frikkylikeme/getting-started-with-shuffle-an-open-source-soar-platform-part-2-1d7c67a64244)
 * [3. Creating your first app - Virustotal and TheHive](https://medium.com/@Frikkylikeme/integrating-shuffle-with-virustotal-and-thehive-open-source-soar-part-3-8e2e0d3396a9)
@@ -46,9 +51,6 @@ Shuffle is an open-source automation platform designed specifically for the secu
 * [5. Deploying Shuffle :)](https://medium.com/@stasis_/soar-deploying-shuffle-ad26173525d2)
 * [6. Automation with Shuffle SOAR](https://medium.com/@Romser/final-part-configuring-shuffle-soar-28e3674ede22)
 * [7. Simplify Your SOAR Implementation with Shuffle](https://medium.com/@socfortress/simplify-your-soar-implementation-with-shuffle-and-seim-integration-d1d32728515e)
-
-## Usage Models
-![models](https://user-images.githubusercontent.com/5719530/167960847-53e81815-a240-4a26-abb9-96b9244be901.jpeg)
 
 ### Workflow Principles
 1. Variables & nodes

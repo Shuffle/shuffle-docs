@@ -12,8 +12,7 @@ On top of Shuffle's commitment to securing how we use and protect your personal 
 
 ## SOC2
 
-### Find the SOC2 compliance requirements and fullfilment [here](https://docs.google.com/spreadsheets/d/1LItbuj-05ZT7bziS40oe9gHXhFgdJIsR/).
+**Find the SOC2 compliance requirements and fullfilment [here](https://docs.google.com/spreadsheets/d/1LItbuj-05ZT7bziS40oe9gHXhFgdJIsR/).**
 
 ## ISO 27001
-
-### Find the ISO 27001 compliance requirements and fullfilment [here](https://docs.google.com/spreadsheets/d/1WbPerP9CS557y-4yfdmDBtkQ9zuad-Mq/).
+**Find the ISO 27001 compliance requirements and fullfilment [here](https://docs.google.com/spreadsheets/d/1WbPerP9CS557y-4yfdmDBtkQ9zuad-Mq/).**

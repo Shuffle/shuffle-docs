@@ -21,17 +21,14 @@ The Roadmap is our high level guide to the future, and may be reorganized withou
 * **1.1 - [Creator onboarding](https://github.com/Shuffle/Shuffle/releases/tag/1.1.0):** Workflow, App & Usecase discovery. Stability & Scalability everywhere with multi-region deployments. HUGE focus on on-boarding and workflow templates. Expected release Q4 2022.
 * 1.2 - Usability: Autocompletes, Suggestion engines, Dashboards, Auditing. Lambda & EKS integrations. Partnerships with top 5 relevant tools in each [App Category](https://shuffler.io/welcome?tab=2). Threat Intel management with Shuffle Datastore. Expected release Q2 2023. 
 * 1.3 - Scale support, workflow statistics, stabilization and tracking.  Expected release Q4 2023.
+* 1.4 -  Realtime Workflow Collaboration (+support workflow support cloud->onprem), Workflow Generation based on text, MSSP Tenant & Workflow Management, Dynamic Authentication, Vaults, Improved Coding Editor with Code Generator & Shuffle Functions, Improved Trigger management and branding, Hybrid Workflow Access. Kubernetes support. Expected release Q2 2024.
   
-* 1.4 - **Current release:** Realtime Workflow Collaboration (+support workflow support cloud->onprem), Workflow Generation based on text, MSSP Tenant & Workflow Management, Dynamic Authentication, Vaults, Improved Coding Editor with Code Generator & Shuffle Functions, Improved Trigger management and branding, Hybrid Workflow Access. Kubernetes support. Expected release Q2 2024.
-  
-* **2.0: In Development (Release Candidate 3):** API Standardization & Security Infrastructure as a Service: **Schemaless**, New Updated UI, proper API explorer & testing system, Workflow & Usecase generation, OpenID/SAML testing & user management mechanisms, Automation & Security Dashboards, Developer Friendliness with Workflows as Code, **Form & MQ Triggers (pipelines)**, AI for Documentation -> App generation. MSSP: Multi-Tenant Workflows and other MSSP features. Expected release: Q1 2025
+* [2.0 - **Current release:**](https://shuffler.io/articles/2.0_release) Easy Scaling, Multi-tenant Workflows and a slick new look: **Schemaless**, New Updated UI, proper API explorer & testing system, Workflow & Usecase generation, OpenID/SAML testing & user management mechanisms, Automation & Security Dashboards, Developer Friendliness with Workflows as Code, **Form & MQ Triggers (pipelines)**, AI for Documentation -> App generation. MSSP: Multi-Tenant Workflows and other MSSP features. Expected release: Q1 2025
+ 
+* 2.1 - Improved onboarding, usecase generation and SaaSification
 
 * After next release: API action merging from forks. Multi-language support. OASIS CACAO support (and maybe OpenC2). Creator, Community & Partner earning re-initialization. Fully configurable Dashboards (from Automation & Secuerity). Focus on App, Workflow, Detection and Response ruleset sharing. Add Yara+Sandbox autoscans, Ansible response playbooks and OSQuery asset mapping. Expansive Mitre Att&ck & D3FEND support. Support for JSON-schema & Postman Collections. Optimize Realtime Workflow Collaboration. Mitre D3FEND and Att&ck tracking, automatic Sigma and Sublime detection mechanisms. Developer tooling for Workflows-as-code (secure curl / HTTP auth proxy), shufflepy (and other language).
     
-## Blogposts
-* [Introducing Shuffle](https://medium.com/security-operation-capybara/introducing-shuffle-an-open-source-soar-platform-part-1-58a529de7d12)
-* [Getting started with Shuffle](https://medium.com/@Frikkylikeme/getting-started-with-shuffle-an-open-source-soar-platform-part-2-1d7c67a64244)
-
 ## Problems Shuffle solves 
 These included, but were not limited to (no specific order):
 * [Alert fatigue](https://en.wikipedia.org/wiki/Alarm_fatigue) by giving analysts the tools to automate most alerts

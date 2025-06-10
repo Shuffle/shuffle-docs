@@ -30,11 +30,11 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 
 ## Introduction
 
-With Shuffle being Open Sourced, there is a need for a place to read about configuration. There are quite a few options, and this article aims to delve into those.
+With Shuffle being Open Source, there is a need for a place to read about configuration. There are quite a few options, and this article aims to delve into those.
 
 Shuffle is based on Docker and is started using docker-compose with configuration items in a .env file. .env has the configuration items to be used for default environment changes, database locations, port forwarding, github locations and more.
 
-## Installing Shuffle
+## Installation
 
 Check out the [installation guide](https://github.com/frikky/shuffle/blob/master/.github/install-guide.md), however if you're on linux:
 
@@ -46,199 +46,99 @@ cd Shuffle
 docker-compose up -d
 ```
 
-## Updating Shuffle
+![image](https://user-images.githubusercontent.com/5719530/169809608-325b5e9f-af44-45ab-83e1-c2acbcaf206a.png)
 
-`From version v1.1 onwards, we will use ghcr.io/shuffle/* registry instead of ghcr.io/frikky/*`
+### Updating Shuffle
 
-As long as you use Docker, updating Shuffle is pretty straight forward. To make sure you're as secure and up to date as possible, do this as much as you please. To use a specific version of Shuffle, check out [specific version](/docs/configuration#specific-versioning). We recommend always sticking to the "latest" tag, and if you want experimental changes, use the "nightly" tag.
+`From version v1.1 onwards, we are using ghcr.io/shuffle/* registry instead of ghcr.io/frikky/*`
+
+As long as you use Docker, updating Shuffle is straight forward. To use a specific version of Shuffle, check out [specific version](/docs/configuration#specific-versioning). We recommend always sticking to the `latest` tag, and if you want experimental changes, use the `nightly` tag. You may however in specific cases want to use a static tag, such as `2.0.0`
 
 While being in the main repository, here is how to update Shuffle:
 
 ```
 docker-compose down
 git pull
-docker pull frikky/shuffle:app_sdk    # Force update the App SDK
 docker-compose pull
 docker-compose up -d
 ```
 
 **PS: This will NOT update your apps, meaning they may be outdated. To update your apps, go to /apps and click both buttons in the top right corner (reload apps locally & Download from Github)**
 
-## Specific Versioning
+### Specific Versioning
 
 To use a specific version of Shuffle, you'll need to manually edit the Docker-Compose.yml file to reflect the version - usually for the frontend and backend, but sometimes also the other containers. You can [see all our released versions here](https://github.com/orgs/Shuffle/packages). We recommend keeping the same version for the frontend and backend, and **not** to keep them separate, as seen in the image below.
 
-![image](https://user-images.githubusercontent.com/5719530/169809608-325b5e9f-af44-45ab-83e1-c2acbcaf206a.png)
+### Marketplace Setup
 
-## Production readiness
+Using cloud marketplaces ([AWS Marketplace](https://aws.amazon.com/marketplace/), [Google Cloud Marketplace](https://console.cloud.google.com/marketplace), [Azure Marketplace](https://azuremarketplace.microsoft.com/)), you should be able to deploy Shuffle onprem with a few clicks. This is a great way to get started with Shuffle, as it's a fully managed service and test it out in your own environment without worrying about the setup. We are working with our cloud partners to get this up and running as soon as possible. 
 
-Shuffle is by default configured to be easy to start using. This means we've had to make some tradeoffs which can be enabled/disabled to make it easier to use the first time. This part outlines a lot of what's necessary to make Shuffle's security, availability and scalability better.
+## Server configuration
+
+Shuffle is by default configured to be easy to start using. This means we have had to make some tradeoffs which can be enabled/disabled to make it easier to use, or scale better. The following section outlines a lot of what is necessary to make Shuffle's security, availability and scalability better. 
+
+![image](https://github.com/user-attachments/assets/1bf288e0-fbd7-47c1-aba2-5269acaa4f8d)
 
 **Here are the things we'll dive into**
+- [Environment Variables](#environment_variables)
+- [High Availability](#high-availability)
 
-- [Servers](#servers)
-- [Hybrid Cloud Configuration](#hybrid-cloud-configuration)
-- [Environment Variables](#environment-variables)
-- [Disaster Recovery/High Availability](#Disaster_Recovery/High_Availability)
-- [Proxies](#proxy-configuration)
+### Environment Variables
+With Shuffle being a very technical system, it is important to understand that you have a lot of control mechanisms available to you in your local installation. 
+
+[Check the .env file on your server](https://github.com/Shuffle/Shuffle/blob/main/.env) to see what the default values are. They are broadly split into the following:
+
+- Setup Configuration (default usernames & download locations for easy deployments)
+- Network Configuration (e.g. how does the frontend route to the correct backend, or Orborus->Frontend->Backend through Nginx)
+- Container Control (Registries, Docker & K8s-specific configs etc.)
+- Health and Stability (Enable/Disable health checks, Log forwarding, automatic Reruns and Aborts etc.)
+- Opensearch Configuration (Networking, password & security systems etc)
+
+**PS:** Most of our environment variables start with `SHUFFLE_`
 
 ### Servers
+When setting up Shuffle for production, we always recommend two or more servers (VMs), but it works fine with one to start. These are MINIMUM requirements, and we recommend adding more to avoid congestion.
 
-When setting up Shuffle for production, we always recommend using a minimum of two servers (VMs). This is because you don't want your executions to clog the webserver, which again clogs the executions (orborus). You can put Orborus on multiple servers with different environments to ensure better availability, or [talk to us about Kubernetes/Swarm](https://shuffler.io/contact). These are MINIMUM requirements, and we recommend adding more.
+The webserver is where your users and Shuffle's API is. Opensearch is a RAM heavy database, and we are doing A LOT of caching with to ensure scalable stability.
 
-Basic network overview below. [Architecture](https://github.com/shuffle/Shuffle/raw/main/frontend/src/assets/img/shuffle_architecture.png).
-```
-- Shuffle backend starts a backend listener on port 5001 (default)
-- Orborus POLLS for Jobs. Orborus needs access to port 5001 on backend (default)
-- Orborus creates a worker for each job.
-- The Worker runs the workflow and sends the payload back to the backend on port 5001 (default)
-```
-
-**Webserver**
-The webserver is where your users and our API is. Opensearch is RAM heavy as we're doing A LOT of caching to ensure scalability.
-
-- Services: Frontend, Backend, Opensearch (Database)
+- Services: Frontend, Backend, Orborus, Opensearch (All)
 - CPU: 2vCPU
 - RAM: 8Gb
 - Disk: >100Gb (SSD)
 
-**Orborus**
-Runs all workflows and may be CPU heavy, along with Memory heavy when running at scale with gigabytes of data flowing through. If you do a lot of file transfers, deal with large API payloads, or memory analysis, make sure to add RAM accordingly. No persistent storage necessary.
-
-- Services: Orborus, Worker, Apps
-- CPU: 4vCPU
-- RAM: 4Gb
-- Disk: 10Gb (SSD)
-
-#### Docker configuration
-
-These are the Docker configurations for the two different servers described above. To use them, put the information in files called docker-compose.yml on each respective server, to start the containers.
-
-PS: The data below is based on [this docker-compose file](https://github.com/shuffle/Shuffle/blob/master/docker-compose.yml)
-
-**Orborus**
-Below is the Orborus configuration. make sure to change "BASE_URL" in the environment to match the external Shuffle backend URL. It can be modified to reduce or increase load, to add proxies, and much more. See [environment variables](#environment-variables) for all options.
-
-**PS**: Replace SHUFFLE-BACKEND with the IP of Shuffle backend in the specification below. Using Hostname MAY [cause issues](https://github.com/shuffle/Shuffle/issues/537) in certain environments.
-**PPS**: By default, the environments (executions) are NOT authenticated.
-
-```
-version: '3'
-services:
-  orborus:
-    #build: ./functions/onprem/orborus
-    image: ghcr.io/shuffle/shuffle-orborus:latest
-    container_name: shuffle-orborus
-    hostname: shuffle-orborus
-    networks:
-      - shuffle
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - BASE_URL=http://SHUFFLE-BACKEND:5001
-      - SHUFFLE_APP_SDK_VERSION=1.3.1
-      - SHUFFLE_WORKER_VERSION=latest
-      - ORG_ID=Shuffle
-      - ENVIRONMENT_NAME=Shuffle
-      - DOCKER_API_VERSION=1.40
-      - SHUFFLE_BASE_IMAGE_NAME=shuffle
-      - SHUFFLE_BASE_IMAGE_REGISTRY=ghcr.io
-      - SHUFFLE_BASE_IMAGE_TAG_SUFFIX="-1.0.0"
-      - CLEANUP=true
-      - SHUFFLE_ORBORUS_EXECUTION_TIMEOUT=600
-      - SHUFFLE_STATS_DISABLED=true
-    restart: unless-stopped
-networks:
-  shuffle:
-    driver: bridge
-```
-
-**Webserver**
-The webserver should run the Frontend, Backend and Database. Make sure [THIS .env file](https://github.com/frikky/Shuffle/blob/master/.env) exists in the same folder. Further, make sure that Opensearch the right access:
-
-```
-sudo sysctl -w vm.max_map_count=262144             # https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html
-sudo chown 1000:1000 -R shuffle-database         # Requires for Opensearch
-```
-
-docker-compose.yml:
-
-```
-version: '3'
-services:
-  frontend:
-    image: ghcr.io/shuffle/shuffle-frontend:latest
-    container_name: shuffle-frontend
-    hostname: shuffle-frontend
-    ports:
-      - "${FRONTEND_PORT}:80"
-      - "${FRONTEND_PORT_HTTPS}:443"
-    networks:
-      - shuffle
-    environment:
-      - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
-    restart: unless-stopped
-    depends_on:
-      - backend
-  backend:
-    image: ghcr.io/shuffle/shuffle-backend:latest
-    container_name: shuffle-backend
-    hostname: ${BACKEND_HOSTNAME}
-    # Here for debugging:
-    ports:
-      - "${BACKEND_PORT}:5001"
-    networks:
-      - shuffle
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${SHUFFLE_APP_HOTLOAD_LOCATION}:/shuffle-apps     
-      - ${SHUFFLE_FILE_LOCATION}:/shuffle-files
-      #- ${SHUFFLE_OPENSEARCH_CERTIFICATE_FILE}:/shuffle-files/es_certificate
-    env_file: .env
-    environment:
-      - SHUFFLE_APP_HOTLOAD_FOLDER=/shuffle-apps
-      - SHUFFLE_FILE_LOCATION=/shuffle-files
-    restart: unless-stopped
-    depends_on:
-      - opensearch
-  opensearch:
-    image: opensearchproject/opensearch:2.5.0
-    hostname: shuffle-opensearch
-    container_name: shuffle-opensearch
-    environment:
-      - bootstrap.memory_lock=true
-      - "OPENSEARCH_JAVA_OPTS=-Xms4096m -Xmx4096m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
-      - cluster.routing.allocation.disk.threshold_enabled=false
-      - cluster.name=shuffle-cluster
-      - node.name=shuffle-opensearch
-      - discovery.seed_hosts=shuffle-opensearch
-      - cluster.initial_master_nodes=shuffle-opensearch
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
-        hard: 65536
-    volumes:
-      - ${DB_LOCATION}:/usr/share/opensearch/data:rw
-    networks:
-      - shuffle
-    restart: unless-stopped
-networks:
-  shuffle:
-    driver: bridge
-```
+The [default docker-compose file](https://github.com/shuffle/Shuffle/blob/main/docker-compose.yml) works well to scale on a single server. 
 
 ### Hybrid Cloud Configuration
 
 * Onprem: If you want to try using Hybrid Shuffle, see [Cloud sync documentation](/docs/organizations#cloud_synchronization)
 * Cloud: If you want access to on-premises resources and API's, [set up extra Environments](/docs/organizations#environments)
 
-## Scaling Shuffle
-Orborus can run in Docker-swarm mode, and in early 2023, with Kubernetes. This makes the workflow executions A LOT faster, use less resources, making it more scalable both on a single, as well as across multiple servers. Since September 2024, this has been open sourced, and can be achieved with changing environment variables in the "Orborus" container for Shuffle. [Click here for Kubernetes details](https://github.com/Shuffle/Shuffle/tree/2.0.0/functions/kubernetes#instructions).
+### High Availability
+When running Shuffle on multiple servers, you need to take multiple things into account. Among them are:
+- Can the servers talk to each other?
+- Do you want all Shuffle services on all servers?
+- Do you want distributed storage?
+- Do you already have a cluster, or does it need to be made?
+- Do you want Docker or Kubernetes? Or containerless?
 
-PS: This is only available on the **nightly** version of Shuffle until Shuffle 2.0 is released.
+![image](https://github.com/user-attachments/assets/5248417c-c47b-4397-95c5-b01e1f5b4082)
+
+Here is a breakdown of the previous High Availability image of Shuffle, and how it works:
+1. All the **Green** colored services are our providers, meaning they are built by someone else than Shuffle, but used in the Shuffle stack. Here is our recommendation on scaling these services:
+   * [Opensearch (Database)](https://opensearch.org/docs/latest/tuning-your-cluster/). Elasticsearch also works. If you are using more than one entrypoint to Opensearch/Elasticsearch, [add the URL's comma separated in the .env file](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L104). 
+   * [Memcached (Shared Memory)](#distributed_caching): We recommend starting with memcached on a single server, and only scaling up as need be. When scaling, this memcached is only required for the Workers to communicate, and is not required for Shuffle itself to work. Add multiple [comma separated URL's here](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L84) to configure multiple instances.
+  
+2. **NFS** is Network File Storage. This is for you to be able to store files across multiple servers. This is required if you are running multiple instances of the Shuffle backend, and for them to have consistent access to the Files that you store. Only configure this if you are storing files in Shuffle. When NFS is set up, [mount your NFS storage to ./shuffle-files](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/docker-compose.yml#L28).
+
+3. The **Blue** services are YOUR services. These can be in your Cloud, Onprem etc. The service in Shuffle that needs access to this are the `Apps`, which have their network configuration copied from the `Orborus` container. If you have on-premises services that Shuffle needs access to, set up an Orborus instance in the same network, which has access to your Shuffle instance + the service in question.
+
+4. The **orange** services are Shuffle's containers. Below is a breakdown of what and how to use them.
+* **Backend:** Handles all of Shuffle's API requests, and are typically routed through the Frontend service. This means that it usually does NOT expose a port. **Scale across ALL available servers.** Available on shuffle-http://backend:5001 in the container network. 
+* **Frontend:** Handles frontend & backend routing, as well as the default certificates. **Scale across ALL available servers.** Available on http://shuffle-frontend:3001 or https://shuffle-frontend:3443 in the container network.
+* **Orborus / Worker / Apps:** Orborus is in charge of this stack, and is how you control all three services. Orborus receives jobs from the Backend, and does NOT expose any port. Read more about configuring, scaling and managing them in your instance on the [/admin?tab=locations](/admin?tab=locations) page, or in the next section.
+
+### Scaling Runtime Locations
+Orborus can run in Docker-swarm mode, and in early 2023, with Kubernetes. This makes the workflow executions **A LOT** faster, use less resources, making it more scalable both on a single, as well as across multiple servers. Since September 2024, scale has been partially open source, and can be achieved with changing environment variables in the "Orborus" container for Shuffle. [Click here for Kubernetes details](https://github.com/Shuffle/Shuffle/tree/2.0.0/functions/kubernetes#instructions). If you have received a licensed version, don't forget step 3 to load in the correct worker. 
 
 Let's begin with setting up Docker, Docker Compose, and creating a Docker Swarm network with two manager nodes involves several steps. Below is a step-by-step guide to achieve this:
 
@@ -252,7 +152,17 @@ Docker Installation Guide: https://docs.docker.com/get-docker/
 Install Docker Compose on both machines by following the official Docker Compose installation guide.
 Docker Compose Installation Guide: https://docs.docker.com/compose/install/
 
-**Step 3: Configure Orborus Environment Variables:**
+Step 3: Load the license **(skip if not a customer)**
+
+You should have received a license from the Shuffle team, which comes in form of a URL. This URL can be used to download the licensed version of the Worker as many times as you want. After downloading it, you need to docker load the file. 
+```
+wget <url>
+docker load -i shuffle-worker.zip
+```
+
+After these have been ran, it should be clear what the docker image is. This docker image needs to be used in the `SHUFFLE_WORKER_IMAGE` environment variable in step 4. 
+
+**Step 4: Configure Orborus Environment Variables:**
 1. Add and change the following environment variables for Orborus in the docker-compose.yml file. `BASE_URL` is the external URL of the server you're running Shuffle on (the one you visit Shuffle with in your browser):
 ```
 # Required:
@@ -272,9 +182,12 @@ Docker Compose Installation Guide: https://docs.docker.com/compose/install/
     
 ```
 
+If this is configured properly, the "Status" and "Scale" section on your [Runtime Locations in the Admin panel](https://shuffler.io/admin?tab=locations) should show as "Running" and a green checkmark respectively.
+![image](https://github.com/user-attachments/assets/9fbfdf29-0a3f-4926-bf93-da70226e30b1)
+
 To make swarm work, Please make sure that [these ports are open](https://docs.docker.com/engine/swarm/swarm-tutorial/#open-protocols-and-ports-between-the-hosts) on all your machines (to at least, both of these machines internally): 2377, 7946 and 4789
 
-**It is recommended to make sure that these ports are ONLY open internally just to be sure that everything is secure.**
+**It is recommended to make sure that these ports are ONLY open internally to be sure that everything is secure.**
 
 2. When step 1 is configured, take down the stack and pull it back up AFTER initializing swarm:
 ```
@@ -288,7 +201,7 @@ PS: In certain scenarios you may need extra configurations, e.g. for network MTU
 
 ### Adding another machine to the swarm network:
 
-Again, Make sure docker works here. Then paste the output from the above last command. It adds the network in the docker swarm network as a manager (It is required to orchestrate the app containers).
+Start by making sure docker works here. Then paste the output from the previous docker command to `docker join`. It adds the network in the docker swarm network as a manager (It is required to orchestrate the app containers).
 
 It should look something like this:
 
@@ -404,6 +317,7 @@ You can additionally add this do your docker compose with the following setting:
     container_name: shuffle-cache
     hostname: shuffle-cache
     mem_limit: 1024m
+    restart: unless-stopped
     environment:
       - MEMCACHED_MEMORY=1024
       - MEMCACHED_MAX_CONNECTIONS=2500
@@ -528,7 +442,7 @@ networks:
 
 You need to change the value of the environment `BASE_URL` of this Dockerfile, so it aims to the IP of your Shuffle frontend+backend node.
 
-## Kubernetes
+### Kubernetes
 
 Shuffle use with Kubernetes is now possible due to help from our contributors. You can read more about how it works on our [Github page](https://github.com/Shuffle/Shuffle/tree/main/functions/kubernetes), which includes extensive helm charts and configuration possibilities.
 
@@ -547,7 +461,15 @@ SHUFFLE_SWARM_CONFIG=run
 SHUFFLE_MEMCACHED=shuffle-memcached:11211 # this depends on your setup.
 ```
 
-## Proxy configuration
+## Networking
+Networking with Shuffle is pretty straight forward. What we check for are the following:
+
+- Can Shuffle reach your services? 
+- Can the Shuffle services reach each other (frontend/backend/database/Orborus)
+
+There are however many things that can go wrong with these simple mechanisms, leading to a need for network configuration changes. Shuffle is however built on HTTP, and can be easily modified and made to work both in air-gapped locations as well as with enterprise proxy environments. 
+
+### Proxy configuration
 
 Proxies are another requirement to many enterprises, hence it's an important feature to support. There are two places where proxies can be implemented:
 
@@ -562,17 +484,58 @@ To configure these, there are two options:
 * Individual containers
 * Globally for Docker
 
-To **DISABLE** proxy for **internal** Shuffle traffic, add the following environment variable to Orborus ([origin](https://jamboard.google.com/d/1KNr4JJXmTcH44r5j_5goQYinIe52lWzW-12Ii_joi-w/edit?usp=sharing)):
+To **DISABLE** proxy for **internal** Shuffle traffic (between internal containers), add the following environment variable to Orborus ([origin](https://jamboard.google.com/d/1KNr4JJXmTcH44r5j_5goQYinIe52lWzW-12Ii_joi-w/edit?usp=sharing)):
 ```
 - SHUFFLE_INTERNAL_HTTP_PROXY=noproxy
 - SHUFFLE_INTERNAL_HTTPS_PROXY=noproxy
 ```
 
-### Global Docker proxy configuration
+To disable proxy use for specific domains, use NO_PROXY with comma separation between domains:
+```
+NO_PROXY=myinternal-domain.com,random.org
+```
+
+#### Global Docker proxy configuration
 
 Follow this guide from Docker: https://docs.docker.com/network/proxy/
 
-### Individual container proxy
+### Internal Proxy settings
+
+The main proxy issues may arise with the "Backend", along with 3the "Orborus" container, which runs workflows. This has to do with how this server can contact the backend (Orborus), along with how apps can be downloaded (Worker), down to how apps engage with external systems (Apps).
+
+Environment variables to be sent to the Orborus container:
+
+```
+# Configures a HTTP proxy to use when talking to the Shuffle Backend
+HTTP_PROXY=     
+# Configures a HTTPS proxy when speaking to the Shuffle Backend
+HTTPs_PROXY=     
+
+# Decides if the Worker should use the same proxy as Orborus (HTTP_PROXY). Default=true
+SHUFFLE_PASS_WORKER_PROXY=true
+
+# Decides if the Apps should use the same proxy as Orborus (HTTP_PROXY). Default=false
+SHUFFLE_PASS_WORKER_PROXY=true
+```
+
+Environment variables for the Backend container:
+
+```
+# A proxy to be used if Opensearch / Elasticsearch (database) is behind a proxy.
+SHUFFLE_OPENSEARCH_PROXY
+
+# Configures a HTTP proxy for external downloads
+HTTP_PROXY=     
+# Configures a HTTPS proxy for external downloads
+HTTPs_PROXY=     
+```
+
+### Opensearch / Elasticsearch proxies
+Connections from Shuffle's backend to the Opensearch database **does NOT** follow normal HTTP_PROXY and NOPROXY environment variables. 
+
+Opensearch and Elasticsearch proxy configuration can be set using the `SHUFFLE_OPENSEARCH_PROXY` environment variable. 
+
+#### Individual container proxy
 
 To set up proxies in individual containers, open docker-compose.yml and add the following lines with your proxy settings (http://my-proxy.com:8080 in my case).
 
@@ -596,9 +559,9 @@ HTTP_PROXY=<external proxy>                     # used by default for everything
 SHUFFLE_INTERNAL_HTTP_PROXY=<internal proxy>     # Overrides HTTP_PROXY, making internal services in Shuffle use this proxy instead of HTTP_PROXY.
 ```
 
-**PS: This is in beta. Reach out to support@shuffler.io if you have any trouble with this.
-**
-## HTTPS
+**PS: This is in beta. Reach out to support@shuffler.io if you have any trouble with this.**
+
+### HTTPS
 
 HTTPS is enabled by default on port 3443 with a self-signed certificate for localhost. If you would like to change this, the only way (currently) is to add configure and rebuild the frontend. If you don't have HTTPS enabled, check [updating shuffle](#updating_shuffle) to get the latest configuration. Another workaround is to set up an [Nginx reverse proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) you can control yourself. See further down for more details
 
@@ -628,17 +591,14 @@ After changing certificates, you can rebuild the entire frontend by running (./f
 Make sure that the output image is the same in your docker-compose.yml file. This should work seemlessly for you next.
 
 ### App Certificates
-As of November 2023, it's now possible to mount folders into apps. This is in order for you to have better control of what Shuffle Apps can do, with the main reason being to manage certificates. 
+As of November 2023, it is possible to mount folders into apps. This is in order for you to have better control of what Shuffle Apps can do, with the main reason being to manage certificates or dynamic, large files. 
 
-To mount in certificates, add the following environment variable to the "Orborus" container, but change the source and destination folder. The item BEFORE the colon (:) is the source folder on your machine, with the one AFTER the colon (:) being for the destination folder in the app itself.
+To mount in certificates to ALL App containers, add the following environment variable to the "Orborus" container, but change the source and destination folder. The item BEFORE the colon (:) is the source folder on your machine, with the one AFTER the colon (:) being for the destination folder in the app itself.
 
-If you want more folders mounted, add them with a comma.
+If you want more multiple folders mounted, add them with a comma. Folders MUST exist, otherwise apps may not run, and the Worker will throw an error in the logs with Workflow Runs not finishing. If you are in production, we recommend trying this feature in a separate Runtime Location. 
 ```
-SHUFFLE_VOLUME_BINDS="/etc/ssl/certs:/usr/local/share/ca-certificates,srcfolder2:dstfolder2"
+SHUFFLE_VOLUME_BINDS="/etc/ssl/certs:/usr/local/share/ca-certificates,/srcfolder:/dstfolder"
 ```
-
-**PS: This is in beta. Reach out to support@shuffler.io if you have any trouble with this.
-**
 
 ### Using the Nginx Reverse Proxy for TLS/SSL
 If you intend to use Nginx as a Reverse Proxy, the main steps are below. [Here is a basic single-server architecture for it](https://jamboard.google.com/d/1zJU8yMzbsu-XWeZnch_5MoDwmMNkkN8ZmoGNLCaHPlU/edit?usp=sharing). The Docker version is further down.
@@ -704,7 +664,7 @@ server {
 3. Add a folder called "certs" with **your certificates** named `cert.crt` and `cert.key`.
 4. Restart everything: `docker-compose down; docker-compose up -d`
 
-## Internal Certificate Authority
+### Internal Certificate Authority
 By default, certificates are not being verified when outbound traffic goes from Shuffle. This is due to the massive use of self-signed certificates when using internal services. You may ignore certificate warnings by adding `SHUFFLE_SKIPSSL_VERIFY=true` to the environment of each relevant service - most notably used for Orborus.  If you want to accept your Certificate Authority for all requests, there are a few ways to do this:
 
 1. Mount your CA certificates (recommended): Add the `./certs:/certs` mount to the Orborus service in your docker-compose.yml. Ensure that the shuffle directory contains a certs subdirectory with all the necessary certificate files. This will automatically append all certificates in `./certs` to the system's root CA.
@@ -713,16 +673,16 @@ By default, certificates are not being verified when outbound traffic goes from 
 
 As this may require advanced Docker understanding, reach out to ask us about it: [support@shuffler.io](mailto:support@shuffler.io) 
 
-## IPv6
+### IPv6
 
 Shuffle supports IPv6 in Docker by default, but your docker engine may not. IPv6 can be enabled in Docker by adding it to the /etc/docker/daemon.json file on the host as per this article by Docker:
 
 [https://docs.docker.com/config/daemon/ipv6/](https://docs.docker.com/config/daemon/ipv6/)
 
 
-## Network configuration
+### Enterprise Environments
 
-In most enterprise environments, Shuffle will be behind multiple firewalls, proxies and other networking equipment. If this is the case, below are the requirements to make Shuffle work anywhere. The most common issue has to do with downloads from Alpine linux during runtime.
+In most enterprise environments, Shuffle will be behind firewalls, proxies and other networking equipment. If this is the case, below are the requirements to make Shuffle work anywhere. The most common issue has to do with downloads from Alpine linux's Docker images while Shuffle is running.
 
 **PS:** If external connections are blocked, you may further have issues running Apps. Read more about [manual image transfers here](#manual_docker_image_transfers).
 
@@ -765,21 +725,17 @@ registry-1.docker.io                            # Dockerhub registry (for apps)
 production.cloudflare.docker.com     # Protects of DockerHub
 ```
 
-## Incoming IP Whitelisting
+### Incoming IP Whitelisting
 
-When using Shuffle in the cloud (*.shuffler.io), the incoming IP to your services by default will be be from our cloud functions, if you are not using [Hybrid Environments](/admin?tab=environments). The range is **not static**, and may wary based on region. Here's a list (mostly IPv6 as of 2023):
+When using Shuffle in the cloud (*.shuffler.io), the incoming IP to your services by default will be be from our cloud functions, if you are not using [Runtime Locations](/admin?tab=locations). The range is **not static**, and may wary based on region. Here's a list (mostly IPv6 as of 2025):
 
 ```
 Default (London): 2600:1900:2000:2a:400::0 -> 2600:1900:2000:2a:400::ffff
-Euroean Union (eu): TBA
-United States (us): TBA
-Canada (ca): TBA
-India (in): TBA
 ```
 
 If you want direct access with ANY app in your on-premises environment, we recommend setting up a new environment on a server in the same network. Steps to set this up:
 
-1. Go to [/admin?tab=environments](/admin?tab=environments) and create a new environment
+1. Go to [/admin?tab=locations](/admin?tab=locations) and create a new runtime location
 2. Click the Copy button in the "Command" tab to copy the relevant Docker command. This requires Docker installed on the server in question.
 3. Run the copied command on your server on-premises.
 4. Change the Environment a workflow runs with to the new environment. When ran, it will automatically run on YOUR server, instead of on our cloud.
@@ -791,37 +747,8 @@ Environment page:
 Architecture connecting from cloud to onprem (hybrid):
 ![image](https://github.com/user-attachments/assets/7f0b6146-ebae-4133-bbc7-8b158d48c3a9)
 
-
-## Proxy settings
-
-The main proxy issues may arise with the "Backend", along with 3the "Orborus" container, which runs workflows. This has to do with how this server can contact the backend (Orborus), along with how apps can be downloaded (Worker), down to how apps engage with external systems (Apps).
-
-Environment variables to be sent to the Orborus container:
-
-```
-# Configures a HTTP proxy to use when talking to the Shuffle Backend
-HTTP_PROXY=     
-# Configures a HTTPS proxy when speaking to the Shuffle Backend
-HTTPs_PROXY=     
-
-# Decides if the Worker should use the same proxy as Orborus (HTTP_PROXY). Default=true
-SHUFFLE_PASS_WORKER_PROXY=true
-
-# Decides if the Apps should use the same proxy as Orborus (HTTP_PROXY). Default=false
-SHUFFLE_PASS_WORKER_PROXY=true
-```
-
-Environment variables for the Backend container:
-
-```
-# A proxy to be used if Opensearch / Elasticsearch (database) is behind a proxy.
-SHUFFLE_OPENSEARCH_PROXY
-
-# Configures a HTTP proxy for external downloads
-HTTP_PROXY=     
-# Configures a HTTPS proxy for external downloads
-HTTPs_PROXY=     
-```
+### Static inbound IPs for cloud
+As a customer of Shuffle we can provide you with a static **IP range** with secondary domains that can be used for cloud routing. Contact support@shuffler.io for more info
 
 ### Manual Docker image transfers
 
@@ -850,9 +777,15 @@ docker load shuffle_tools.tar
 #scp -3 centos@10.0.0.1:/home/user/wazuh.tar centos@10.0.0.2:/home/user/wazuh.tar
 ```
 
-## No Internet Install
-
+### No Internet Install
 This procedure will help you export what you need to run Shuffle on a no internet host.
+
+**The following features will not work without internet:**
+- Cloud Sync
+- Automatic Health System (/health page)
+- UI app activations
+- Automatic App generation AI
+- Depending on your network: Search engine. This is a frontend feature, if you are in a no-internet zone, it will stop working. 
 
 1. Prerequise
 * Both machines has Docker and Docker Compose installed already
@@ -924,18 +857,6 @@ cp -a python-apps/ * shuffle-apps/
 
 Now, you just need to configure and install Shuffler like in normal procedure
 
-## Uptime Monitoring
-
-Uptime monitoring of Shuffle can be done by periodically polling the API for userinfo located at /api/v1/getinfo. This is an API that connects to our database, and which will be stuck if we any platform issues occur, whether in your local instance or in our Cloud instance on https://shuffler.io. 
-
-Shuffle has and will not have any planned downtime for services on https://shuffler.io, and have built our architecture around being able to upgrade and roll back without any downtime at all. If this occurs in the future for our Cloud platform, we will make sure to notify any active users. We plan to launch a status monitor for our services in 2022.
-
-**Basic monitoring** can be done with a curl request + sendmail + cronjob as [seen in this blogpost](https://www.programcreek.com/2017/06/automatically-detect-server-downtime-using-linux-cron-job/) with the curl command below. Your personal API key can be found on [https://shuffler.io/settings](https://shuffler.io/settings) or in the same location (/settings) in your local instance.
-
-```
-curl https://shuffler.io/api/v1/getinfo -H "Authorization: Bearer apikey"
-```
-
 ### Database
 
 To modify the database location, change "DB_LOCATION" in .env (root dir) to your new location.
@@ -961,101 +882,7 @@ To modify the database location, change "DB_LOCATION" in .env (root dir) to your
 - users
 - workflowqueue-*
 
-PS: workflowqueue-* is based on the environment used for execution.
-
-### Database migration
-
-With the change from 0.8 to 0.9 we're changing databases from Google's Datastore to Opensearch. This has to be done due to unforeseen errors with Datastore, including issues with scale, search and debugging. The next section will detail how you can go about migrating from 0.8.X to 0.9.0 without losing access to your workflows, apps, organizations, triggers, users etc.
-
-**Indexes not being migrated**:
-
-- workflowexecutions
-- app_execution_values
-- files
-- sessions
-- syncjobs
-- trigger_auth
-- workflowqueue
-  
-
-Before you start:
-If you have data of the same kind in the same index within Opensearch, these will be overwritten.
-Example: you have the user "admin" in the index "users" within Opensearch and Datastore; this will be overwritten with the version that's in Datastore.
-
-**Requirements**:
-
-- Admin user in Shuffle using Datastore
-- An available Elasticsearch / Opensearch database.
-
-### 1. Set main database to be Datastore
-
-- 1. Open .env
-
-- 2. Scroll down and look for "SHUFFLE_ELASTIC"
-
-- 3. Set it to false; SHUFFLE_ELASTIC=false
-     
-
-### 2. Set up Datastore and Opensearch
-
-In order to run the migration, we have to run both databases at once, connected to Shuffle. This means to run both containers at the same time in the Docker-compose file like the image below, before restarting.
-
-```
-docker-compose down
-## EDIT FILE
-docker-compose pull
-docker-compose up         # PS: Notice that we don't add -d here. This to make it easier to follow the logs. It's ok as we'll stop the instance later.
-```
-
-![Migration-1](https://github.com/shuffle/shuffle-docs/blob/master/assets/migration-1.png?raw=true)
-
-### 3. Find your API-key!
-
-Now that you have both databases set up, we need to find the API-key.
-
-```
-1. http://localhost:3000/settings     # You may need to log in
-2. Copy the API-key
-3. Go to next step
-```
-
-### 4. Run the migration!
-
-We'll now run a curl command that starts the migration. It shouldn't take more than a few seconds, max a few minutes at scale.
-
-PS: This is NOT a destructive action. It just reads data from one place and moves it to the other. The server will restart after it has finished.
-
-Change the part that says "APIKEY" to your actual API key from the previous step.
-
-```
-curl -XPOST -v localhost:5001/api/v1/migrate_database -H 'Authorization: Bearer APIKEY'
-```
-
-![Migration-2](https://github.com/shuffle/shuffle-docs/blob/master/assets/migration-2.png?raw=true)
-
-### 5. Change database back to Opensearch
-
-Let's reverse step 1 by choosing elastic as main database
-
-```
-- 1. Open .env
-- 2. Scroll down and look for "SHUFFLE_ELASTIC"
-- 3. Set it to false; SHUFFLE_ELASTIC=true
-```
-
-Got any issue? Ask on [discord](https://discord.gg/B2CBzUm) or [Contact us](/contact).
-
-## Docker Version error
-
-Shuffle runs using Docker in every step, from the frontend to the workers and apps. For certain systems however, it requires manual configuration of the version of Docker you're running. This has a self-correcting feature to it within Orborus > v0.8.98, but before then you'll have to manually correct for it.
-
-```
-Error getting containers: Error response from daemon: client version 1.40 is too new. Maximum supported API version is 1.35
-```
-
-To fix this issue, we need to set the version from 1.40 down to 1.35 in the Shuffle environment. This can be done by opening the docker-compose.yml file, then changing environment variable "DOCKER_API_VERSION" from 1.40 to 1.35 for the "orborus" service as seen below, then restarting Shuffle.
-
-![Error with Docker version](https://github.com/shuffle/shuffle-docs/blob/master/assets/configuration-error-1.png?raw=true)
+PS: workflowqueue-* is based on the runtime location used for workflow execution (Orborus).
 
 ## Debugging
 
@@ -1070,6 +897,10 @@ As Shuffle has a lot of individual parts, debugging can be quite tricky. To get 
 | Worker                                      | worker-id             | Golang           | Deploys Apps to run Actions defined in a workflow                                                          |
 | app sdk                                     | appname_appversion_id | Python           | Used by Apps to talk to the backend                                                                        |
 | worker-8a666e4f-e544-440e-bf0f-4220e7cc9e25 |                       |                  |                                                                                                            |
+
+### Disabling Image downloads
+There are cases where automatic image downloads may occur, such as when you restart Orborus. You can disable this with `SHUFFLE_AUTO_IMAGE_DOWNLOAD=false`
+
 
 ### Execution debugging
 
@@ -1225,7 +1056,19 @@ When done, remove the "/var/run/docker.sock" volume from the backend and orborus
 
 This will route all docker traffic through the docker-socket-proxy giving you granular access to each API. 
 
-## Shuffle Server Healthcheck
+## Uptime Monitoring
+
+Uptime monitoring of Shuffle can be done by periodically polling the API for userinfo located at /api/v1/getinfo. This is an API that connects to our database, and which will be stuck if we any platform issues occur, whether in your local instance or in our Cloud instance on https://shuffler.io. 
+
+Shuffle has and will not have any planned downtime for services on https://shuffler.io, and have built our architecture around being able to upgrade and roll back without any downtime at all. If this occurs in the future for our Cloud platform, we will make sure to notify any active users. We plan to launch a status monitor for our services in 2022.
+
+**Basic monitoring** can be done with a curl request + sendmail + cronjob as [seen in this blogpost](https://www.programcreek.com/2017/06/automatically-detect-server-downtime-using-linux-cron-job/) with the curl command below. Your personal API key can be found on [https://shuffler.io/settings](https://shuffler.io/settings) or in the same location (/settings) in your local instance.
+
+```
+curl https://shuffler.io/api/v1/getinfo -H "Authorization: Bearer apikey"
+```
+
+### Shuffle Server Healthcheck
 
 There are multiple things to check in the Shuffle server to ensure that the health of server is in a good state:  
 
@@ -1351,8 +1194,3 @@ So that the shuffle-backend service block ends up looking like this:
 sudo podman-compose -f docker-compose.yml pull
 sudo podman-compose -f docker-compose.yml up
 ```
-
-
-### Marketplace Setup
-
-Using cloud marketplaces ([AWS Marketplace](https://aws.amazon.com/marketplace/), [Google Cloud Marketplace](https://console.cloud.google.com/marketplace), [Azure Marketplace](https://azuremarketplace.microsoft.com/)), you should be able to deploy Shuffle onprem with a few clicks. This is a great way to get started with Shuffle, as it's a fully managed service and test it out in your own environment without worrying about the setup. We are working with our cloud partners to get this up and running as soon as possible. 
