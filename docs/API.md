@@ -974,7 +974,7 @@ curl https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer APIKEY"
 
 **Success response** 
 ```json
-{"name":"Testing","description":"Description","company_type":"","image": "base64 image", "id":"583816e5-40ab-4212-8c7a-e54c8edd6b51","org":"new suborg","users":[],"role":"","roles":["admin","user"],"active_apps":["eb6b633ebbb77575ad17789eecf36cdf"],"cloud_sync":false,"cloud_sync_active":true,"sync_config":{"interval":0,"api_key":"","source":""},"sync_features": {}, "invites":null,"child_orgs":[],"manager_orgs":null,"creator_org":"PARENT_ORG_ID","disabled":false,"partner_info":{"reseller":false,"reseller_level":""},"sso_config":{"sso_entrypoint":"","sso_certificate":"","client_id":"","client_secret":"","openid_authorization":"","openid_token":""},"main_priority":"","region":"","region_url":"","tutorials":[]} 
+{"name":"Testing","description":"Description","company_type":"","image": "base64 image", "id":"583816e5-40ab-4212-8c7a-e54c8edd6b51","org":"new suborg","users":[],"role":"","roles":["admin","user"],"active_apps":["eb6b633ebbb77575ad17789eecf36cdf"],"cloud_sync":false,"cloud_sync_active":true,"sync_config":{"interval":0,"api_key":"","source":""},"sync_features": {}, "invites":null,"child_orgs":[],"manager_orgs":null,"creator_org":"PARENT_ORG_ID","disabled":false,"partner_info":{"reseller":false,"reseller_level":""},"sso_config":{"sso_entrypoint":"","sso_certificate":"","client_id":"","client_secret":"","openid_authorization":"","openid_token":""},"main_priority":"","region":"","region_url":"","tutorials":[], "org_auth": {"org_token": "", "expires": ""}} 
 ```
 
 ### Create a Suborg
