@@ -243,6 +243,98 @@ curl https://shuffler.io/api/v1/workflows/{workflow_id}/executions/{execution_id
 {"success": true}
 ```
 
+## Datastore API
+Datastore is a persistent storage mechanism you can use for workflows to talk to each other between executions, or for normal storage. Below are the endpoints related to datastore (cache) creation, listing, deletion and more. This API is available to Python apps by using self.set_cache("key", "value") and self.get_cache("key")
+
+### Add a key
+To add a key to a specific category, add `"category": "name"` to the JSON body.
+
+Methods: POST, PUT
+
+```bash
+curl https://shuffler.io/api/v1/orgs/{org_id}/set_cache -H "Authorization: Bearer APIKEY" -d '{"key":"hi", "value":"1234", "category": "category"}'
+```
+
+
+**Success response** 
+```json
+{"success": true}
+```
+
+### Add multiple keys
+To add a key to a specific category, add `"category": "name"` to the JSON body. Only keys of the first discovered category will be added.
+
+Methods: POST, PUT
+
+```bash
+curl https://shuffler.io/api/v2/datastore?bulk=true -H "Authorization: Bearer APIKEY" -d '[{"key":"hi", "value":"1234", "category": "category"}]'
+```
+
+
+**Success response** 
+```json
+{"success": true}
+```
+
+
+### Get a key
+Search for a cache key. For keys set in a workflow, it may unavailable with the normal API, and require execution_id & authorization in the JSON body.
+
+To get a key from a specific category, add `"category": "name"` to the JSON body.
+ 
+Methods: POST
+
+```bash
+curl https://shuffler.io/api/v1/orgs/{org_id}/get_cache -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
+```
+
+
+**Success response** 
+```json
+{"success":false,"workflow_id":"99951014-f0b1-473d-a474-4dc9afecaa75","execution_id":"f0b2b4e9-90ca-4835-bdd4-2889ef5f926f","org_id":"2e7b6a08-b63b-4fc2-bd70-718091509db1","key":"hi","value":"1234"}
+```
+
+
+### List all keys
+List existing datastore (cache) keys. By default, this will include the 50 last modified keys from any category. 
+
+To list keys from a specific category, ?category=<name> to the URL.
+
+Available queries:
+- top: default 50. How many keys to return.
+- cursor: to get the next page
+- category: the category to get
+
+Methods: GET
+
+```bash
+curl https://shuffler.io/api/v1/orgs/{org_id}/list_cache -H "Authorization: Bearer APIKEY"
+```
+
+
+**Success response** 
+```json
+{"success":true,"keys":[{"success":false,"workflow_id":"99951014-f0b1-473d-a474-4dc9afecaa75","execution_id":"f0b2b4e9-90ca-4835-bdd4-2889ef5f926f","org_id":"2e7b6a08-b63b-4fc2-bd70-718091509db1","key":"hi","value":"1234"}]}
+```
+
+### Delete a key
+Deletes a key, completely removing all references to it. 
+
+To delete a key from a specific category, add `"category": "name"` to the JSON body.
+
+Methods: DELETE
+
+```bash
+curl https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
+```
+
+
+**Success response** 
+```json
+{"success": true}
+```
+
+
 ## App API
 Apps are the building blocks used in [workflows](/docs/apps#workflows), as they contain the actions to be executed. First of all, there are two types of apps:
 
@@ -587,83 +679,6 @@ curl https://shuffler.io/api/v1/users/generateapikey -H "Authorization: Bearer A
 **Success response** 
 ```json
 {"success": true, "username": "username", "verified": false, "apikey": "new apikey"}
-```
-
-## Datastore API
-Datastore is a persistent storage mechanism you can use for workflows to talk to each other between executions, or for normal storage. Below are the endpoints related to datastore (cache) creation, listing, deletion and more. This API is available to Python apps by using self.set_cache("key", "value") and self.get_cache("key")
-
-### Add a key
-To add or edit a cache key use 
-
-To add a key to a specific category, add `"category": "name"` to the JSON body.
-
-Methods: POST, PUT
-
-```bash
-curl https://shuffler.io/api/v1/orgs/{org_id}/set_cache -H "Authorization: Bearer APIKEY" -d '{"key":"hi", "value":"1234"}'
-```
-
-
-**Success response** 
-```json
-{"success": true}
-```
-
-### Get a key
-Search for a cache key. For keys set in a workflow, it may unavailable with the normal API, and require execution_id & authorization in the JSON body.
-
-To get a key from a specific category, add `"category": "name"` to the JSON body.
- 
-Methods: POST
-
-```bash
-curl https://shuffler.io/api/v1/orgs/{org_id}/get_cache -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
-```
-
-
-**Success response** 
-```json
-{"success":false,"workflow_id":"99951014-f0b1-473d-a474-4dc9afecaa75","execution_id":"f0b2b4e9-90ca-4835-bdd4-2889ef5f926f","org_id":"2e7b6a08-b63b-4fc2-bd70-718091509db1","key":"hi","value":"1234"}
-```
-
-
-### List all keys
-List existing datastore (cache) keys. By default, this will include the 50 last modified keys from any category. 
-
-To list keys from a specific category, ?category=<name> to the URL.
-
-Available queries:
-- top: default 50. How many keys to return.
-- cursor: to get the next page
-- category: the category to get
-
-Methods: GET
-
-```bash
-curl https://shuffler.io/api/v1/orgs/{org_id}/list_cache -H "Authorization: Bearer APIKEY"
-```
-
-
-**Success response** 
-```json
-{"success":true,"keys":[{"success":false,"workflow_id":"99951014-f0b1-473d-a474-4dc9afecaa75","execution_id":"f0b2b4e9-90ca-4835-bdd4-2889ef5f926f","org_id":"2e7b6a08-b63b-4fc2-bd70-718091509db1","key":"hi","value":"1234"}]}
-```
-
-### Delete a key
-Deletes a key, completely removing all references to it. 
-
-To delete a key from a specific category, add `"category": "name"` to the JSON body.
-
-Methods: DELETE
-
-```bash
-curl https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
-```
-
-
-**Success response** 
-```json
-{"success": true}
 ```
 
 ## File API
