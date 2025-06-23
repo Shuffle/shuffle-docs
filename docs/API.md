@@ -1052,11 +1052,20 @@ curl https://shuffler.io/api/v1/orgs -H "Authorization: Bearer APIKEY"
 Deletes an organization. Only possible for sub-organizations. 
 
 **This requires you to have already removed all workflows, and will NOT clean up all the data in the database until it expires (3 months~)**
+**Only **admins of the parent organization** can delete a sub-organization.**
 
 Methods: DELETE 
 
 ```bash
-curl -XDELETE https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer APIKEY" 
+curl -XDELETE https://shuffler.io/api/v1/orgs/{parent_org_id} -H "Authorization: Bearer APIKEY" 
+```
+
+### Request Body
+
+```json
+{
+  "suborg_id": "YOUR_SUBORG_ID_TO_DELETE"
+}
 ```
 
 **Success response** 
