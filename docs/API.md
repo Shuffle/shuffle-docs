@@ -1057,15 +1057,7 @@ Deletes an organization. Only possible for sub-organizations.
 Methods: DELETE 
 
 ```bash
-curl -XDELETE https://shuffler.io/api/v1/orgs/{parent_org_id} -H "Authorization: Bearer APIKEY" 
-```
-
-### Request Body
-
-```json
-{
-  "suborg_id": "YOUR_SUBORG_ID_TO_DELETE"
-}
+curl -XDELETE https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer APIKEY" 
 ```
 
 **Success response** 
