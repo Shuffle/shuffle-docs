@@ -426,7 +426,6 @@ services:
       - BASE_URL=http://192.168.0.49:5001
       - SHUFFLE_APP_SDK_VERSION=1.1.0
       - SHUFFLE_WORKER_VERSION=latest
-      - ORG_ID=Shuffle
       - ENVIRONMENT_NAME=Shuffle
       - DOCKER_API_VERSION=1.40
       - SHUFFLE_BASE_IMAGE_NAME=frikky
