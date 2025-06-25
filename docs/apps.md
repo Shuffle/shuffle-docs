@@ -392,7 +392,7 @@ You may want to change an app later. This can be done by using the /apps UI to f
 Apps using Python can do pretty much anything you can do on a computer. As an example, most utility functions of Shuffle itself are written with as functions of Python in the app "Shuffle-Tools"
 
 ### Uploading an App
-[Uploading apps (cloud)](https://shuffler.io/docs/API#upload-a-python-app) or [Local Hotloading (onprem)](https://shuffler.io/docs/app_creation#hotloading-your-app) are the way to go. Look into this when you have a prototype app ready. 
+[Uploading apps (cloud)](https://shuffler.io/docs/API#upload-a-python-app) or [Local Hotloading (onprem)](https://shuffler.io/docs/apps#local-hotloading-your-app) are the way to go. Look into this when you have a prototype app ready. 
 
 ### About
 One of the first things you have to do is select an SDK. There are three images currently in Shuffle, Alpine, Kali, and Blackarch. Alpine is your standard slim docker image. Kali allows you access to Kali tooling, and Blackarch is arch, with a kitchen sink approach to tools.
@@ -729,10 +729,10 @@ I have the function below, as specified in my api.yaml, that accepts the args I 
     def run_o365poller(self, planType,tenantID,clientID,clientSecret, PollInterval,json_data):
 ```
 
-### Hotloading your app
+### Testing your app
 Uploading and testing an app can be done in multiple ways. When the necessary files and directory structure is set up, you may continue to upload the app.
 
-**Anywhere:**
+**Cloud Only:**
 To use a custom app in your instance, you can to use the [Upload App API](https://shuffler.io/docs/API#upload-a-python-app).  When this has been ran, the app is available in your organisation in Shuffle. To test the app, run a workflow.
 
 After it has been uploaded once, we suggest you run the app on a local environment, and run the docker build command instead of the full upload to make testing easier. To do this: 
@@ -740,15 +740,23 @@ After it has been uploaded once, we suggest you run the app on a local environme
 2. Find the docker image for the app: `docker images | grep <appname>`
 3. Hotload the app locally: `docker build . -t <imagename>`
 
-For cloud, this is the only option.
+
+### Local Hotloading your app
 
 **Onprem Only:**
-Once your app has been tested, you've created the necessary metadata files and directory structure under your shuffle-apps folder, there is no need to restart your containers!
+For self-hosted Shuffle instances, you can use the hot reloading feature to quickly add custom Python apps without restarting the server:
 
-Shuffle has an app hot reloading feature in the GUI. Go to Apps on the top left hand tool bar of the GUI, and then look for a Double Arrow refresh.
-Give the system 20 or so seconds, and you will see a pop up saying it was successful.
+1. Create your Python app with the proper [directory structure](#directory-structure)
+2. Take the app folder (not the ZIP file) and place it inside the `shuffle-apps` directory in your Shuffle instance (this directory is empty by default).
+3. Make sure in env file the `SHUFFLE_APP_HOTLOAD_FOLDER` is set as `./shuffle-apps`
+4. Go to the Apps page in the Shuffle UI
+5. On the top right corner, you'll see a rotating double arrow icon. Click on it to hot reload your apps
 
-Once complete, any workflows you have that use the existing app, you'll have to delete old versions of the app and re-add them in the workflow.
+![Hot Reload Button](https://github.com/frikky/shuffle-docs/blob/master/assets/hotloading-app.png?raw=true)
+
+Give the system about 20 seconds, and you will see a popup notification indicating success. This will load your custom Python app into your self-hosted Shuffle instance without requiring a restart.
+
+Note: If you're updating an existing app, you'll need to delete the old version from any workflows that use it and re-add the new version.
 
 
 ### CI/CD for managing apps
