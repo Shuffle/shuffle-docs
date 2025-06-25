@@ -747,7 +747,7 @@ After it has been uploaded once, we suggest you run the app on a local environme
 For self-hosted Shuffle instances, you can use the hot reloading feature to quickly add custom Python apps without restarting the server:
 
 1. Create your Python app with the proper [directory structure](#directory-structure)
-2. Take the app folder (not the ZIP file) and place it inside the `shuffle-apps` directory in your Shuffle instance (this directory is empty by default).
+2. Take the app folder (not the ZIP file) and place it inside the `shuffle-apps` directory in your Shuffle instance. For reference [shuffle-apps](https://github.com/Shuffle/Shuffle/tree/main/shuffle-apps).
 3. Make sure in env file the `SHUFFLE_APP_HOTLOAD_FOLDER` is set as `./shuffle-apps`
 4. Go to the Apps page in the Shuffle UI
 5. On the top right corner, you'll see a rotating double arrow icon. Click on it to hot reload your apps
