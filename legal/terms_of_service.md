@@ -7,7 +7,7 @@ The following capitalized terms shall have the following meanings whenever used 
 * “Cloud Services” means such software and software as a service (SAAS) integration services as Shuffle may provide from time to time via the System, including point-to-point data migration services and integration services for enterprise platforms, to customers on a subscription basis.
 * “Confidential Information” has the meaning ascribed to it in Section 7.
 * “Customer Data” means data in electronic form input or collected through the System by or from Customer, including without limitation by Customer’s Users.
-* “Customer Order” means an order for access to the System entered by Customer through Shuffle’s online registration process on the Website or executed by Customer by means of a form of Customer Order provided by Shuffle, and acknowledged by such Customer (including through a click-to-agree online process or electronically-signed document exchange).
+* “Customer Order” means an order or invoice or payment for access to the System entered by Customer through Shuffle’s online registration process on the Website or executed by Customer, and acknowledged by such Customer (including through a click-to-agree online process or electronically-signed document exchange).
 * “Customization Services” means services, other than Cloud Services, provided by Shuffle to Customer pursuant to the Customization Services Addendum.
 * “Customization Services Addendum” means the optional agreement governing the provision of Customization Services to Customer.
 * “Documentation” means [Shuffle’s standard manual](https://shuffler.io/docs) related to use of the System, as well as any additional documentation provided to Customer in connection with this Agreement.
