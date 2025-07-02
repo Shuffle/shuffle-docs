@@ -595,6 +595,16 @@ The next part is a list of Action Results that were performed within the executi
 
 **PS: There's a handy Copy trick with JSON. By clicking the VALUE in JSON, it will copy the path to the Value itself (e.g. #nodename.success), while clicking the pink COPY ICON to the right of the value will copy the actual value (e.g. false in the image above)**
 
+### Workflow Run Debugger
+The Workflow Run Debugger is a powerful tool that helps you debug your workflows. You can find it at [https://shuffler.io/workflows/debug](https://shuffler.io/workflows/debug).
+
+![Workflow Run Debugger](https://github.com/0x0elliot/Shuffle-docs/blob/master/assets/workflow_run_debugger.png?raw=true)
+
+With the Workflow Run Debugger, you can:
+- Filter executions by Workflow Name, Status, Execution Argument, and Results.
+- View all executions in your organization and sub-organizations.
+- See the execution status of visible executions.
+
 ## Collaboration features
 Workflows have additional features that may be helpful when you start scaling, or want to collaborate.
 
