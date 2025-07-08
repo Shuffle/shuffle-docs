@@ -988,6 +988,32 @@ curl https://shuffler.io/api/v1/getenvironments -H "Authorization: Bearer APIKEY
 
 Ps: If you want to get the environments of another org, Please add in the Org-Id: {Org-Id} header.
 
+It would return something like this:
+```bash
+[{
+    "Name": "example",
+    "Type": "onprem",
+    "Registered": false,
+    "default": false,
+    "archived": true,
+    "id": "{ID}",
+    "org_id": "{ID}",
+    "created": 1710253304,
+    "edited": 1750766926,
+    "checkin": 1716270170,
+    "running_ip": "",
+    "auth": "{AUTH}",
+    "queue": 1,
+    "orborus_uuid": "",
+    "licensed": false,
+    "run_type": "docker",
+    "data_lake": {
+        "enabled": false,
+        "pipelines": null
+    },
+    "suborg_distribution": null
+}]
+```
 
 ## Organizations
 Below are the endpoints related to organization/tenant creation, editing, listing and more.
