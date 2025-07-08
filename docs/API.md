@@ -974,6 +974,19 @@ curl https://shuffler.io/api/v1/notifications/{notificationId}/markasread -H "Au
 {"success":true}
 ```
 
+## Environments
+Below are the endpoints related to environments.
+
+### Get environments
+Get user's active Organization's environments.
+
+Methods: GET 
+
+```bash
+curl https://shuffler.io/api/v1/getenvironments -H "Authorization: Bearer APIKEY" 
+```
+
+
 ## Organizations
 Below are the endpoints related to organization/tenant creation, editing, listing and more.
 
