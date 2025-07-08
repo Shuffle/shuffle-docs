@@ -986,6 +986,8 @@ Methods: GET
 curl https://shuffler.io/api/v1/getenvironments -H "Authorization: Bearer APIKEY" 
 ```
 
+Ps: If you want to get the environments of another org, Please add in the Org-Id: {Org-Id} header.
+
 
 ## Organizations
 Below are the endpoints related to organization/tenant creation, editing, listing and more.
