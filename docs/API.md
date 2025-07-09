@@ -975,7 +975,7 @@ curl https://shuffler.io/api/v1/notifications/{notificationId}/markasread -H "Au
 ```
 
 ## Environments
-Below are the endpoints related to environments.
+Below are the endpoints related to **Runtime Locations** (previously environments)
 
 ### Get environments
 Get user's active Organization's environments.
