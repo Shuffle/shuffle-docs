@@ -120,8 +120,19 @@ On the cloud instance of Shuffle (https://shuffler.io) the following password po
   
 If you try to log in too many times in a short amount of time, you will be locked from attempting to log in for a short amount of time. [Details can be seen here: CheckPasswordStrength()](https://github.com/Shuffle/shuffle-shared/blob/c0c6ec07f7268622d9ad82b2854475bf987ded6c/shared.go#L9452)
 
-
 In local instances of Shuffle, password policies are minimal (8 characters).
+
+### MFA and SSO
+SAML/SSO and MFA is fully available and can be controlled from an organisation perspective. Users can be a part of multiple organisations, but if even one organisation the user is in enables "MFA Required", it will now be required for the users. 
+
+**MFA:** [https://shuffler.io/admin?tab=users](https://shuffler.io/admin?tab=users)
+
+<img width="1501" height="195" alt="image" src="https://github.com/user-attachments/assets/78df42d7-521f-42fd-8f3f-a54c4cd88630" />
+
+SAML/SSO: [https://shuffler.io/admin?admin_tab=sso](https://shuffler.io/admin?admin_tab=sso)
+
+<img width="1066" height="949" alt="image" src="https://github.com/user-attachments/assets/2726db10-ab43-4395-a604-b8c629d9cbf2" />
+
 
 ### Backend API access
 There are multiple [ways to access the API](/docs/API). The first is through the UI and a logged in user. The second is through the API directly with a Bearer token. The third is from a workflow execution.  
