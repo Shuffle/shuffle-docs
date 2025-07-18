@@ -113,8 +113,18 @@ Encrypted (AES-256):
 - [Decrypt](https://github.com/Shuffle/shuffle-shared/blob/d5e67ed2cefb5e94f3c516bdd3030384f6241754/shared.go#L11228)
 
 
+### Password Management
+On the cloud instance of Shuffle (https://shuffler.io) the following password policy applies:
+- Minimum length of 10
+- Lower- and Uppercase character
+  
+If you try to log in too many times in a short amount of time, you will be locked from attempting to log in for a short amount of time. [Details can be seen here: CheckPasswordStrength()](https://github.com/Shuffle/shuffle-shared/blob/c0c6ec07f7268622d9ad82b2854475bf987ded6c/shared.go#L9452)
+
+
+In local instances of Shuffle, password policies are minimal (8 characters).
+
 ### Backend API access
-There are multiple ways to access the API. The first is through the UI and a logged in user. The second is through the API directly with a Bearer token. The third is from a workflow execution.  
+There are multiple [ways to access the API](/docs/API). The first is through the UI and a logged in user. The second is through the API directly with a Bearer token. The third is from a workflow execution.  
 
 - Session Token: Defined in a users' browser as user logs in. 
 - Bearer Auth: This is a token provided to each user to be used with the [API](/docs/API)
