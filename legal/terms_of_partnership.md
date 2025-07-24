@@ -169,3 +169,21 @@ Shuffle can provide the Partner with an optional Partner package with Shuffle Pu
 The Shuffle Partner Package is an optional package that can be availed only by Shuffle Partners. The goal of the package is to get the Partner started with the Shuffle platform at an expedited rate with Shuffle Public Training and Shuffle Professional Services at a combined discounted fee of $3500.
 
 It includes Shuffle Public Training for up to 5 people (that helps in training Partner’s team about the Shuffle platform) and 15 hours of Shuffle Professional Services (that helps in additional development or work required from the Shuffle team; check Exhibit Professional Services), which can be availed at any point by the partner but recommended at the beginning of the partnership.
+
+## Legal
+
+On top of the terms outlined in [Terms of Service](https://shuffler.io/legal/terms_of_service), these additional terms apply to Terms of Partnership:
+
+
+1. The User agrees to: (a) use the System only as permitted by this Agreement; (b) take reasonable measures to prevent unauthorized access to the System (for example, by safeguarding login credentials); (c) comply with all applicable laws and regulations in connection with its use of the platform; and (d) be responsible for all actions taken by its Users.
+
+2. Shuffle retains all intellectual property rights to the software we provide, and all pre-existing and derivative IP. The Partner grants Shuffle a royalty-free, perpetual license to improvements or derivatives created by the Partner.
+
+3. The Partner shall not solicit or transact with customers introduced through Shuffle-Enabled offerings for non-Shuffle products/services without Shuffle’s approval.
+
+4. The Partner shall not: (a) subcontract or delegate any obligations under this Agreement,  (b) permit third-party access to the Vendor's software or materials, and/or (c) grant its customers, associates, or affiliates any rights or licenses under this Agreement. All rights and privileges granted to the Partner are non-transferable and non-assignable. This Agreement shall be binding upon and inure to the benefit of the Parties and their respective successors and assigns. Shuffle grants the Partner a non-exclusive, non-transferable, revocable license to use Shuffle’s IP solely for fulfilling this partnership agreement.
+
+5. The Partner shall not avoid payment obligations by renaming, rebranding, or white-labeling Shuffle-Enabled Products/Services. The Partner must notify Shuffle in writing of any rebranding within 10 business days and provide samples of marketing materials.
+
+
+6. The Partner may not engage third parties to develop, distribute, or support Shuffle-Enabled Products/Services without Shuffle’s prior written consent.
