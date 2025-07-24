@@ -1,8 +1,13 @@
-# Terms and Conditions
-Welcome to our terms and conditions. Just like with our [privacy policy](https://shuffler.io/docs/privacy_policy), it's really important that you take your time to read this. You need to be sure you agree with it before you start using the Shuffle Cloud Platform. If you have any questions about any of this then please get in touch with us at [support@shuffler.io](mailto:support@shuffler.io).
+# Terms of Service
+Welcome to our terms and conditions. Just like with our [privacy policy](https://shuffler.io/docs/privacy_policy), it's really important that you take your time to read this. You need to be sure you agree with it before you start using the Shuffle Cloud Platform, become an Enterprise Customer, or enter into a Partnership or Proof of Concept.
+
+If you have any questions about any of this then please get in touch with us at [support@shuffler.io](mailto:support@shuffler.io).
 
 ## Definitions
 The following capitalized terms shall have the following meanings whenever used in this Agreement.
+* "Shuffle" refers to the legal entity providing the Software as a Service ("SaaS") in the form of Cloud Services and delivery of Software to be used by the Customer on an on-premise or self-hosted setup, which shall be:
+  * Shuffle LLC, a limited liability company incorporated under the laws of the United States, for users whose principal place of business or residence is in the United States or outside of the United States with the exception of Europe.
+  * Shuffle AS, a company incorporated under the laws of Norway, for users whose principal place of business or residence is in Norway or Europe.
 * “AUP” means Shuffle’s acceptable use policy accessible farther down in this Terms of Service agreement.
 * “Cloud Services” means such software and software as a service (SAAS) integration services as Shuffle may provide from time to time via the System, including point-to-point data migration services and integration services for enterprise platforms, to customers on a subscription basis.
 * “Confidential Information” has the meaning ascribed to it in Section 7.
@@ -12,27 +17,157 @@ The following capitalized terms shall have the following meanings whenever used 
 * “Customization Services Addendum” means the optional agreement governing the provision of Customization Services to Customer.
 * “Documentation” means [Shuffle’s standard manual](https://shuffler.io/docs) related to use of the System, as well as any additional documentation provided to Customer in connection with this Agreement.
 * “Privacy Policy” means Shuffle’s privacy policy, currently posted at https://shuffler.io/docs/privacy_policy.
-* “Service Agreement” means the agreement executed by Customer and Shuffle pursuant to the Customization Services Addendum.
+* “Agreement” refers to this Terms of Service as well as the optional agreement executed by the User and Shuffle pursuant to the Customization Services Addendum.
 * “System” means Shuffle’s proprietary online platform designed for building and sharing software, SaaS and mobile application integrations, using the visual workflow editor or any major programming language.
 * “System Fees” has the meaning ascribed to it in Section 3.1 hereof.
-* “Term” is defined in Section 11.1 below.
-* “User” means any individual who uses the System on Customer’s behalf or through Customer’s account or passwords, whether authorized or not.
+* “Term” is defined in Section "Term and Termination" below.
+* “User” means any individual, entity, Customer, or Partner who uses the System provided by Shuffle. For purposes of this Agreement, "Customer" shoudl infer the same meaning and denotation as "User".
 * “Website” means the website owned and operated by Shuffle at https://shuffler.io.
+
+## Shuffle Cloud
+
+### About the Shuffle Cloud plan
+The Shuffle Cloud plan is made for anyone that wants to use Shuffle as a Service (SaaS), without worrying about infrastructure or scalability. The Cloud plan includes, but is not limited to access to Multi-Tenancy, Multi-Region and an unlimited amount of Workflows, Users, Apps and Organizations, Workflows as Functions and more. Features such as Multi-Environments and running Workflows and their Actions on-premises are also available. Additional features added over time, will be made immediately available to the User as it is released to their specific region.
+
+The pricing structure is based on the amount of App Runs completed per month. The Shuffle team will spend time with you at the start of the contract to make sure we can fully support your Apps and API’s, and will be available for followup sessions to help with your automation needs, and provide a point of contact within Shuffle.
+
+An App Run is based on how many Apps are executed within a Workflow. Actions within sub-organizations will count towards the same total as your main organization. The amount of App Runs included are refreshed on a monthly basis, and are renewed on the first of every month. The first billing cycle will start on the first of the next month, with the User getting immediate access from the day of payment.
+
+If User's usage exceeds the initial (as set forth above) or subsequently increased Included App Run limit ("Excess Usage"), Shuffle will automatically enable and invoice fees for Excess Usage at the rate specified in Service Details per App Run for the month of Excess Usage provided that User will have fourteen (14) days after first exceeding its Included Usage limit to contact Shuffle and request to increase its Included Usage limit to cover its Excess Usage to such date and any future usage.
+
+## Shuffle OnPrem (Self-Host)
+
+### About the Shuffle OnPrem (Self-Host) plan
+The Shuffle OnPrem (Self-Host) plan is made for anyone that wants to operate Shuffle within their own environment, with the option to scale out easily. It includes an upgraded license for the “Orborus” and “Worker” system, and includes regular support to help with uptime and maintenance of your Shuffle systems. The Shuffle team will spend time with you at the start of our contract to get your supported instance up and running, and provide a point of contact within Shuffle. This plan is aimed at growing together, and uses scalable pricing.
+
+If the User has more throughput than what their paid infrastructure can handle, Shuffle can not and will not guarantee high availability of Shuffle and its services, unless more computational resources are made available. In the case Shuffle has helped scope and decide the amount of computational resources necessary to handle the amount of throughput, but these are underestimated or further scale is required because of the underestimation, this does not lead to further costs on the side of the User until contract renegotiations.
+
+The pricing structure is based on the amount of App Runs completed per month. The Shuffle team will spend time with you at the start of the contract to make sure we can fully support your Apps and API’s, and will be available for followup sessions to help with your automation needs, and provide a point of contact within Shuffle.
+
+An App Run is based on how many Apps are executed within a Workflow. Actions within sub-organizations will count towards the same total as your main organization. The amount of App Runs included are refreshed on a monthly basis, and are renewed on the first of every month. The first billing cycle will start on the first of the next month, with the User getting immediate access from the day of payment.
+
+If User's usage exceeds the initial (as set forth above) or subsequently increased Included App Run limit ("Excess Usage"), Shuffle will automatically enable and invoice fees for Excess Usage at the rate specified in Service Details per App Run for the month of Excess Usage provided that User will have fourteen (14) days after first exceeding its Included Usage limit to contact Shuffle and request to increase its Included Usage limit to cover its Excess Usage to such date and any future usage.
+
+## Hybrid Cloud Access
+
+### About Hybrid Cloud Access
+Shuffle Cloud access is a part of Shuffle On-Prem, and gives the User access to features which aren’t feasible without the cloud integrations. This includes such features as Cloud Triggers, Configuration backups, workflow recommendations, a search engine. It will further be extended by new features as they become available, such as notifications and platform recommendations, New Triggers, App, playbook downloads, a cloud search engine and more. Hybrid Cloud can be enabled by following the Organization management documentation found here: https://shuffler.io/docs/organizations.
+
+All future features that are made for our Software-As-A-Service offering will be made accessible from the day they are implemented. All limits are soft limits which can be seen for each individual Organization in their Admin dashboard. Default limits include 2000 app executions, 1000 emails and 300 SMS for free each month, with the addition of multi-tenant cloud environments to enable hybrid for each on-premises organization. If the limits are exceeded over multiple periods (>=2 months), Shuffle may stop access to either of these features after notifying the User.
+
+## Training
+
+### About Public Training
+Public Training is not included by default. Public Training for Shuffle happens once every couple months and the User can choose which one to be a part of. It is a two day virtual course with a trainer from Shuffle, and includes but is not limited to: Workflow Development, App Development and Debugging, Organizational Control, Execution exploration and Information searching. The standard pricing is $500 per seat. For more information, visit https://shuffler.io/training.
+
+### About Private Training
+Private Training is not included by default. Private Training for Shuffle happens at a time agreed upon by Shuffle and User, and is accessible for up to any number of people as per agreement. It is a highly customizable (number of days, number of people, virtual or in-person, syllabus, pricing, timeline) course with a trainer from Shuffle, and includes but is not limited to: Workflow Development, App Development and Debugging, Organizational Control, Execution exploration and Information searching. The User can choose to add use cases and custom topics to cover for the Private Training. For more information, visit https://shuffler.io/training.
+
+### About Partner Training
+Partner Training is included by default with a partnership agreement. Partner Training for Shuffle happens at a time agreed upon by Shuffle and the Partner, and is accessible for up to any number of people as per agreement. It is of 2-3 hours and can be customized (number of people, syllabus) course with a trainer from Shuffle, and includes but is not limited to: Introduction to Shuffle, Workflow, App-runs, Usecases, Features and Differentiation, Architecture, Configuration, Deployment, Working, Data Management, Platform Walkthrough, Real-World Usecases, QnA.
+
+## Support
+
+### About Support
+Support will be provided by our experienced team of security engineers. Support is purchased separate from the license, but can be bundled together for a lower cost agreed upon by Shuffle and the User.
+
+Shuffle’s support team will provide support via remote assistance. All requests will be performed via email or our support portal (as it becomes available). Critical events can be logged via alert email under the Enterprise Support Plan and can be performed by online meetings (onCall).
+
+Our initial response (or acknowledgement) time for critical issues like service downtime is as follows:
+
+| Sr. No. | Event    | Description | Support Level | Time  |
+|---------|----------|------------|--------|---------|
+| 1       | Normal   | Trouble or any conditions where Shuffle is not fully functional, but is not causing business impact to the User. | Standard Support | 24 Hours |
+| 2       | Critical |  Trouble conditions where Shuffle is completely out of service or not fully functional, and is causing business impact to the User. | Enterprise Support | 15 Minutes |
+
+Any normal support requests should be sent to the Shuffle support email which is support@shuffler.io, while critical support requests should be directed to the alert email provided to the User during the onboarding process. Further details on Support are as follows:
+
+| Name | Standard Support | Enterprise Support |
+|------|------------------|--------------------|
+| Email Support | Yes | Yes |
+| onCall Support | No | Yes |
+| Alert Mechanism | No | Yes |
+| Professional Services | No | Yes |
+| Support Hours | 09:00AM - 3:00PM EST | 09:00AM - 3:00PM EST; 12:00PM - 5:00PM CEST; 10:00AM - 6:00PM IST
+| Support Days | Mon-Fri | Moni-Fri; Everyday for Alerts with slower response time on weekends |
+
+Abuse of the critical event email will force blocking of further use in the future.
+
+
+### About Standard Support
+
+Standard Support is email-based, and includes expert guidance and / or support with upgrades, solution configuration, deployment and bug fixes. It further includes help with deployment during onboarding and maintenance.
+
+### About Enterprise Support
+
+Enterprise support covers everything under Standard Support, and
+- On top of email-based support, it includes online meetings (onCall).
+- It include "alert" mechanism. Shuffle will provide an alert email to the User for critical issues that require urgent attention and cannot wait for the standard 24 hours response window.
+- Beyond the topics covered by Standard Support, Enterprise Support includes Professional Services that cover custom features, integrations or apps, or work specific to the User, as agreed upon by Shuffle and the User.
+
+### About Alert Mechanism
+
+Shuffle's alert mechanism is essentially for an expedited response from the Shuffle team. It brings the response time down from 24 hours to 15 minutes. It should be used when Shuffle is completely out of service or not fully functional, and is causing business impact to the User. Absue of this mechanism will force blocking of further use in the future for the User.
+
+### About Professional Services
+
+Professional Service gives User access to Non-recurring engineering (NRE), advice and process improvement by the experienced Shuffle team. NRE is any special development required by the User that is not covered by Standard Support and includes, but not limited to, new Integrations or Apps, Workflow development and special development of the Shuffle platform itself. Advice and process improvements are part of our professional services goal to help operations teams work more effectively, and in a more standardized manner.
+
+#### Custom Shuffle App Development
+Custom App Development in Shuffle incurs when the User requires an integration or extension which Shuffle doesn’t already have a developed version of. Shuffle will develop the necessary functions of the App, as well as any Action the User sees necessary for future use-cases. This process is typically started based on a use-case, where Shuffle will help identify the needs of the User. If this is not proprietary software, Shuffle will share the use-cases with the community to further support the community, and if agreed upon, Shuffle will add information about the User as the sponsor and/or co-creator of the App, without the entitlement of any compensation.
+
+#### Custom Workflow Development
+Custom Workflow Development in Shuffle incurs when the User requires a process to be automated with the help of Shuffle automation experts. Workflow development will start with a conversation between Shuffle and User to define our goals, before User gives access to a demo environment of the required tools if applicable. If this is not proprietary software or processes, Shuffle will share the use-cases with the community to further support the community, and if agreed upon, Shuffle will add information about the User as the sponsor and/or co-creator of the App, without the entitlement of any compensation.
+
+#### Special Shuffle Platform Development
+Special Shuffle Platform Development in Shuffle incurs when the User requires a change, update, or build of Shuffle platform itself. Special Shuffle platform development will start with a conversation between Shuffle and User to define our goals, before User gives access to a demo environment of the required tools if applicable.
+
+
+#### Custom Miscellaneous Development
+Custom Miscellaneous Development is incurred when the User requires help or development related to, but not limited to, infrastructure, in-product development, dashboards, or any other miscellaneous work. While not directly associated with Shuffle, the User can discuss the scope of the work, and necessary help can be provided if both Shuffle and the User agree to the scope of the work.
+
+
+
+## Disaster recovery & Business continuity
+Shuffle’s cloud services run completely on GCP and use GCP serverless functionality all around the world as redundant systems to ensure that User can reliably access their active utilities. In the case of problems with an onPrem (self-hosted) version of Shuffle, the User can work with Shuffle Support to provide the services necessary to get their instance up and running at full capacity.
+
+In the case of complete failures with GCP, it is likely to be resolved in a number of hours, but the service failure also translates to a complete failure of GCP. This would mean that other services running on GCP have also failed too. If a User strongly desires to get access to certain information during the outage, the User's IT team can work with Shuffle Support to access the required information. This may require extra verification of the person asking, as to verify whether they work with the User or not.
+
+Once GCP and Shuffle come back online, Shuffle will work with the User to ensure any and all use-cases affected by the outage will be running again at full capacity. If Shuffle on GCP is completely offline for an extended period of time (2+ days), Shuffle will work with the User to figure out a contingency plan to ensure the environment works as expected.
+
+In the case of circumstances outside of Shuffle’s control such as sickness or deaths, preventing business continuity for the contract to be fulfilled by Shuffle directly, Shuffle’s partner, Infopercept will take over all operations for the Partner. Infopercept has certain access rights, allowing them to take over and host the Shuffle cloud platform by themselves under these circumstances, and have certain extra access due to support fulfillment.
+
+## Availability
+The System, Cloud Services, and related services shall be available at least 99.9% of the time, excluding scheduled downtime for routine maintenance (not to exceed 4 hours a month) and downtime attributable to Force Majeure (the “Availability SLA”). Compliance with the Availability SLA will be measured on a calendar month basis. For clarity, the system and cloud services here include workflow executions (backend) and shuffler.io site (frontend), which will be covered by the Availability SLA.
+
+The Availability will be calculated by: (a) dividing: (i) the total number of minutes of up time (i.e., in which there were no Outages) during an applicable calendar month (excluding only downtime occurring during the scheduled maintenance period of 4 hours or less or attributable to elements of Force Majeure) by (ii) the total number of actual minutes in such month minus minutes of downtime occurring during the scheduled maintenance period or attributable to elements of Force Majeure, and then (b) multiplying that amount by 100.
+
+For purposes of this Agreement, an “Outage” means that substantially all of the System and/or Cloud Services are dysfunctional or unavailable, and “Force Majeure” means events and conditions caused by acts of war, terrorism, hurricanes, earthquakes, other acts of God or of nature, strikes or other labor disputes, riots or other acts of civil disorder, embargoes, or other causes beyond the performing party’s reasonable control.
+
+
+Credits will be provided as an addition to existing license tier provisioned to the User at no cost. The following Service Credits shall apply in the event the Availability SLA is not met:
+
+| Less Than | Greater Than | Credit |
+|------|------------------|--------------------|
+| 99.9 | 99.8 | Additional 15k App Runs for 1 Month |
+| 99.8 | 99.7 | Additional 30k App Runs for 2 Months |
+| 99.7 | 99.6 | Additional 45k App Runs for 3 Months |
+| 99.6 | 99.5 | Additional 60k App Runs for 4 Months |
+| 99.5 | N/A | Additional 100k App Runs for 6 Months |
 
 ## Acceptable Use Policy
 Our acceptable use policy sets per-organization usage limits and was designed to prevent misuse and unduly burdensome use of the platform. These limits are put in place for our cloud offering, and do not apply to the [open source model](https://github.com/frikky/shuffle), which is free indefinitely.
 
-### Monthly limits
+### Monthly limits for Cloud Services
 All monthly limits are per organization, including its sub-organizations. 
 
-### Free Plan
-- **App Executions** - 10.000 
+### Starter Plan
+- **App Executions** - 2000
 - **Bandwidth** - 10GB in and 10GB out of Shuffle 
 
-### Scale, Enterprise & MSSP Plan
-- **App Executions** - Minimum 300.000 or 8 CPU cores
+### Scale and Enterprise Plan
+- **App Executions** - Minimum 300.000
 - **Bandwidth** - 1000 GB in and 1000 GB out of Shuffle 
-- **Extended limits** - Varies based on agreement - by default $0.006/app execution above normal limit, or $120 per CPU core supported above normal limit. Please [contact us](https://shuffler.io/contact) us for more information.
 
 ## The system
 1. Use of the System. During the Term and provided that this Agreement has not been terminated by either party, and in consideration of the payment of the System Fees, Customer may access and use the System pursuant and subject to: (a) the terms of any outstanding Customer Order, including such features and functions as the Customer Order provides and any limitations on the number of Users, data volume and capacity as the Customer Order imposes; and (b) AUP and Shuffle’s other policies posted on its Website at shuffler.io, as such policies may be updated from time to time.
@@ -132,15 +267,12 @@ Each Party (Shuffle and the Customer) shall be liable for any damage caused to t
 
 8. The agreement or subscription will automatically renew for successive periods of 1 year each (or 1 month each as per the subscription chosen), unless either party gives written termination notice to the other at least 60 days prior to the date of expiration. This automatic renewal will continue until either party provides termination notice, at which point the agreement will terminate at the end of the then-current term.
 
-9. Any work requested outside of or resulting from this project will be subject to a separate evaluation, analysis, and invoicing.
+9. Any work requested outside of or resulting from this agreement will be subject to a separate evaluation, analysis, and invoicing.
 
-10. In the event of any dispute, controversy, or claim arising out of or relating to this terms of service, or the breach, termination, or invalidity thereof, the parties agree to first attempt to resolve the dispute amicably through mediation. The mediation shall be conducted in accordance with the rules of The American Arbitration Association. If the dispute is not resolved within 30 days from the commencement of mediation, either party may initiate binding arbitration or pursue other available legal remedies.
+10. In the event of any dispute, controversy, or claim arising out of or relating to this terms of service, or the breach, termination, or invalidity thereof, the parties agree to first attempt to resolve the dispute amicably through mediation. The mediation shall be conducted in accordance with the rules of The American Arbitration Association (or Norway's Act relating to mediation and procedure in civil disputes (The Dispute Act) if explicitly stated in the Additional Terms Section of the Service Agreement or Partnership Agreement with the User). If the dispute is not resolved within 30 days from the commencement of mediation, either party may initiate binding arbitration or pursue other available legal remedies.
 
-11. We have further terms for the Shuffle cloud platform available at https://shuffler.io/docs/terms_of_service.
+11. All monetary amounts stated in this Agreement are in United States Dollars (USD).
 
-12. We collect and process data according to https://shuffler.io/docs/privacy_policy.
-
-13. This Agreement constitutes the entire agreement of the parties with regard to the subject matter hereof, and supersedes all previous written or oral representations, agreements and understandings between the parties, whether expressed or implied.
 
 ## Miscellaneous
 1. Independent Contractors. The parties are independent contractors and will so represent themselves in all regards. Neither party is the agent of the other, and neither may make commitments on the other’s behalf. The parties agree that no Shuffle employee or contractor will be an employee of Customer.
