@@ -12,6 +12,7 @@ This is the initial privacy policy for Shuffle cloud. Valid as of this file's la
 * [External platforms](#external_platforms)
 * [User Data Management](#user_data_management)
 * [Contact Information](#contact_information)
+* [Log retention](#log_retention)
 
 ## Introduction
 We are Shuffle AS (and Shuffle LLC, the subsidiary), and this privacy policy will tell you how we use and protect your personal data.
@@ -95,5 +96,8 @@ We use the third party payment processor [Stripe](https://stripe.com/us/privacy)
 
 ### Contact Information
 Data Controller: Shuffle AS and Shuffle LLC
+
+### Log retention
+Our policy is to retain logs for 15 days on cloud, however this is subject to change. For on-prem users, this is up to the server administrators running shuffle (generally, it is the customer doing that).
 
 Contact info: [privacy@shuffler.io](mailto:privacy@shuffler.io)
