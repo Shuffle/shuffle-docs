@@ -836,7 +836,7 @@ cd .. & tar cvf shuffle-export.tar.gz shuffle-export
 
 4. Export data to the targeted machine
 
-Use scp, usb key, ..., to copy the previous archive to the machine. [More about manual transfers here](http://localhost:3002/docs/configuration#manual_docker_image_transfers)
+Use scp, usb key, ..., to copy the previous archive to the machine. [More about manual transfers here](/docs/configuration#manual_docker_image_transfers)
 
 5. Import docker images to host without internet
    
