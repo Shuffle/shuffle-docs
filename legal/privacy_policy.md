@@ -11,6 +11,8 @@ This is the initial privacy policy for Shuffle cloud. Valid as of this file's la
 * [External social media platforms](#external_social_media_platforms)
 * [External platforms](#external_platforms)
 * [User Data Management](#user_data_management)
+* [Business Transfers (Acquisition or Bankruptcy Events)](#Business_Transfers)
+* [Data Ownership and Control](#Data_Ownership_and_Control)
 * [Contact Information](#contact_information)
 * [Log retention](#log_retention)
 
@@ -86,6 +88,15 @@ We use the third party payment processor [Stripe](https://stripe.com/us/privacy)
 ### User Data Management
 * Collected data: Email addresses, Domains, Organization names, Firstname, Lastname, Authentication keys
 * Usage: User signin and Email outreach 
+
+### Business Transfers
+
+Business Transfers: In connection with any merger, acquisition, sale of company assets, or in the unlikely event that Shuffle goes out of business or enters bankruptcy, user information may be transferred to or acquired by a third party. If any of these events occur, you will retain all of your data and privacy rights even after the transfer. This Privacy Policy will continue to apply to your information, and any successor or acquiring entity must honor the same commitments they may only use and protect your information consistent with the terms of this Privacy Policy. In practical terms, this means that your rights (for example, the right to access or delete your data) remain intact and enforceable, regardless of any change in our ownership or corporate status.
+
+### Data Ownership and Control
+
+Ownership of Your Data: You (and your institution) retain ownership of all data that you enter, upload, or generate through our Services, including all inputs, outputs, and associated metadata. We do not claim any ownership rights over your content or data; it remains your property at all times. Shuffle will access and process your data solely for the purposes of providing and improving the Services (and for any other purposes you have authorized), in accordance with this Privacy Policy and our Terms of Service. We will never use, disclose, or transfer your data for any other purpose without your explicit consent. This provision ensures that your institution’s data, and any results or insights derived from it, remain under your control and ownership even as it resides on our platform.
+
 
 ### User Creations 
 1. Apps: Optional sharing with everyone
