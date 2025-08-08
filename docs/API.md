@@ -762,6 +762,8 @@ curl https://shuffler.io/api/v1/files/{id} -H "Authorization: Bearer APIKEY"
 ### Delete a file
 Deletes a file. The file meta is left intact, but the file itself is removed from existence. Status is changed to "deleted".
 
+**PS: To REMOVE the data entirely, add `?remove_metadata=true` to the url** 
+
 Methods: DELETE
 
 ```bash
