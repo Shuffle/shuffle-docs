@@ -1,7 +1,7 @@
 # About Shuffle
 Shuffle started as a project in mid-2019 because of a few automation related problems that needed more attention in the [CERT/SIRT](https://en.wikipedia.org/wiki/Computer_emergency_response_team) community. Available automation solutions in the security industry are trying to do everything at once; handle tickets, indicators, threat intel and much more in a single platform, while our goal is to build the best **automation solution** to fit all your existing tools while following the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well): "Do One Thing and Do It Well". 
 
-[![Shuffle Overview PDF](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/Shuffle%20Overview.png)](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/Shuffle%20Overview.pdf)
+[![Shuffle Presentation PDF](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/Shuffle%20Presentation.png)](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/Shuffle%20Presentation.pdf)
 
 ## Mission
 To make every security operations center share their processes, automations and detections in a standardized way. Cybersecurity is not a competiton, and shouldn't treated as such.
