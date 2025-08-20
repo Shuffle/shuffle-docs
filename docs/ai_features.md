@@ -14,7 +14,7 @@ Whether you're using the cloud version or the open-source self-hosted version, t
 4. Click **AI Generate**.
 5. The AI-generated workflow will appear. You can use it as is or modify it if needed
 
-![AI Generate UI placeholder](image_placeholder_ui_ai_generate.png)
+<img width="785" height="787" alt="AI_generate_page" src="https://github.com/user-attachments/assets/c756caf1-a32b-4b56-bd5a-81fc2ec879dd" />
 
 ## Setting Up AI for Open Source / Self-Hosted Shuffle
 
