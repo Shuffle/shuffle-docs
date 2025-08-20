@@ -4,8 +4,6 @@
 
 Shuffle now includes AI-powered workflow generation. This allows you to quickly create workflows by simply describing them in natural language. The AI will generate the workflow steps automatically.
 
-Whether you're using the cloud version or the open-source self-hosted version, the workflow AI feature works the same way from the user's perspective.
-
 ## Using AI Workflow Generation
 
 1. Go to the **Workflows** page.
