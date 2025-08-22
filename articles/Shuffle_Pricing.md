@@ -6,7 +6,7 @@ Shuffle's pricing is primarily based on two things:
 1. License - Based on App-Runs.
 2. Support - Based on Post-Onboarding Needs.
 
-We also have [training](https://shuffler.io/training) and [professional services](https://shuffler.io/professional-services), but they are optional and available if you need them.
+We also have [training](https://shuffler.io/training), but it is optional and available if you need it.
 
 ## What are App-Runs?
 
