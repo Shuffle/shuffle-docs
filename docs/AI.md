@@ -12,9 +12,17 @@ Read the [usage Shuffle Docs here](https://github.com/Shuffle/openapi-apps/blob/
 Website: [https://singul.io](https://singul.io)
 
 ## AI Agents
-Agents are a way to have an AI model interact with the world. In Shuffle, this means using tools (playbooks) to perform actions. We intend to provide controllable, deterministic Agents that can be used to perform tasks. 
+Agents are a way to have an AI model interact with the world. In Shuffle, this means using tools (playbooks) to perform actions. We intend to provide controllable, deterministic Agents that can be used to perform tasks.
 
-**This is in Beta and is not generally available yet.**
+**Some areas has been built for:**
+- Tool Usage  (Collection, Enrichment, Detection & Response)
+- Reasoning   (Helps with workflow building)
+- Correlation (Historical alerts and cases)
+- RAG         (Docs: Knowledge base usage)
+
+They can additionally talk to each other and be published for third party use. 
+
+**This is in private Beta and is not generally available yet. If you would like to try it, please reach out to support@shuffler.io and ask about AI Agents.**
 
 ## Workflow Generation
 AI Workflow generation is a great starting point.
@@ -29,7 +37,9 @@ AI Workflow generation is a great starting point.
 
 ## Self-Hosting models
 
-For the open-source version, you need to provide details about your self-hosted AI model.
+For the open-source version, you need to provide details about your self-hosted AI model. If you haven't done this before, we recommend looking into [Ollama with the OpenAI gpt-oss model](https://ollama.com/blog/gpt-oss).
+
+[Ollama installation](https://ollama.com/)
 
 ### Environment Variables
 
