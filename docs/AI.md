@@ -24,8 +24,44 @@ They can additionally talk to each other and be published for third party use.
 
 **This is in private Beta and is not generally available yet. If you would like to try it, please reach out to support@shuffler.io and ask about AI Agents.**
 
-## Workflow Generation
-AI Workflow generation is a great starting point.
+## How to Generate Your First Workflow with AI
+This guide will walk you through creating a complete, functional Shuffle workflow in seconds, just by describing what you want to do in plain English.
+
+
+**Step 1: Navigate to the Workflow Page**
+* From the main Shuffle dashboard, click on the "Workflows" icon in the left-hand navigation menu. This will take you to your list of existing workflows.
+
+**Step 2: Start a New Workflow**
+* In the top right corner of the Workflows page, click the "Create Workflow" button.
+
+**Step 3: Describe Your Goal**
+At the top of the canvas, you will see a text box that says "Describe your workflow in natural language...". This is where the magic happens.
+
+* Click inside this box and type out the process you want to automate.
+**Tips for a Great Description:**
+* **Be Specific:** Instead of "Check a URL," try "Check a URL in VirusTotal."
+* **Name Your Tools:** Mention the specific apps you want to use (e.g., "Open a ticket in Jira," "Send a message to Slack").
+
+**Example Description:**
+  When a phishing email is reported, get the URL from the email body. Check the URL's reputation in VirusTotal. If the score is above 5, create a new ticket in      TheHive and send a high-priority alert to the 'security-alerts' channel in Slack.
+
+**Step 4: Generate the Workflow**
+
+* Once you are happy with your description, click the "AI Generate" button.
+* Wait a few moments. The AI will analyze your request and automatically build the workflow on the canvas, complete with the right apps and connections.
+
+**Step 5: Review and Customize**
+* The AI-generated workflow is a powerful starting point. You can now:
+
+* Click on each app to configure its specific settings (e.g., authenticating with your Jira account).
+
+* Drag and drop new apps onto the canvas.
+
+* Modify the connections between the apps.
+
+* Once you are satisfied, give your workflow a name at the top of the page and click "Save".
+
+**Congratulations! You've just built an automation workflow using AI.**
 
 1. Go to the **Workflows** page.
 2. Click **Create Workflow**.
