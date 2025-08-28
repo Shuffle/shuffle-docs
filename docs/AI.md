@@ -35,9 +35,20 @@ This guide will walk you through creating a complete, functional Shuffle workflo
 * In the top right corner of the Workflows page, click the "Create Workflow" button.
 
 **Step 3: Describe Your Goal**
-At the top of the canvas, you will see a text box that says "Describe your workflow in natural language...". This is where the magic happens.
 
+****You have two options: writing a description or uploading a flowchart.****
+
+#### 
+
+***Option A: Write a Text Description***
+
+<img width="600" height="650" alt="AI_generate_page" src="https://github.com/user-attachments/assets/c756caf1-a32b-4b56-bd5a-81fc2ec879dd" />
+
+
+
+* At the top of the canvas, you will see a text box that says "Describe your workflow in natural language...". This is where the magic happens.
 * Click inside this box and type out the process you want to automate.
+
 **Tips for a Great Description:**
 * **Be Specific:** Instead of "Check a URL," try "Check a URL in VirusTotal."
 * **Name Your Tools:** Mention the specific apps you want to use (e.g., "Open a ticket in Jira," "Send a message to Slack").
@@ -45,9 +56,34 @@ At the top of the canvas, you will see a text box that says "Describe your workf
 **Example Description:**
   When a phishing email is reported, get the URL from the email body. Check the URL's reputation in VirusTotal. If the score is above 5, create a new ticket in      TheHive and send a high-priority alert to the 'security-alerts' channel in Slack.
 
+***Option B: Upload a Flowchart Image***
+
+If you prefer to visualize your process, you can upload an image of a flowchart. The AI will analyze the shapes, text, and connections in the diagram to build your workflow.
+
+<img width="600" height="650" alt="flowchart" src="https://github.com/user-attachments/assets/a484e0ed-3f21-4a3c-a8f3-dbd333a893e4" />
+
+* Look for the large box below the "Description" field that says "Generate Workflow from Flowchart" with a cloud upload icon.
+
+* Click anywhere inside this box. This will open your computer's file browser.
+
+* Select a flowchart image (e.g., a .png, .jpg, or .jpeg file up to 5MB in size) from your computer.
+
+**Pro Tip: Add a Description for Even Better Results**
+Even after uploading your flowchart, we recommend adding a brief text description in the "Description" box (mentioned in Option A).
+
+Think of this description as extra instructions for the AI model. It helps clarify any details or ambiguities in the flowchart and provides specific context, leading to an even more accurate and powerful workflow.
+
+**Example description to add:**
+
+This flowchart shows our phishing response process. The goal is to automate the URL check with VirusTotal and create a Jira ticket for malicious findings.
+
+**Important Note for Self-Hosted Users:**
+The ability to process images depends entirely on your AI model. This feature is fully supported when using Shuffle Cloud's default model. If you are using a self-hosted model (like Ollama), you must ensure it is a multimodal model (one that can understand both text and images) for this feature to work correctly.
+
+
 **Step 4: Generate the Workflow**
 
-* Once you are happy with your description, click the "AI Generate" button.
+* Once you are satisfied with your description or uploaded flowchart, click the 'AI Generate' button.
 * Wait a few moments. The AI will analyze your request and automatically build the workflow on the canvas, complete with the right apps and connections.
 
 **Step 5: Review and Customize**
@@ -59,17 +95,7 @@ At the top of the canvas, you will see a text box that says "Describe your workf
 
 * Modify the connections between the apps.
 
-* Once you are satisfied, give your workflow a name at the top of the page and click "Save".
-
 **Congratulations! You've just built an automation workflow using AI.**
-
-1. Go to the **Workflows** page.
-2. Click **Create Workflow**.
-3. Describe your workflow in natural language.
-4. Click **AI Generate**.
-5. The AI-generated workflow will appear. You can use it as is or modify it if needed
-
-<img width="785" height="787" alt="AI_generate_page" src="https://github.com/user-attachments/assets/c756caf1-a32b-4b56-bd5a-81fc2ec879dd" />
 
 ## How to set up a Self-Hosted AI Model with Shuffle
 
