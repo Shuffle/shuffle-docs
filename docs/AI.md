@@ -29,10 +29,12 @@ This guide will walk you through creating a complete, functional Shuffle workflo
 
 
 **Step 1: Navigate to the Workflow Page**
-* From the main Shuffle dashboard, click on the "Workflows" icon in the left-hand navigation menu. This will take you to your list of existing workflows.
+* In the navigation sidebar on the left, click on "Workflows". This will take you to the `/workflows` page where you'll see your list of existing workflows.
 
 **Step 2: Start a New Workflow**
 * In the top right corner of the Workflows page, click the "Create Workflow" button.
+
+<img width="1200" height="966" alt="create_workflow" src="https://github.com/user-attachments/assets/8938b032-db6f-4f25-b8bb-578f241c638c" />
 
 **Step 3: Describe Your Goal**
 
