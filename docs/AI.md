@@ -70,7 +70,7 @@ If you prefer to visualize your process, you can upload an image of a flowchart.
 
 * Select a flowchart image (e.g., a .png, .jpg, or .jpeg file up to 5MB in size) from your computer.
 
-**Pro Tip: Add a Description for Even Better Results**
+**Pro Tip:** Add a Description for Even Better Results
 Even after uploading your flowchart, we recommend adding a brief text description in the "Description" box (mentioned in Option A).
 
 Think of this description as extra instructions for the AI model. It helps clarify any details or ambiguities in the flowchart and provides specific context, leading to an even more accurate and powerful workflow.
