@@ -41,30 +41,64 @@ While Shuffle's Cloud platform provides AI credits to get you started, connectin
 
 **Before you configure Shuffle, please ensure you have the following ready:**
 
-* 1 A Server to Run the AI: You need a computer that Shuffle can reach over the network. This can be a VM, physical server or a cloud instance.
-* 2 Ollama Installed and Running: We recommend Ollama as the simplest way to run LLMs. Make sure it's installed and the service is running. You can find 
+1. A Server to Run the AI: You need a computer that Shuffle can reach over the network. This can be a VM, physical server or a cloud instance.
+2. We recommend Ollama as the simplest way to run local AI models. Go to [Download Ollama](https://ollama.com/download) to install it on your server. After installation, make sure the Ollama service is running.
+3. Once Ollama is installed, you need a model for it to serve. For a great starting point, we recommend the gpt-oss model. It's a powerful and versatile model perfect for general tasks. (You can read more about it in Ollama's official announcement [here](https://ollama.com/blog/gpt-oss)). Of course, you can use any model available on Ollama. Our gpt-oss suggestion is just a recommendation to make getting started easy.
 
 
-For the open-source version, you need to provide details about your self-hosted AI model. If you haven't done this before, we recommend looking into [Ollama with the OpenAI gpt-oss model](https://ollama.com/blog/gpt-oss).
-
-[Ollama installation](https://ollama.com/)
-
-### Environment Variables
+Open your server's terminal and run this command:
 
 ```bash
-# URL of your AI server (required for self-hosted models)
-OPENAI_API_URL=http://localhost:11434/v1
-
-# API Key (optional if authentication is enabled)
-OPENAI_API_KEY=myapikey
-
-# Model to use (required)
-AI_MODEL=your-model-name
+ollama run gpt-oss:20b
 ```
+
+### Setting Up Environment Variables in Shuffle
+
+Once your self-hosted AI model is running, you can proceed with setting up the necessary environment variables in Shuffle.
+
+**Step 1: Find Your AI Server Details**
+
+You will need the following information from your self-hosted AI server:
+
+* The full URL of the API (e.g., http://192.168.1.55:11434/v1).
+* The exact name of the model you want to use (e.g., llama3).
+* An API key (if your server requires authentication).
+
+**Step 2: Set the Environment Variables**
+
+`OPENAI_API_URL` (Required)
+
+* What it is: The full URL to your AI server's API endpoint.
+
+Example: 
+```bash
+OPENAI_API_URL=http://localhost:11434/v1
+```
+
+`AI_MODEL` (Required)
+
+* What it is: The exact name of the model you want Shuffle to use.
+
+Example:
+```bash
+AI_MODEL=llama3
+```
+
+OPENAI_API_KEY (Optional)
+
+* What it is: The API key or token if your server requires authentication.
+
+Example:
+```bash
+OPENAI_API_KEY=sk-mysecretkey123
+```
+
 
 Shuffle can support any self-hosted model that implements the OpenAI API interface. Examples include Ollama, local LLMs wrapped with OpenAI-compatible endpoints, or any other model that exposes the same API.
 
-Once these are set, start your Shuffle backend server. The AI features will be automatically enabled, allowing you to use AI features.
+Once these are set, there is no need to restart your Shuffle backend server as the checks happen in real-time. The AI features will be automatically enabled, allowing you to use them immediately.
+
+**Note: You need to refresh the Shuffle UI page in your browser for the new AI features to appear.**
 
 
 ### Troubleshooting
