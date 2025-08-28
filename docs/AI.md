@@ -35,7 +35,15 @@ AI Workflow generation is a great starting point.
 
 <img width="785" height="787" alt="AI_generate_page" src="https://github.com/user-attachments/assets/c756caf1-a32b-4b56-bd5a-81fc2ec879dd" />
 
-## Self-Hosting models
+## How to set up a Self-Hosted AI Model with Shuffle
+
+While Shuffle's Cloud platform provides AI credits to get you started, connecting your own self-hosted AI model gives you ultimate control and flexibility. This guide will walk you through the process.
+
+**Before you configure Shuffle, please ensure you have the following ready:**
+
+* 1 A Server to Run the AI: You need a computer that Shuffle can reach over the network. This can be a VM, physical server or a cloud instance.
+* 2 Ollama Installed and Running: We recommend Ollama as the simplest way to run LLMs. Make sure it's installed and the service is running. You can find 
+
 
 For the open-source version, you need to provide details about your self-hosted AI model. If you haven't done this before, we recommend looking into [Ollama with the OpenAI gpt-oss model](https://ollama.com/blog/gpt-oss).
 
