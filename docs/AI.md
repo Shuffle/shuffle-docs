@@ -40,7 +40,6 @@ This guide will walk you through creating a complete, functional Shuffle workflo
 
 ****You have two options: writing a description or uploading a flowchart.****
 
-#### 
 
 ***Option A: Write a Text Description***
 
