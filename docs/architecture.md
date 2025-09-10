@@ -96,7 +96,7 @@ Hashed (bcrypt):
 - User passwords.
 
 Encrypted (AES-256):
-- [App authentication](#app_authentication) and [Files](#files) are being encrypted. The seed used for hashing is random for each organization, and can be set with the environment variable SHUFFLE_ENCRYPTION_MODIFIER in the local version of Shuffle. This is automatically handled in our SaaS offering. How it works: 
+- [App authentication](/docs/organizations#app_authentication), [Protected Datastore Keys](/docs/organizations#datastore) and [Files](/docs/organizations#files) are being encrypted. The seed used for hashing is random for each organization, and can be set with the environment variable SHUFFLE_ENCRYPTION_MODIFIER in the local version of Shuffle. This is automatically handled in our SaaS offering. How it works: 
 
 	1. Create md5 hash from Org ID + Workflow_id + Auth timestamp + SHUFFLE_ENCRYPTION_MODIFIER
 	2. Encrypt the authentication value with [aes.NewCipher](https://cs.opensource.google/go/go/+/go1.17.1:src/crypto/aes/cipher.go;l=32)
