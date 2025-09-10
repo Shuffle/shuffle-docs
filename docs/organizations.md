@@ -171,6 +171,8 @@ These are **NOT** editable outside of deletion as of november 2020, but we may a
 Shuffle supports the use of a KMS. [Please see the extension documentation for more](/docs/extensions#kms).
 
 ### App Authentication Groups
+**Groups was taken out of beta and was removed for the 2.0.0 release**
+
 App Authentication groups are a way for you to group authentications together, enabling a single workflow to run with multiple different authentication options and runtime locations. When a workflow runs with authentication groups selected, the workflow execution will replicate and run multiple versions of the same workflow at the same time, where the relevant authentication is filled in in real-time. 
 
 <img width="830" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/44e1d2f6-6e1c-4736-834a-a98e6419814e">
@@ -181,8 +183,6 @@ App Authentication groups are a way for you to group authentications together, e
 - Choose the App Auth group you want to use in the app
 
 If these requirements are fulfilled, the workflow will run as many times as there are App Auth groups selected in that workflow. If one app (e.g. Outlook) has selected to use App Auth groups in a workflow, we will distribute this to every node in the same workflow
-
-This is a Beta feature aimed at Service Providers / MSSP's, and is being fleshed out in Q3 2024. If you are interested, please reach out to support@shuffler.io.
 
 **App Auth Groups vs. Suborg Workflow distribution**
 A similar topic for running workflows is the Suborg Workflow distribution system, available in the Edit Workflow menu. 
@@ -264,16 +264,6 @@ docker run \
 By clicking the "Scale" or "K8s" tab, you will get relevant info related to scaling Shuffle the way you want. This IS available from cloud to onprem (hybrid).
 
 <img width="837" alt="image" src="https://github.com/user-attachments/assets/84eed978-e857-4965-87e3-813b0d5e964f" />
-
-
-### Files
-You can learn more about files in this Youtube video:
-
-
-
-[![Shuffle files tutorial](https://img.youtube.com/vi/DPYowyTbsSk/0.jpg)](https://www.youtube.com/watch?v=DPYowyTbsSk)
-
-
 
 
 ### Using Multiple Environments
