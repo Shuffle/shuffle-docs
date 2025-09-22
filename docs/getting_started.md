@@ -14,12 +14,12 @@ Welcome to the Shuffle documentation! This guide will help you get up and runnin
 ## Overview
 Shuffle is an open-source automation platform designed specifically for the security industry. You can start using it for free with the following options:
 
-- **<a href="https://github.com/shuffle/shuffle/blob/main/.github/install-guide.md" target="_blank">Open Source (On-Premises)</a>**
+- <a href="https://github.com/shuffle/shuffle/blob/main/.github/install-guide.md" target="_blank">Open Source (On-Premises)</a>
   <br/>Download and install Shuffle in your infrastructure.
-- **<a href="https://shuffler.io/register" target="_blank">Cloud Signup (SaaS)</a>**
+- <a href="https://shuffler.io/register" target="_blank">Cloud Signup (SaaS)</a>
   <br/>Sign up for Shuffle's cloud-based service and get started quickly. Allows for Multi-Tenant and <a href="https://shuffler.io/legal/privacy_policy#data-location" target="_blank">stores data in a location near you</a>.
-- **<a href="https://shuffler.io" target="_blank">Hybrid Cloud</a>**
-  Use Local Shuffle Agents connected to your Shuffle Cloud Organizations.
+- <a href="https://shuffler.io" target="_blank">Hybrid Cloud</a>
+  <br/>Use Local Shuffle Agents connected to your Shuffle Cloud Organizations.
 
 **Need help? Check out these resources:**
 - **[Training](https://shuffler.io/training)**  
