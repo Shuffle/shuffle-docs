@@ -14,16 +14,14 @@ Welcome to the Shuffle documentation! This guide will help you get up and runnin
 ## Overview
 Shuffle is an open-source automation platform designed specifically for the security industry. You can start using it for free with the following options:
 
-- **[Open Source (On-Premises)](https://github.com/shuffle/shuffle/blob/main/.github/install-guide.md)**  
-  Download and install Shuffle in your infrastructure.
-- **[Cloud Signup (SaaS)](https://shuffler.io/register)**  
-  Sign up for Shuffle's cloud-based service and get started quickly. Allows for Multi-Tenant and [stores data in a location near you](https://shuffler.io/docs/privacy_policy#data-location). 
-- **[Hybrid Cloud](https://shuffler.io)**
+- **<a href="https://github.com/shuffle/shuffle/blob/main/.github/install-guide.md" target="_blank">Open Source (On-Premises)</a>**
+  <br/>Download and install Shuffle in your infrastructure.
+- **<a href="https://shuffler.io/register" target="_blank">Cloud Signup (SaaS)</a>**
+  <br/>Sign up for Shuffle's cloud-based service and get started quickly. Allows for Multi-Tenant and <a href="https://shuffler.io/docs/privacy_policy#data-location" target="_blank">stores data in a location near you</a>.
+- **<a href="https://shuffler.io" target="_blank">Hybrid Cloud</a>**
   Use Local Shuffle Agents connected to your Shuffle Cloud Organizations.
 
 **Need help? Check out these resources:**
-- **[Professional Services](https://shuffler.io/professional-services)**  
-  Explore our professional services for advanced support and customization.
 - **[Training](https://shuffler.io/training)**  
   Access training resources to get up to speed with Shuffle.
 - **[Old Training Videos](https://drive.google.com/drive/folders/1MtVfkCXDMSZ9yBwLDiVb0lj1H-oAK5RZ?usp=sharing)**  
