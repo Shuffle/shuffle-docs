@@ -17,7 +17,7 @@ Shuffle is an open-source automation platform designed specifically for the secu
 - **<a href="https://github.com/shuffle/shuffle/blob/main/.github/install-guide.md" target="_blank">Open Source (On-Premises)</a>**
   <br/>Download and install Shuffle in your infrastructure.
 - **<a href="https://shuffler.io/register" target="_blank">Cloud Signup (SaaS)</a>**
-  <br/>Sign up for Shuffle's cloud-based service and get started quickly. Allows for Multi-Tenant and <a href="https://shuffler.io/docs/privacy_policy#data-location" target="_blank">stores data in a location near you</a>.
+  <br/>Sign up for Shuffle's cloud-based service and get started quickly. Allows for Multi-Tenant and <a href="https://shuffler.io/legal/privacy_policy#data-location" target="_blank">stores data in a location near you</a>.
 - **<a href="https://shuffler.io" target="_blank">Hybrid Cloud</a>**
   Use Local Shuffle Agents connected to your Shuffle Cloud Organizations.
 
