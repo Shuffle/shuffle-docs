@@ -13,6 +13,7 @@ Documentation for troubleshooting and debugging known issues in Shuffle.
 * [Opensearch permission errors](#opensearch_permissions_error)
 * [Recover admin user](#recover-admin-user)
 * [Delete user](#delete_user)
+* [Docker client version too new](#docker_client_version)
 * [Useful OpenSearch Queries](#useful_opensearch_queries)
 * [Extract all workflows](#extract_all_workflows)
 * [Rebuilding an OpenSearch index](#rebuilding_an_opsearch_index)
@@ -260,6 +261,12 @@ sudo chown 1000:1000 -R shuffle-database
     ```
     curl -X DELETE "https://localhost:9200/users/_doc/<user_id>?pretty" -H 'Content-Type: application/json' --insecure -u <opensearch_user>:<opensearch_password>
     ```
+
+## Docker client version too new
+If we run into "Failed to build: Error in Docker build: Error response from daemon: client version 1.51 is too new. Maximum supported APl version is 1.43" add the following environment variable into docker-compose under the backend section.
+
+```- DOCKER_API_VERSION=1.40```
+
 
 ## Recover admin user
 If you find yourself in a situation where you have forgotten your passowrd and need a reset for your user, you can reset your lost password in your local instance by doing the following: 
