@@ -642,7 +642,7 @@ Supported fields:
 Methods: PUT
 
 ```bash
-curl https://shuffler.io/api/v1/users/updateuser -H "Authorization: Bearer APIKEY" -d '{"user_id": "USERID", "role": "user"}'
+curl -X PUT https://shuffler.io/api/v1/users/updateuser -H "Authorization: Bearer APIKEY" -d '{"user_id": "USERID", "role": "user"}'
 ```
 
 
@@ -657,7 +657,7 @@ Deactivates a user. This exists instead of a deletion method. Requires admin rig
 Method: DELETE 
 
 ```bash
-curl -XDELETE https://shuffler.io/api/v1/users/{userid} -H "Authorization: Bearer APIKEY" 
+curl -X DELETE https://shuffler.io/api/v1/users/{userid} -H "Authorization: Bearer APIKEY" 
 ```
 
 
