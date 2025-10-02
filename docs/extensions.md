@@ -364,7 +364,7 @@ To solve the pipeline issue shown in the previous image, we have to do two thing
 
 Tenzir setup configuration:
 - **Adding a custom storage folder for Sigma rules:** Mount in the folder you want to control into the Orborus command. Then add the environment variable `SHUFFLE_STORAGE_FOLDER=/tmp/foldername` to Orborus. The default is `/tmp/`. 
-- **Connecting to an external Tenzir node:** Add the following environment variable to the Orborus command: ``. This requires that [the web API is enabled](https://docs.tenzir.com/rest-api) on the node.
+- **Connecting to an EXTERNAL Tenzir node:** Add the following environment variable to the Orborus command: `SHUFFLE_PIPELINE_URL=http://<server_ip>:5158`. This requires that [the web API is enabled](https://docs.tenzir.com/rest-api) on the node.
 
 ```
 If ran locally with systemd:
