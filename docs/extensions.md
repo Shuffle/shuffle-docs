@@ -428,6 +428,23 @@ Delete a pipeline
 curl -XPOST http://localhost:5160/api/v0/pipeline/delete -H "Content-Type: application/json" -d '{"id":"ID"}' -v
 ```
 
+**Manually testing pipelines Tenzir:**
+```
+# 1. Make a sample file to import into the database
+echo "line1-1,line1-2,line2-1,line2-2" > test.log
+
+# 2. Get into the Docker container (if applicable)
+docker exec -u 0 -it tenzir-node bash
+
+# 3. Import the sample log file. /tmp is mounted to /var/lib/tenzir by default.
+tenzir 'load_file "/var/lib/tenzir/test.log" | read_csv | import'
+
+# 4. Export it as a JSON file (sample)
+tenzir 'export | to "/var/lib/tenzir/output.csv"'
+
+# 5. You should now have a file called 'output.csv' on your host with the logs in JSON format.
+```
+
 ### Storing Tenzir logs in Opensearch
 - [Tenzir -> Opensearch documentation](https://docs.tenzir.com/integrations/opensearch)
 
