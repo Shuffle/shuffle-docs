@@ -411,7 +411,22 @@ It can take up to 60 seconds to deploy, and should look like this in the UI when
 [Sigma Pipelines details](https://docs.tenzir.com/tql2/operators/sigma)
 
 ### Running a sample Detection
-TBD
+
+### Debugging
+Running a pipeline manually. This example dumps database content (`export`) into the `/tmp/events.ndjson` file.
+```
+curl http://localhost:5160/api/v0/pipeline/launch -H "Content-type: application/json" -d '{"definition": "export | write_ndjson | save_file \"/tmp/events.ndjson\""}'
+```
+
+Listing all pipelines
+```
+curl -XPOST http://localhost:5160/api/v0/pipeline/list -H "Content-Type: application/json"
+```
+
+Delete a pipeline
+```
+curl -XPOST http://localhost:5160/api/v0/pipeline/delete -H "Content-Type: application/json" -d '{"id":"ID"}' -v
+```
 
 ### Storing Tenzir logs in Opensearch
 - [Tenzir -> Opensearch documentation](https://docs.tenzir.com/integrations/opensearch)
