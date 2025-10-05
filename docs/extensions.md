@@ -384,9 +384,31 @@ It should look like this: ExecStart=/opt/tenzir/bin/tenzir-node "--commands=web 
 1. You need to mount in the folder that is going to store the sigma rules, controlled from within Shuffle
 2. The default location is /tmp/sigma_rules, so to mount it in, use `--volume "/tmp:/tmp"` in the Dockerfile.
 3. If you end up changing the storage location, use the `SHUFFLE_STORAGE_FOLDER` environment variable with the full path.
+4. Test whether it works by going to [/detections/Sigma](/detections/Sigma), then switch the "Global Enable/Disable" off and on again. This makes the rules get downloaded onto your server.
+
+<img width="343" height="82" alt="image" src="https://github.com/user-attachments/assets/e8728ba0-493d-41d1-a7fe-64f6ac08a823" />
+
+5. Verify if the files actually exist on the server. By default, you can find the rules in the `/tmp/sigma_rules` folder (ls /tmp/sigma_rules). If the folder exists, then it worked. 
+
+<img width="619" height="43" alt="image" src="https://github.com/user-attachments/assets/1e44ff9f-dd3a-4e16-9b0b-e3ab20b29787" />
+
+**PS: This folder is deleted if rules are globally disabled in the UI.**
 
 ### Running the Tenzir Detection pipeline
-- [Sigma Pipelines with Tenzir](https://docs.tenzir.com/tql2/operators/sigma)
+With detection rules in the `/tmp/sigma_rules` folder, you can now test the Sigma rules directly. To do this, there are two parts:
+1. Ingest some kind of logs. We suggest using [Syslog](https://docs.tenzir.com/integrations/syslog/), but almost data format you want is supported. You can enable this by going to the "Triggers" page in Shuffle: [/admin?tab=triggers](/admin?tab=triggers), then clicking `Deploy New Pipeline`, and running the `Syslog listener` pipeline. 
+
+<img width="1207" height="516" alt="image" src="https://github.com/user-attachments/assets/1c0d4574-4ba8-4e66-8b8f-7dcb67480cfb" />
+
+It can take up to 60 seconds to deploy, and should look like this in the UI when ready to receive logs. 
+
+<img width="1192" height="349" alt="image" src="https://github.com/user-attachments/assets/b62bacb0-12f1-4722-928c-0bb06c7709b2" />
+
+2. Now that you got a way to receive logs, we can deploy the Sigma Rules pipeline. Follow the same process as in step #1, and ensure the "Webhook URL" part is filled in properly.
+
+<img width="1657" height="284" alt="image" src="https://github.com/user-attachments/assets/9b2bd913-f4a4-4b2a-8b8a-c74f0ab199a9" />
+
+[Sigma Pipelines details](https://docs.tenzir.com/tql2/operators/sigma)
 
 ### Running a sample Detection
 TBD
