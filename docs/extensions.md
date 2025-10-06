@@ -460,7 +460,10 @@ sudo tcpdump -n tcp port 1514 -v
 tenzir 'from "tcp://0.0.0.0:1514" { read_syslog } | import'
 
 # 3. Send logs to it manually
+logger --tcp -n 192.168.86.67 -P 1514 "more logs for testing"
 
+# 4. Check if the logs arrived
+tenzir 'export'
 ```
 
 ### Storing Tenzir logs in Opensearch
