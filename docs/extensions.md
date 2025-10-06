@@ -438,7 +438,14 @@ PS: If you can't see whether it is triggering in the workflow, run this locally 
 5. Detections are live! Feel free to add or change them on [/detections/sigma](/detections/sigma).
 
 ### Storing Tenzir logs in Opensearch
-- [Tenzir -> Opensearch documentation](https://docs.tenzir.com/integrations/opensearch)
+Since we are already ingesting logs using the `import` mechanism, it means we in theory can just route those logs forward.
+
+[Tenzir -> Opensearch documentation](https://docs.tenzir.com/integrations/opensearch)
+
+Modify the following:
+`export live=true | to_opensearch "localhost:9200", action="create", index="shuffle_logs", user="admin", passwd="PASSWORD"`
+
+Additional [to_opensearch docs here](https://docs.tenzir.com/reference/operators/to_opensearch/).
 
 - ### Debugging
 Running a pipeline manually. This example dumps database content (`export`) into the `/tmp/events.ndjson` file.
