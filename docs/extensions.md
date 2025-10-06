@@ -412,7 +412,11 @@ It can take up to 60 seconds to deploy, and should look like this in the UI when
 
 ### Running a sample Detection
 
-### Debugging
+
+### Storing Tenzir logs in Opensearch
+- [Tenzir -> Opensearch documentation](https://docs.tenzir.com/integrations/opensearch)
+
+- ### Debugging
 Running a pipeline manually. This example dumps database content (`export`) into the `/tmp/events.ndjson` file.
 ```
 curl http://localhost:5160/api/v0/pipeline/launch -H "Content-type: application/json" -d '{"definition": "export | write_ndjson | save_file \"/tmp/events.ndjson\""}'
@@ -428,7 +432,7 @@ Delete a pipeline
 curl -XPOST http://localhost:5160/api/v0/pipeline/delete -H "Content-Type: application/json" -d '{"id":"ID"}' -v
 ```
 
-#### Manually testing pipelines Tenzir:**
+#### Manually testing pipelines Tenzir:
 Ensures pipelines act as they should, and you get a reasonable output
 
 ```
@@ -449,8 +453,8 @@ tenzir 'export | to "/var/lib/tenzir/output.json"'
 ## PPS: You can use tenzir `export` to see the data live as well (print database)
 ```
 
-#### Network Tests**
-This is in case the exports aren't working and you need to figure out what is and isn't working.
+#### Network Tests
+In case the exports aren't working and you need to figure out what is going wrong.
 
 ```
 # 1. Set up a tcpdump listener on port TCP/1514. Ports <1024 need root, so this makes it easier to test.
@@ -464,10 +468,10 @@ logger --tcp -n 192.168.86.67 -P 1514 "more logs for testing"
 
 # 4. Check if the logs arrived
 tenzir 'export'
-```
 
-### Storing Tenzir logs in Opensearch
-- [Tenzir -> Opensearch documentation](https://docs.tenzir.com/integrations/opensearch)
+# 5. Clear the database
+tenzir ''
+```
 
 ## KMS
 Shuffle by default allows you to store authentication tokens within Shuffle itself, which are encrypted in the database. Since February 2024, we additionally support the use of external KMS systems to handle authentication, which is based on [Native Actions](https://shuffler.io/docs/extensions#native-actions) and [Schemaless](https://github.com/frikky/schemaless). Native Actions run in the background to perform the "Get KMS key" action, and the run of the app is NOT stored. 
