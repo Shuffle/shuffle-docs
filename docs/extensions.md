@@ -428,7 +428,9 @@ Delete a pipeline
 curl -XPOST http://localhost:5160/api/v0/pipeline/delete -H "Content-Type: application/json" -d '{"id":"ID"}' -v
 ```
 
-**Manually testing pipelines Tenzir:**
+#### Manually testing pipelines Tenzir:**
+Ensures pipelines act as they should, and you get a reasonable output
+
 ```
 # 1. Make a sample csv file to import
 echo -e "type1,type2\nline1.1,line1.2\nline2.1,line2.2\nline3.1,line3.2" > /tmp/test.log
@@ -442,7 +444,23 @@ tenzir 'load_file "/var/lib/tenzir/test.log" | read_csv | import'
 # 4. Export it as a JSON file (sample)
 tenzir 'export | to "/var/lib/tenzir/output.json"'
 
-# 5. You should now have a file called 'output.csv' on your host with the logs in JSON format.
+# 5. You should now have a file called 'output.json' on your host in the /tmp folder with the CSV data in JSON format.
+
+## PPS: You can use tenzir `export` to see the data live as well (print database)
+```
+
+#### Network Tests**
+This is in case the exports aren't working and you need to figure out what is and isn't working.
+
+```
+# 1. Set up a tcpdump listener on port TCP/1514. Ports <1024 need root, so this makes it easier to test.
+sudo tcpdump -n tcp port 1514 -v
+
+# 2. Start the syslog listener pipeline in Tenzir
+tenzir 'from "tcp://0.0.0.0:1514" { read_syslog } | import'
+
+# 3. Send logs to it manually
+
 ```
 
 ### Storing Tenzir logs in Opensearch
