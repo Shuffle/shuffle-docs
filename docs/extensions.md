@@ -411,7 +411,31 @@ It can take up to 60 seconds to deploy, and should look like this in the UI when
 [Sigma Pipelines details](https://docs.tenzir.com/tql2/operators/sigma)
 
 ### Running a sample Detection
+To run a sample detection requires that the correct rules are in place in the /tmp/sigma_rules folder. Below are some details on testing:
 
+1. [Ensure that the detection pipeline is running](/admin?tab=triggers):
+<img width="1098" height="190" alt="image" src="https://github.com/user-attachments/assets/119347e5-59e2-4bf8-8f4e-34b70abbec42" />
+
+2. One of the test rules is called `notepad_test.yaml` and works as follows. This should already exist in your sigma_rules folder.
+```
+detection:
+    selection:
+        EventID: 4688  
+        NewProcessName: '*notepad.exe*'
+        Context: Testing
+    condition: selection
+```
+
+3. This detection requires three events to match: EventID, NewProcessName & Context. To trigger this, you may run the following from any machine with connectivity to the Tenzir machine on port 1514.
+`printf '<165>1 2025-10-06T12:34:56.789Z myhost.example.com myapp 1234 ID47 [huh eventSource="App" EventID="4688" NewProcessName="notepad.exe"] This is a test log message' | nc IP 1514`
+
+4. Find your detection workflow [here](http://localhost:3002/workflows?tab=background_processes). 
+
+<img width="931" height="283" alt="image" src="https://github.com/user-attachments/assets/fa322d53-c219-423b-a689-930493662ab5" />
+
+PS: If you can't see whether it is triggering in the workflow, run this locally to see if it is being ingested: `tenzir 'export live=true'`  
+
+5. Detections are live! Feel free to add or change them on [/detections/sigma](/detections/sigma).
 
 ### Storing Tenzir logs in Opensearch
 - [Tenzir -> Opensearch documentation](https://docs.tenzir.com/integrations/opensearch)
