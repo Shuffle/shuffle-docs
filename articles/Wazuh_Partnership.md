@@ -1,13 +1,13 @@
 ![Wazuh Partnership](https://github.com/frikky/shuffle-docs/blob/master/assets/Wazuh_Partnership.png?raw=true)
 
 # Shuffle and Wazuh Announce Technology Partnership to Deliver Integrated Security Automation
-Oslo, Norway, September 2025
+*Oslo, Norway, September 2025*
 
 Shuffle, the leading Security Orchestration, Automation and Response (SOAR) platform designed to simplify and scale cybersecurity operations, announced a technology partnership with Wazuh, the leading open-source Security Information and Event Management (SIEM) and Extended Detection and Response (XDR) solution.
 
 Through this integration, Shuffle connects seamlessly with Wazuh to provide out-of-the-box automation for SIEM and XDR use cases. Security teams can orchestrate workflows across their existing tools, enabling faster, more efficient responses to incidents and improving overall operational resilience.
 
-> Santiago Bassett, Founder and CEO at Wazuh, said: _“We are pleased to partner with Shuffle to deliver automation capabilities that enhance the value of Wazuh for security teams worldwide. Together, we empower organizations to detect and respond to threats with greater speed, accuracy, and confidence.”_
+Santiago Bassett, Founder and CEO at Wazuh, said: *“We are pleased to partner with Shuffle to deliver automation capabilities that enhance the value of Wazuh for security teams worldwide. Together, we empower organizations to detect and respond to threats with greater speed, accuracy, and confidence.”*
 
 By combining Wazuh and Shuffle, organizations benefit from:
 
@@ -15,7 +15,7 @@ By combining Wazuh and Shuffle, organizations benefit from:
 - **Streamlined workflows**: Connect multiple tools and processes for coordinated detection and response.
 - **Improved efficiency**: Reduce manual intervention, investigation time, and operational overhead.
 
-> Jay Gohil, CTO at Shuffle, said: _“Wazuh has played a monumental role in bringing unified XDR and SIEM-based automation capabilities to Shuffle customers through tight-knit integration. And it’s always a treat to work with the Wazuh team.”_
+Jay Gohil, CTO at Shuffle, said: *“Wazuh has played a monumental role in bringing unified XDR and SIEM-based automation capabilities to Shuffle customers through tight-knit integration. And it’s always a treat to work with the Wazuh team.”*
 
 # About Wazuh
 
