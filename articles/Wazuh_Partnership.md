@@ -1,4 +1,4 @@
-![Wazuh Partnership](https://github.com/frikky/shuffle-docs/blob/master/assets/Wazuh_Partnership.png?raw=true)
+![Wazuh Partnership](https://github.com/user-attachments/assets/8f93e2da-54be-4690-9bf1-5efd3e99fa1b?raw=true")
 
 # Shuffle and Wazuh Announce Technology Partnership to Deliver Integrated Security Automation
 *Oslo, Norway, September 2025*
