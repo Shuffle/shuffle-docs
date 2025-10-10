@@ -648,6 +648,12 @@ Choose the backup you want to revert to. Your current configuration will also be
 **Beta:** Workflows on Shuffle cloud are multiplayer. What this means is that you can for most usecases be building the same workflow at the same time.
 
 ### Forms
+ALL Workflows are forms, and can be accessed by going to /forms/{workflow_id}. 
+You can control the form by editing the workflow details in the "Forms" section.
+
+<img width="1440" height="698" alt="Shuffle Forms" src="https://github.com/user-attachments/assets/1ae4176c-bc6d-4f19-9c2f-1d41b7cc2df1" />
+
+
 TBA: See /workflows/<workflow_id>/run of any workflow. Configure Input fields in the edit window.
 
 ### Github backups
