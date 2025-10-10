@@ -59,13 +59,13 @@ All use of Google's API's within the Shuffle ecosystem adheres to the [Google AP
 * Personal data: Cookies, Usage Data, Browser storage
 
 ### Data Location
-As of Q1 2023, we have added multiple datacenter locations around the world on the Google Cloud Platform infrastructure. [Google's europe-west2 location (London)](https://cloud.google.com/compute/docs/regions-zones) is our default region for everyone, but we move customers to the closest region for them. The following regions are available:
+We have multiple datacenter locations around the world on the Google Cloud Platform infrastructure. [Google's europe-west2 location (London)](https://cloud.google.com/compute/docs/regions-zones) is our default region for everyone, but we move customers to the closest region for them. The following regions are available:
 
 1. europe-west2 (London, England - Default)
 2. europe-west3 (Frankfurt, Germany)
 3. us-west2 (California, US)
 4. na-northeast1 (Québec, Canada)
-5. asia-south1 (Mumbai, India)
+5. australia-southeast1 (Sydney, Australia)
 
 We may add more regions in the future. If you would like to retain your data in another region than the default one (even if the region doesn't exist), contact the Shuffle support team.
 
