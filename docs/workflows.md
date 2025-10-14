@@ -730,4 +730,6 @@ Azure DevOps integration enables workflow backup with your organization’s Azur
 
 4. **Username**
    - Use your **Azure DevOps email address** as the username.
+
+Note: Azure devops support is available from version 2.1.1 and above
    
