@@ -325,7 +325,7 @@ To delete a key from a specific category, add `"category": "name"` to the JSON b
 Methods: DELETE
 
 ```bash
-curl https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
+curl -X DELETE https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
 ```
 
 
