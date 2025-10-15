@@ -35,6 +35,9 @@ Documentation for workflows.
   * [Upload file API with the app creator](#upload-file-api-with-the-app-creator)
 * [Exploring Executions](#exploring-executions)
 * [API](#api)
+* [Workflow Backup](#workflow-backup)
+  * [Azure Devops](#azure-devops)
+  * [Github](#github)
 
 ## Introduction
 Workflows are the backbone of Shuffle, empowering you to automate your daily tasks by with a simple interface. Workflows use [apps](/docs/apps), [triggers](/docs/triggers), [conditions](/docs/conditions) and [variables](/docs/apps/#variables) to make powerful automations in no time. 
@@ -666,3 +669,73 @@ These backups are stored without images, but are formatted in a way that makes i
 
 ## API
 [Click here to see the Workflow API](/docs/API#workflow-api)
+
+## Workflow Backup
+
+The **Workflow Backup** system ensures that all workflows connected to **GitHub** or **Azure DevOps** are securely backed up and can be restored anytime. Shuffle automatically syncs workflow changes with your connected repositories, maintaining version history and backup integrity.
+
+Workflows are automatically backed up whenever you change workflow. 
+
+<img width="1392" height="547" alt="image" src="https://github.com/user-attachments/assets/079abd70-67f8-41e3-90a1-4b74b0e8f6ff" />
+
+### GitHub Integration
+
+GitHub backups allow Shuffle workflows to be stored inside your GitHub repository.
+
+**How to get the required details:**
+
+1. **Repository URL**
+   - Go to your GitHub repository.
+   - Click the green **“Code”** button.
+   - Copy the **HTTPS URL**, e.g.:
+     ```
+     https://github.com/<organization>/<repository>.git
+     ```
+
+2. **Branch**
+   - The branch name appears in the top-left dropdown of the repository page.
+   - Common examples: `main` or `master`.
+
+3. **Personal Access Token (PAT)**
+   - Go to [https://github.com/settings/tokens](https://github.com/settings/tokens)
+   - Click **“Generate new token (classic)”** or use **Fine-grained tokens**.
+   - Enable the following scopes:
+     - `repo` (Full control of private repositories)
+     - `workflow`
+   - Copy and store your token securely it will be used for authentication.
+
+4. **Username**
+   - Use your **GitHub username** as shown in your GitHub profile URL.
+
+
+### Azure DevOps Integration
+
+Azure DevOps integration enables workflow backup with your organization’s Azure Repos.
+
+**How to get the required details:**
+
+1. **Repository URL**
+   - Navigate to your Azure DevOps project.
+   - Go to **Repos → Files**.
+   - Click **Clone** and select the **HTTPS** option.
+   - Copy the repository URL, which follows this format:
+     ```
+     https://dev.azure.com/<organization>/<project>/_git/<repository>
+     ```
+
+2. **Branch**
+   - The active branch name is visible in the **branch selector** dropdown above the file list.
+   - Example: `main` or `develop`.
+
+3. **Personal Access Token (PAT)**
+   - Go to [https://dev.azure.com](https://dev.azure.com)
+   - Click your profile picture → **Personal access tokens** → **+ New Token**.
+   - Set **Organization** and **Expiration**, then grant the following scopes:
+     - `Code (Read & Write)`
+   - Copy and store the generated token securely — you’ll need it for authentication.
+
+4. **Username**
+   - Use your **Azure DevOps email address** as the username.
+
+Note: Azure devops support is available from version 2.1.1 and above
+   
