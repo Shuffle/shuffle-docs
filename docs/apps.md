@@ -277,12 +277,12 @@ Authorization=Basic base64(username:password)
 Very widely used in older systems.
 
 ### Oauth2
-Oauth2 is a special kind of **multi-step** authentication, meaning Shuffle will run a request to authorize your user's access before the actual HTTP request runs. There are two main forms of it that are widely used by larger companies: Delegated and Application. 
+Oauth2 is a special kind of **multi-step** authentication, meaning Shuffle will run a request to authorize your user's access before the actual HTTP request runs. There are two main forms of it that are widely used by larger companies: Delegated and Application.
+
+Your Redirect URI: `https://shuffler.io/set_authentication`
 
 - **Delegated Permissions** are a way for you to give access to something from your (typically) individual account. This can be an account at work, but is still from an individual's account. This will create a popup where you need to accept these permissions. Requires Client ID + Client Secret + Scope + user login
 - **Application Permissions** require a Client ID + Client Secret + Scope, and are the typical way to use Oauth2 for security. It uses permissions from the platform itself, and usually has more permissions than delegated, but doesn't allow you to delve into the personal access of an individual.
-
-**PS: As of October 2023, we only support Delegated Permissions in the App Creator (Application is TBA).**
 
 As the creator of the app, you will need to fill in three (3) fields to help Shuffle and the user with Authorization: 
 - Authorization URL
