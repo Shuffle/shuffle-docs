@@ -292,7 +292,7 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/get_cache -H "Authorization: Beare
 **Success response** 
 ```json
 {
-"success": true, "workflow_id": "99951014-f0b1-473d-a474-4dc9afedkb81", "execution_id": "f0b2b4e9-90ca-4835-bdd4-2889ef5ls2u5", "key": "hi", "value": "1234", "category": "category", "created": 1761114186, "edited": 1761114186, "changed": true, "encrypted": false, "suborg_distribution": null, "revision_id": ""
+"success": true, "workflow_id": "99951014-f0b1-473d-a474-4dc9afedkb81", "execution_id": "f0b2b4e9-90ca-4835-bdd4-2889ef5ls2u5", "key": "hi", "value": "1234", "category": "category", "created": 1761114186, "edited": 1761114186, "changed": true, "encrypted": false, "public_authorization":"efbd9m2sy-f07c-4167-aa32-642b1429814d", "suborg_distribution": null, "revision_id": ""
 }
 ```
 
