@@ -258,7 +258,7 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/set_cache -H "Authorization: Beare
 
 **Success response** 
 ```json
-{"success": true}
+{"success": true, "keys_existed": [{"key": "hi", "existed": true }]}
 ```
 
 ### Add multiple keys
@@ -267,13 +267,13 @@ To add a key to a specific category, add `"category": "name"` to the JSON body. 
 Methods: POST, PUT
 
 ```bash
-curl https://shuffler.io/api/v2/datastore?bulk=true -H "Authorization: Bearer APIKEY" -d '[{"key":"hi", "value":"1234", "category": "category"}]'
+curl https://shuffler.io/api/v2/datastore?bulk=true -H "Authorization: Bearer APIKEY" -d '[{"key":"testKey1", "value":"1234", "category": "category"}, {"key":"testKey2", "value":"1234", "category": "category"}]'
 ```
 
 
 **Success response** 
 ```json
-{"success": true}
+{"success": true, "keys_existed": [{"key": "testKey1", "existed": true }, { "key": "testKey2", "existed": false}]}
 ```
 
 
