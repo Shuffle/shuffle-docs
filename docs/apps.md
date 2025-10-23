@@ -13,6 +13,7 @@ Documentation for apps. If you'd like to make an app [check out this guide](/doc
   * [Delete app](#delete-app)
 * [Finding more apps](#finding-apps)
   * [Testing apps](#testing-apps)
+  * [Running apps programmatically](#running-apps-programmatically)
   * [Downloading apps](#downloading-apps)
   * [Importing apps](#importing-apps)
   * [Publishing apps](#publishing-apps)
@@ -90,6 +91,121 @@ After you've found a public or private app on [https://shuffler.io](https://shuf
 - Exploring the result
 
 ![Apps view search 16](https://github.com/Shuffle/shuffle-docs/blob/master/assets/searchengine_app.png?raw=true)
+
+## Running Apps Programmatically
+The `run_app()` function in the Shuffle Python SDK (shufflepy) lets you trigger and test any Shuffle app action directly from Python. It works the same way as running an action inside a workflow, making it perfect for quick testing, debugging, or running apps outside the Shuffle UI.
+
+Here’s what a simple call looks like:
+```python 
+response = shuffle.run_app( 
+			app_id="YOUR_APP_ID", 
+			action="YOUR_ACTION_NAME", 
+			auth="YOUR_AUTH_ID", 
+			params={ "param_name": "value_here" } 
+		) 
+print(response) 
+```
+
+That’s it. Shuffle takes care of the rest, URL handling, request sending, authentication, all of it.
+
+**Finding app_id, auth, and Required Params**:
+
+If you’re wondering where to get these values
+
+* app_id → Go to /apps, find the app, and click it.
+You’ll see a link icon that leads to something like /apps/fb715a176a192687e95e9d162186c97f.
+The last part of the URL (fb715a176a192687e95e9d162186c97f) is your app ID.
+
+* auth → If you already authenticated the app, then you don't have to provide the auth again here. You can leave it as "", but just in case it doesn’t work, go to `/admin?tab=app_auth`, find the app’s authentication entry, and copy the Auth ID.
+
+* params → These are the same as the input fields you see when you drag the app’s action into a workflow.
+The parameter names in Python have to match exactly what you see in the UI, but in a lowercase.
+
+**Basic Example – Shuffle Tools App**
+The Shuffle Tools app comes with a simple action called Repeat back to me, which just returns whatever you send. It’s perfect for testing.
+
+```python
+response = shuffle.run_app(
+    app_id="3e2bdf9d5069fe3f4746c29d68785a6a",   
+    action="repeat_back_to_me",             
+    auth="",          
+    params={
+        "call": "hiii"
+    }
+)
+print(response)
+```
+This will just return the text you passed in `call`.
+
+**Sample Output**
+
+```json
+{
+  "success": true,
+  "result": "hiii",
+  "id": "1fdf8549-9a96-4d6f-d4fd-lay2345658be6", 
+  "authorization": "2df453c0-1df9-4bdf-8822-XXXXXXX", 
+  "errors": [],
+}
+```
+
+**Example with Path Parameters – IPInfo App**:
+
+Now let’s look at a more realistic example using the IPInfo app.
+This app has an endpoint like:
+
+```bash
+https://ipinfo.io/{ip}/geo
+```
+
+In Shuffle, whenever you build an app where an action has a path param like `{param}` in the URL, Shuffle will automatically detect this and include it as a required param for the action.
+
+```python
+response = shuffle.run_app(
+    app_id="3cdebb07c300e4e60242a0ef5ae284e7",   
+    action="get_ip_geo_info",                   
+    auth="a8d1db04-2dd5-496f-a441-3efc4dxxxxxx",
+    params={
+        "url": "https://ipinfo.io",
+        "ip": "8.8.8.8"
+    }
+)
+print(response)
+```
+
+Here, the params like `url` and `ip` are required by the action. You can easily know what params an app needs by clicking on it in the workflow editor and selecting the action.
+
+**Query Parameters (like ?foo=bar)**
+If your action uses query parameters (for example /api/data?limit=10&sort=desc), just pass them as a string in "queries":
+
+```python
+params={
+    "queries": "limit=10&sort=desc"
+}
+```
+
+You can also mix both path and query params together if the action uses both. For example:
+
+```python
+response = shuffle.run_app(
+    app_id="example_app_id",
+    action="get_device_logs",
+    auth="auth_id",
+    params={
+        "deviceId": "abc123",
+        "queries": "limit=10&sort=desc"
+    }
+)
+
+```
+
+That call becomes:
+
+```bash
+/device/abc123/logs?limit=10&sort=desc
+```
+
+That’s pretty much it. Once you get the hang of it, shuffle.run_app() is a quick and reliable way to test or trigger any app directly from Python.
 
 ## Downloading apps 
 Apps can be downloaded or exported from your local instance or [https://shuffler.io](https://shuffler.io) as long as it's either your private app, or a public one AND is OpenAPI. If you find the "download" icon in any part of Shuffle, that means the item is exportable.
