@@ -24,7 +24,10 @@ Read the [usage Shuffle Docs here](https://github.com/Shuffle/openapi-apps/blob/
 Website: [https://singul.io](https://singul.io)
 
 ## MCP
-TBA: Any app in Shuffle is an MCP
+TBA: Coming soon
+
+## Using AI in Workflows
+TBA: Coming soon
 
 ## App generation
 App generation is a system built to generate Rest API apps from documentation URLs. It works by emulating a browser with which it crawls the documentation.
@@ -191,6 +194,8 @@ Once these are set, there is no need to restart your Shuffle backend server as t
 
 **Note: You need to refresh the Shuffle UI page in your browser for the new AI features to appear.**
 
+## AI for quicker Support
+TBA: Coming soon. The goal is to provide quick answers to typical questions, and otherwise forward to the Shuffle team.
 
 ## Troubleshooting
 
