@@ -17,14 +17,23 @@ They can additionally talk to each other and be published for third party use.
 
 **This is in private Beta and is not generally available yet. If you would like to try it, please reach out to support@shuffler.io and ask about AI Agents.**
 
+### Agent Continuations
+TBA: Coming soon
+
+### MCP
+TBA: Coming soon
+
+### App Control
+TBA: Coming soon
+
+### Workflow Generation
+TBA: Coming soon
+
 ## Singul
 Singul works against vendor-locking with our translator for different providers of the same tools, such as Slack vs Teams vs Discord, or Splunk vs Elastic vs QRadar). It uses LLMs to understand the context of what you are trying to perform, and makes a determinsitic translation to use a standard such as OCSF or STIX. This is a powerful way to avoid vendor lock-in, and to make your automation more future-proof. Made by the Shuffle team.
 
 Read the [usage Shuffle Docs here](https://github.com/Shuffle/openapi-apps/blob/master/docs/singul.md)
 Website: [https://singul.io](https://singul.io)
-
-## MCP
-TBA: Coming soon
 
 ## Using AI in Workflows
 TBA: Coming soon
