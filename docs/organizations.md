@@ -4,7 +4,6 @@ Documentation for the Admin view of Shuffle. Best used by administrators.
 ## Table of contents
 * [Introduction](#introduction)
 * [Organization Overview](#organization_overview)
-* [Cloud Synchronization](#cloud_synchronization)
 * [App runs management for Suborgs (Enterprise)](#app_runs_management_suborg)
 * [Data collection](#data_collection)
 * [Pricing](#pricing)
@@ -19,6 +18,14 @@ Documentation for the Admin view of Shuffle. Best used by administrators.
 * [Statistics](#statistics)
 * [Health](#health)
 * [Notifications](#notifications)
+* [Billing](#billing)
+  * [Onprem Licensing](#onprem_license)
+  	* [Cloud Synchronization](#cloud_synchronization)
+  	* [License Key](#license_key)
+  * [Production Readiness](#production_readiness)
+  * [Checking Subscription Details](#subscription_details)
+  * [Viewing Enabled Features and Limits](#features_and_limits)
+  * [Upgrading or Increasing Limits](#upgrading_limits)
 
 ## Introduction
 Organizations are Shuffle's way of organizing data, and can be thought of as tenants. Data from Apps, Workflows, Notifications, Files etc. are all related to an organization from which users gain access based on their access rights. This document is made to explain what the different options for organizations are.
@@ -42,25 +49,6 @@ This view outlines the basic details of your organizations, which any Admin can 
 * The **cloud** version shows you an API-key. This can be used in the open source version.
 * The **open source** version gives you an API-key field. This can be used in the cloud version.
 ![Organization view](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-1.png?raw=true)
-
-### Cloud Synchronization
-Cloud synchronization is a FREE feature used to get more capabilities on-premises, that otherwise wouldn't be possible. These range from scalability to collaboration, support, public workflow generation, accessibility and more. The goal is to give access to features that otherwise are impossible to build in a location solution. See [Hybrid Features](#hybrid_features) for more info.
-
-![Cloud sync features](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-2.png?raw=true)
-
-#### Setup 
-Setting up cloud synchronization requires two things:
-1. A user on [https://shuffler.io](https://shuffler.io). Get the API-key.
-2. An open source version of Shuffle. [Here's how to set it up](https://github.com/frikky/shuffle/blob/master/install-guide.md)
-
-1. Start by going to [https://shuffler.io/register](https://shuffler.io/register?view=admin) and create an account. 
-![Register user](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-3.png?raw=true)
-2. With an account made, go to [https://shuffler.io/admin](https://shuffler.io/admin). Here you'll find your API-key. Copy it.
-![Cloud sync cloud](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-4.png?raw=true)
-3. Go to your [local instance](http://localhost:3001/admin) at /admin and paste the API-key.
-![Cloud sync local](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-5.png?raw=true)
-4. See the features you get access to.
-![Cloud sync local features](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-6.png?raw=true)
 
 ### App Runs Management for Suborg (Enterprise)
 Starting from version 2.0.2, enterprise users can manage suborg app run limits from the parent organization. The maximum limit that can be assigned to a suborg is equal to the app run limit of the parent organization. For example, if the parent org has an app run limit of 300k, the maximum limit that can be assigned to each suborg is also 300k.
@@ -339,4 +327,141 @@ You can create notifications yourself with the Notification Creation API from Sh
 
 **Disabling a Notification:**
 You can ignore/disable a notification by clicking the "Disable" button next to any of them.  
+
+## Billing
+
+### Onprem Licensing
+Shuffle’s licensing system enables organizations to unlock advanced capabilities designed for production deployments and enterprise grade scalability.
+
+While the open-source version of Shuffle includes all core workflow automation functionality, running Shuffle in production environments or at scale (including multi-tenant or multi-environment setups) requires a valid on-premise license.
+
+Licensing ensures access to premium features such as high-performance scaling, multi-tenant management, multi-environment configurations, and full platform branding empowering organizations to customize, optimize, and securely manage their automation infrastructure.
+
+### Cloud Synchronization
+Cloud synchronization is a feature used to get more capabilities on-premises, that otherwise wouldn't be possible. These range from scalability to collaboration, support, public workflow generation, accessibility and more. The goal is to give access to features that otherwise are impossible to build in a location solution. See [Hybrid Features](#hybrid_features) for more info.
+
+<img width="1272" height="502" alt="image" src="https://github.com/user-attachments/assets/95cd65c2-55ba-4230-8129-206b5f390b87" />
+
+
+#### Setup 
+
+Setting up cloud synchronization requires two things:
+1. A user on [https://shuffler.io](https://shuffler.io). Get the API-key.
+2. An open source version of Shuffle. [Here's how to set it up](https://github.com/frikky/shuffle/blob/master/install-guide.md)
+
+1. Start by going to [https://shuffler.io/register](https://shuffler.io/register?view=admin) and create an account.
+
+![Register user](https://github.com/user-attachments/assets/a849d04d-ce4e-43a3-b5f7-5b0c7e13fce6)
+
+3. With an account made, go to [https://shuffler.io/admin](https://shuffler.io/admin). Here you'll find your API-key. Copy it.
+
+![Cloud sync cloud](https://github.com/user-attachments/assets/13adf626-30b0-46d2-97f9-d7299c584612)
+
+4. Go to your [local instance](http://localhost:3001/admin) at /admin and paste the API-key.
+
+![Cloud sync local](https://github.com/user-attachments/assets/7f797416-83fd-470f-8f48-35f250528013)
+
+6. See the features you get access to.
+
+![Cloud sync local features](https://github.com/user-attachments/assets/ff1719b3-bd8e-4a40-8869-d07d5d0f7fe2)
+
+A valid **Shuffle license** is required to unlock advanced enterprise capabilities on your on-premise instance.  
+
+With a valid license, connecting your instance to the cloud allows you to access features such as **multi-tenant management**, **multi-environment setups**, **workflow executions**, and **branding customization**.
+
+#### Default Limits
+By default, Shuffle onprem instance includes the following limits:
+
+- **Workflow Executions:** 10,000 per month  
+- **Sub-Organizations:** Up to 3  
+- **Environments:** 1
+- **Branding** not Enabled
+
+To run Shuffle **in production** or to **scale beyond default limits**, a valid **on-premise Shuffle license** is required.  
+Licensing ensures access to advanced scaling, customization, and management features designed for enterprise and high-availability deployments.
+
+For more information or to obtain an on-premise license, please contact **[support@shuffler.io](mailto:support@shuffler.io)**
+
+### License Key
+
+For air-gapped or offline environments where **Cloud Synchronization** cannot be used, Shuffle supports activating enterprise features through an **on-premise license key**.
+
+The license key allows organizations to unlock capabilities for **scaling**, **multi-tenancy**, **multi-environment setups**, and **branding** enabling full production use of Shuffle on-premises.
+
+#### Applying a License Key
+
+To activate your license, set the `SHUFFLE_LICENSE` environment variable in your on-prem deployment:
+
+```bash
+export SHUFFLE_LICENSE=<your_license_key>
+```
+Once applied, Shuffle will automatically recognize and unlock the licensed capabilities no internet connection is required.
+
+#### Features Unlocked by License
+
+A valid **Shuffle license** unlocks a range of enterprise capabilities.  
+The availability of these features depends on the **type and level of your license**.
+
+| Feature | Description |
+|----------|-------------|
+| **Workflow Scaling** | Increase monthly workflow execution limits to support larger workloads. |
+| **Multi-Tenant Management** | Add and manage more sub-organizations within a single deployment. |
+| **Multi-Environment Support** | Create and operate multiple isolated environments. |
+| **Branding Customization** | Enable full white-label branding, including logo, colors, and support links. |
+
+> **Note:** The exact features and limits available to your organization depend on your Shuffle license tier.  
+> For more information or to upgrade your license, contact **[support@shuffler.io](mailto:support@shuffler.io)**.
+
+You can securely store your license key in the **Datastore** tab (`/admin?tab=datastore`) or save it in a text file and upload it via the **Files** tab (`/admin?tab=files`) in the Admin panel.  
+
+Alternatively, you may store the key outside of Shuffle (e.g., in a secure local or cloud storage) to ensure it can be recovered if the key is lost.
+
+## Production Readiness (Onprem)
+
+The **Production Readiness** section helps administrators verify whether their **Shuffle on-premise instance** is properly licensed, synchronized, and configured for stable production use.
+
+Running Shuffle in production requires both a **valid on-prem license** and a **verified production configuration**, ensuring your deployment can support enterprise workloads with high availability, scalability, and reliability.
+
+To **unlock default limits** ([see details here](https://shuffler.io/docs/organizations#default-limits)) for your on-prem instance, you must activate a valid license using either **[Cloud Synchronization](https://shuffler.io/docs/organizations#cloud-synchronization)** or a **[License Key](https://shuffler.io/docs/organizations#license-key)**.
+
+Once your license is applied, navigate to the `/admin?admin_tab=billingstats` tab in the Admin panel and verify that:
+
+- **Production Status** is set to **“On”**
+- The following indicators show a **green checkmark**:  
+  **License**, **Multi-Tenant**, **High Availability**, and **Robust Infrastructure**
+
+![Production Readiness](https://github.com/user-attachments/assets/95dfccb9-9338-4787-8ca9-0ec2b80e0485)
+
+---
+
+## Checking Subscription Details
+
+Based on your license type, you can view detailed subscription information in the **Billing Stats** section of the Admin panel (`/admin?admin_tab=billingstats`), as shown below:
+
+![Subscription Details](https://github.com/user-attachments/assets/bdc65242-75bf-484d-ae1b-6757f67de3bb)
+
+---
+
+## Viewing Enabled Features and Limits
+
+To review which features are unlocked and their respective limits:
+
+1. Go to the `/admin?admin_tab=org_config` page in the Admin panel.  
+2. Scroll to the **Hybrid Features** section.  
+3. Check the list to see which features are currently enabled or disabled.
+
+![Onprem Features](https://github.com/user-attachments/assets/1f5ad82a-ae58-4b56-a8e0-b18d90027108)
+
+---
+
+## Upgrading or Increasing Limits
+
+If you need to:
+
+- Increase existing feature limits  
+- Enable additional enterprise capabilities  
+- Upgrade to a higher-tier or **Enterprise license**
+
+Please contact **[support@shuffler.io](mailto:support@shuffler.io)** for more information and assistance.
+
 
