@@ -1,15 +1,8 @@
 # AI at Shuffle
-
-With AI becoming a larger part of the Automation space, the goal with AI at Shuffle is provide it in a controllable and responsible way. We do not intend to implement chat systems - just to make certain mechanisms in Shuffle easier to use over time.
+With AI becoming a larger part of the Automation space, the goal with AI at Shuffle is provide it in a deterministic, controllable and responsible way. We do not intend to implement chat systems - just to make certain mechanisms in Shuffle easier to use over time.
 
 ## Using LLMs 
 Shuffle by default provides LLM credits using the OpenAI GPT-5-mini model. This is available to a certain level to those who use our Cloud or Hybrid offerings. [Read about self-hosted models](#how-to-set-up-a-self-hosted-ai-model-with-shuffle).
-
-## Singul
-Singul works against vendor-locking with our translator for different providers of the same tools, such as Slack vs Teams vs Discord, or Splunk vs Elastic vs QRadar). It uses LLMs to understand the context of what you are trying to perform, and makes a determinsitic translation to use a standard such as OCSF or STIX. This is a powerful way to avoid vendor lock-in, and to make your automation more future-proof. Made by the Shuffle team.
-
-Read the [usage Shuffle Docs here](https://github.com/Shuffle/openapi-apps/blob/master/docs/singul.md)
-Website: [https://singul.io](https://singul.io)
 
 ## AI Agents
 Agents are a way to have an AI model interact with the world. In Shuffle, this means using tools (playbooks) to perform actions. We intend to provide controllable, deterministic Agents that can be used to perform tasks.
@@ -24,19 +17,65 @@ They can additionally talk to each other and be published for third party use.
 
 **This is in private Beta and is not generally available yet. If you would like to try it, please reach out to support@shuffler.io and ask about AI Agents.**
 
-## How to Generate Your First Workflow with AI
+### Agent Continuations
+TBA: Coming soon
+
+### MCP
+TBA: Coming soon
+
+### App Control
+TBA: Coming soon
+
+### Workflow Generation
+TBA: Coming soon
+
+## Singul
+Singul works against vendor-locking with our translator for different providers of the same tools, such as Slack vs Teams vs Discord, or Splunk vs Elastic vs QRadar). It uses LLMs to understand the context of what you are trying to perform, and makes a determinsitic translation to use a standard such as OCSF or STIX. This is a powerful way to avoid vendor lock-in, and to make your automation more future-proof. Made by the Shuffle team.
+
+Read the [usage Shuffle Docs here](https://github.com/Shuffle/openapi-apps/blob/master/docs/singul.md)
+Website: [https://singul.io](https://singul.io)
+
+## Using AI in Workflows
+TBA: Coming soon
+
+## App generation
+App generation is a system built to generate Rest API apps from documentation URLs. It works by emulating a browser with which it crawls the documentation.
+
+<img width="1281" height="425" alt="image" src="https://github.com/user-attachments/assets/002f9079-b4fa-4c3f-8cf9-54ad29a65c07" />
+
+### 1. Navigate to the App page
+Go to [/apps](/apps)
+
+### 2. Click "Create an App"
+
+### 3. Click "Generate from Documentation"
+
+<img width="601" height="417" alt="image" src="https://github.com/user-attachments/assets/f82fa8d1-61f7-4165-bf00-b10deb4e773c" />
+
+### 4. Paste a URL and hit "Generate". This may take up to a few minutes.
+
+Sample URL: https://docs.virustotal.com/reference/ip-info
+
+<img width="617" height="371" alt="image" src="https://github.com/user-attachments/assets/1ecf31a9-c85c-439d-b6b3-1dbb5d721afe" />
+
+### 5. You get a valid App that can be used in seconds!
+
+<img width="621" height="579" alt="image" src="https://github.com/user-attachments/assets/a0fac4a2-a5b3-433a-808d-0615f5e29bb5" />
+
+### 6. Save it, then start using it in workflows. 
+
+## Workflow generation
 This guide will walk you through creating a complete, functional Shuffle workflow in seconds, just by describing what you want to do in plain English.
 
-
-**Step 1: Navigate to the Workflow Page**
+### 1: Navigate to the Workflow Page
 * In the navigation sidebar on the left, click on "Workflows". This will take you to the `/workflows` page where you'll see your list of existing workflows.
 
-**Step 2: Start a New Workflow**
+### 2: Click "Create Workflow"
 * In the top right corner of the Workflows page, click the "Create Workflow" button.
 
 <img width="1200" height="966" alt="create_workflow" src="https://github.com/user-attachments/assets/8938b032-db6f-4f25-b8bb-578f241c638c" />
 
-**Step 3: Describe Your Goal**
+### 3: Describe Your Goal
 
 ****You have two options: writing a description or uploading a flowchart.****
 
@@ -44,7 +83,6 @@ This guide will walk you through creating a complete, functional Shuffle workflo
 ***Option A: Write a Text Description***
 
 <img width="600" height="650" alt="AI_generate_page" src="https://github.com/user-attachments/assets/c756caf1-a32b-4b56-bd5a-81fc2ec879dd" />
-
 
 
 * At the top of the canvas, you will see a text box that says "Describe your workflow in natural language...". This is where the magic happens.
@@ -82,12 +120,12 @@ This flowchart shows our phishing response process. The goal is to automate the 
 The ability to process images depends entirely on your AI model. This feature is fully supported when using Shuffle Cloud's default model. If you are using a self-hosted model (like Ollama), you must ensure it is a multimodal model (one that can understand both text and images) for this feature to work correctly.
 
 
-**Step 4: Generate the Workflow**
+### 4: Generate the Workflow
 
 * Once you are satisfied with your description or uploaded flowchart, click the 'AI Generate' button.
 * Wait a few moments. The AI will analyze your request and automatically build the workflow on the canvas, complete with the right apps and connections.
 
-**Step 5: Review and Customize**
+### 5: Review and Customize
 * The AI-generated workflow is a powerful starting point. You can now:
 
 * Click on each app to configure its specific settings (e.g., authenticating with your Jira account).
@@ -98,7 +136,10 @@ The ability to process images depends entirely on your AI model. This feature is
 
 **Congratulations! You've just built an automation workflow using AI.**
 
-## How to set up a Self-Hosted AI Model with Shuffle
+## Editing a Workflow
+This is a work in progress. Currently in Alpha. Contact support@shuffler.io if you would like to be a tester.
+
+## Using self-hosted AI models
 
 While Shuffle's Cloud platform provides AI credits to get you started, connecting your own self-hosted AI model gives you ultimate control and flexibility. This guide will walk you through the process.
 
@@ -129,13 +170,13 @@ You will need the following information from your self-hosted AI server:
 
 **Step 2: Set the Environment Variables**
 
-`OPENAI_API_URL` (Required)
+`AI_API_URL` (Required)
 
 * What it is: The full URL to your AI server's API endpoint.
 
 Example: 
 ```bash
-OPENAI_API_URL=http://localhost:11434/v1
+AI_API_URL=http://localhost:11434/v1
 ```
 
 `AI_MODEL` (Required)
@@ -147,15 +188,14 @@ Example:
 AI_MODEL=llama3
 ```
 
-OPENAI_API_KEY (Optional)
+AI_API_KEY (Optional)
 
 * What it is: The API key or token if your server requires authentication.
 
 Example:
 ```bash
-OPENAI_API_KEY=sk-mysecretkey123
+AI_API_KEY=sk-mysecretkey123
 ```
-
 
 Shuffle can support any self-hosted model that implements the OpenAI API interface. Examples include Ollama, local LLMs wrapped with OpenAI-compatible endpoints, or any other model that exposes the same API.
 
@@ -163,9 +203,13 @@ Once these are set, there is no need to restart your Shuffle backend server as t
 
 **Note: You need to refresh the Shuffle UI page in your browser for the new AI features to appear.**
 
+## AI for quicker Support
+TBA: Coming soon. The goal is to provide quick answers to typical questions, and otherwise forward to the Shuffle team.
 
-### Troubleshooting
+## Troubleshooting
 
 * Ensure your AI server is running and reachable at the URL you provided.
 * If using authentication, double-check the API key.
 * Use the exact model name available on your self-hosted AI instance.
+
+If anything else goes wrong, please contact support@shuffler.io
