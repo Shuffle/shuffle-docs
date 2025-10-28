@@ -599,14 +599,42 @@ The next part is a list of Action Results that were performed within the executi
 **PS: There's a handy Copy trick with JSON. By clicking the VALUE in JSON, it will copy the path to the Value itself (e.g. #nodename.success), while clicking the pink COPY ICON to the right of the value will copy the actual value (e.g. false in the image above)**
 
 ### Workflow Run Debugger
-The Workflow Run Debugger is a powerful tool that helps you debug your workflows. You can find it at [https://shuffler.io/workflows/debug](https://shuffler.io/workflows/debug).
+The Workflow Run Debugger is a powerful tool for debugging and managing large volumes of workflow executions. It is the recommended solution when you need to find past runs or **view more than the 100 executions**.You can find it at [https://shuffler.io/workflows/debug](https://shuffler.io/workflows/debug).
 
 ![Workflow Run Debugger](https://github.com/0x0elliot/Shuffle-docs/blob/master/assets/workflow_run_debugger.png?raw=true)
 
+---
+
+**How to Access the Workflow Run Debugger**
+
+There are two ways to access the debugger. The recommended method is starting from your workflow, as it pre-filters the list for you.
+
+**From a Specific Workflow:**
+1.  Navigate to the workflow you want to check.
+2.  Click the **"running person" icon** 🏃 (located next to the "Play" button) in the **bottom-left corner**.
+
+<img width="1618" height="906" alt="image" src="https://github.com/user-attachments/assets/5b76e581-b46c-4a4d-b83f-c36cb2459fff" />
+
+3.  On the "All Workflow Runs" list that opens, click the **graph/search icon** (📈) in the **top-right corner**.
+
+<img width="1087" height="895" alt="image" src="https://github.com/user-attachments/assets/69a8bfcf-e12d-4b55-98fb-e8a84451c169" />
+
+
+**Directly by URL:**
+
+You can also access the debugger directly at:
+`https://shuffler.io/workflows/debug?workflow_id=<your-workflow-id>`
+
+If you use this link, you may need the workflow id to find the specific executions you are looking for 
+
+---
+
 With the Workflow Run Debugger, you can:
-- Filter executions by Workflow Name, Status, Execution Argument, and Results.
+- Filter executions by Workflow Name, Status, Execution Argument, Start and End date/time range, and Results.
+- The debugger's **"Max Results"** dropdown allows you to load and view up to **500** executions at once, Which allows to view large execution histories.
 - View all executions in your organization and sub-organizations.
 - See the execution status of visible executions.
+- Efficiently manage multiple runs. By using the checkboxes next to each run, you can select multiple executions and **mass abort** (stop) or **mass rerun** them simultaneously. This is ideal for handling a large number of failed or stuck workflows.
 
 ## Collaboration features
 Workflows have additional features that may be helpful when you start scaling, or want to collaborate.
