@@ -537,7 +537,7 @@ The "valid" field will match our criteria, while the "invalid" part has everythi
 ## Exploring Executions
 Executions in Shuffle can be explored by clicking the button of the "Running" person on the bottom of your screen while inside a workflow. This will open up a side-bar where you can see a list of the last executions as well as dig into details on why something did or didn't work (debugging). It will not always notify you when a new execution has happened, as these run in the background, but will open up when you attempt re-running an execution.
 
-![image](https://user-images.githubusercontent.com/5719530/193847954-46334f96-f277-445f-9d84-c283c8552ff5.png)
+<img width="1021" height="200" alt="image" src="https://github.com/user-attachments/assets/1b469985-945f-49c3-8de8-2a9aefb21e5b" />
 
 ### Execution List
 After clicking the button, you will see a list of executions, which can be refreshed as you go along. This list is meant to help you find a previous execution, and to dig into it further. Here's a quick breakdown of what everything means:
