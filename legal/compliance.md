@@ -21,6 +21,5 @@ On top of Shuffle's commitment to securing how we use and protect your personal 
 **Shuffle is [GDPR compliant](https://trust.shuffler.io/#/compliance/GDPR), ensuring you have full control and transparency over how your personal data is collected, used, and protected.**
 
 ---
-<p align="center">
-  <img width="426" height="175" alt="socimg" src="https://github.com/user-attachments/assets/f867ceb3-a808-4a53-978f-f2f18ea0a3e8" />
-</p>
+<img src="https://github.com/user-attachments/assets/f867ceb3-a808-4a53-978f-f2f18ea0a3e8" width="482" alt="SOC2" />
+
