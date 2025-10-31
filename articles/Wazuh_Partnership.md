@@ -17,13 +17,13 @@ By combining Wazuh and Shuffle, organizations benefit from:
 
 Jay Gohil, CTO at Shuffle, said: *“Wazuh has played a monumental role in bringing unified XDR and SIEM-based automation capabilities to Shuffle customers through tight-knit integration. And it’s always a treat to work with the Wazuh team.”*
 
-# About Wazuh
+## About Wazuh
 
 [Wazuh](https://wazuh.com/) is a free and open source security platform that combines XDR and SIEM capabilities to protect endpoints and cloud workloads. Its open source nature allows organizations to customize its capabilities to meet specific security requirements, ensuring scalable and adaptable defense strategies.
 
 For additional information on Wazuh Partnerships, please visit their [partners’ website](https://wazuh.com/partners/).
 
-# About Shuffle
+## About Shuffle
 
 [Shuffle](https://shuffler.io/) is a Security Orchestration, Automation and Response (SOAR) platform built to simplify and scale cybersecurity operations. It enables organizations to connect tools, automate workflows, and accelerate response times for SMBs, large enterprises, governments, and educational institutions.
 
