@@ -19,6 +19,7 @@ Describes the features included with Shuffle.
 * [Encrypted Authentication Storage](#encrypted-authentication-storage)
 * [Built-in Documentation](#built-in-documentation)
 * [Automation Triggers](#triggers-of-all-kinds)
+* [Autocomplete](#autocomplete)
 * [SSO and MFA](#sso-and-mfa)
 * [Marketplace](#marketplace)
 * [Development AI](#development-ai)
@@ -37,6 +38,7 @@ Our goal with the App Creator is to incentives as many security companies as pos
 Our workflow designer is the part of Shuffle that makes it all fit together. Together with the [App creator](/apps/new) and our default apps (HTTP & Shuffle Toolbox), it gives you access to unlimited automation possibilities, ensuring anyone can learn to automate anything with just a few hours of practice.
 
 ![Automation-builder](https://github.com/frikky/shuffle-docs/blob/master/assets/shuffle-workflow-1.png?raw=true)
+
 
 ## Standard workflows and apps
 Shuffle comes pre-packaged with a [large amount of apps](https://github.com/frikky/shuffle-apps) and [workflows](https://github.com/frikky/shuffle-workflows), making it both easy to start using and extend. This, together with our [Marketplace](#marketplace) is what will bring security to new heights.
@@ -90,6 +92,16 @@ Automation wouldn't be automation if you had to do manual work. That's why Shuff
 - User Input: Starting or continuing an action based on what an analyst decides 
 
 Extension triggers (not exhaustive): AWS Lambda, AWS S3, Elastalert, Kafka, Pub/Sub
+
+## Autocomplete
+The Autocomplete feature in the Workflow Editor allows you to dynamically reference and insert data from previous node executions into your current action or script.
+
+When you open a field (such as the body, arguments, or parameters) and type the $ symbol or click the autocomplete icon, Shuffle automatically lists all available runtime variables and datastore entries from earlier workflow steps.
+
+Each listed item represents data output from a previous node (for example, $phishing.value, $email_ids.value, or $testing.value). By selecting any of these variables, it automatically inserts the appropriate dynamic reference into your editor.
+
+<img width="636" height="264" alt="Screenshot 2025-11-05 at 2 35 47 AM" src="https://github.com/user-attachments/assets/061fcbe8-1c7f-4f8a-9e49-7ab4380bd94a" />
+
 
 ## SSO and MFA
 SSO and other required authentication mechanisms are already in play, and available to anyone who wants to use them rather than normal signin. Our main supported platforms are the following, with more platforms to come ([ask us!](https://shuffler.io/contact)):
