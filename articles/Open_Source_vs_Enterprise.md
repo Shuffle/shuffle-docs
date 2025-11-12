@@ -25,7 +25,7 @@ Hence:
 
 The major differences are below:
 
-![Shuffle OSS vs Enterprise](https://raw.githubusercontent.com/Shuffle/shuffle-docs/refs/heads/master/assets/Shuffle_Open_Source_vs_Enterprise.png)
+![Shuffle OSS vs Enterprise](https://raw.githubusercontent.com/Shuffle/shuffle-docs/refs/heads/master/assets/Shuffle%20Open%20Source%20vs%20Enterprise.png)
 
 
 Our business model works on two fronts:
