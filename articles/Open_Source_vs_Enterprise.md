@@ -10,7 +10,7 @@ Our business model is based on:
 
 All the features and functionality are available on Open Source, and no features are exclusive. Here's how our development cycle looks:
 - Everything new comes to cloud first, and then onprem within a quarter.
-- New features come to customers first through `nightly` branch, and then everyone else in due time through `main` branch.
+- New features come to customers first through `nightly` branch, and then everyone else through `main` branch releases.
 
 Hence:
 - You simply get all features and use Shuffle as truly Open Source.
@@ -51,7 +51,7 @@ The simple and fair solution is to enforce the trust:
 - We stay true to Open Source.
 - Provide a GREAT platform for EVERYONE with all features and zero evil built-in blockers.
 - Small companies get industry-leading platform for free, which was the core idea of Open Source.
-- Large companies get a better + cheaper platform in the industry, without a vendor-lock-in, another core idea behind Open Source.
+- Big companies get a better + cheaper platform in the industry, without a vendor-lock-in; another core idea behind Open Source.
 - Win-win for everyone.
 
 This helps us:
@@ -64,16 +64,16 @@ This helps us:
 
 Let's be frank:
 - Majority of companies who call themselves Open Source, are not truly Open Source.
-  - Many have hidden blockers, evil business practices, or creates their own licenses.
-- We are not. We are truly Open Source.
+  - Many have hidden blockers, evil business practices, or create their own licenses.
+- We don't do that. We are truly Open Source.
   - We do not block any feature whatsoever, use AGNU-v3 license, and are completely transparent about our business model.
 
-Thus, comparison between Shuffle and others is an apple-to-oranges comparison at best.
+This means comparison of Shuffle-to-Others is an Apple-to-Oranges comparison at best.
 
 ## Shuffle's Future
 
 We have no plans to close-source Shuffle.
 
-We went hard on the first iteration of this, so that we can open up more in the future as we find the balance between growth and friction.
+We went hard on the first iteration of this, so that we can open up more in the future as we find the right balance between growth and friction.
 
-We aim to build a fair and sustainable future for Shuffle.
+We aim to build a fair and sustainable future for Shuffle and the Open Source community.
