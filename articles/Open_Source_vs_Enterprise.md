@@ -10,10 +10,10 @@ Our business model is based on:
 
 All the features and functionality are available on Open Source, and no features are exclusive. Here's how our development cycle looks:
 - Everything new comes to [shuffler.io](shuffler.io) first, and then onprem after thorough onprem scale testing.
-- New features come through `nightly` releases almost nightly, with `latest` being well tested releases.
+- New features come through 'nightly' branch releases almost nightly, with 'latest' branch being well tested releases.
 
 **What you get:**
-- You simply get all features and use Shuffle as truly Open Source.
+- You simply get all the features and use Shuffle as truly Open Source.
 - When you scale, is when you pay.
 - Even when you scale and pay, Shuffle will still be cheaper than any other solution on the market.
   - This is possible due to being available in a wider market, and focus on self-service.
@@ -34,7 +34,7 @@ The major differences are below:
 - **Scale License:** As you grow beyond a point (refer to image above), you get an Enterprise license so that your Shuffle instance scales smoothly without any hiccups.
   - This is done so we set the right expectations for scaling, as our inbox is full of people wanting to scale.
   - Scaling with high availability is hard, especially if you are onprem.
-  - Hence, we have put a lot of money and resources on R&D for a scalable disteributed [runtime architecture](https://shuffler.io/docs/architecture), which is what you get with an Enterprise License.
+  - Hence, we have put a lot of money and resources on R&D for a scalable distributed [runtime architecture](https://shuffler.io/docs/architecture), which is what you get with an Enterprise License.
 - **Support:** Shuffle is a powerful and versatile platform, and it comes with the challenge of too many options and possibilities. When you want our help or want to make the most of Shuffle, you get a support package from Shuffle that covers:
   - Setup (Architecture + Configuration + Onboarding)
   - Error handling
@@ -56,7 +56,7 @@ The simple and fair solution is to enforce the trust:
 
 **This helps us:**
 - Keep Shuffle Open Source
-- To pay our great employees
+- To pay our GREAT employees
 - Reinvest in community building
 - Spend resources on R&D
 - Maintain Shuffle's technical superiority in the market
@@ -69,18 +69,16 @@ Let's be frank:
   - Many have hidden blockers, evil business practices, or create their own licenses.
 - We don't do that. We are truly Open Source.
   - We do not hide any feature whatsoever, are built on the AGPLv3 license, and are completely transparent about our business model.
- 
+
 By being lean and open source first, it has even made us able to make interesting models for top contributors to get licenses and support cheaper. 
 
 This means comparison of Shuffle-to-Others is an Apple-to-Oranges comparison at best.
 
 ## Shuffle's Commitment
 
-* We have no plans to close-source Shuffle. 
-
-* We went hard on the first iteration of scale licensing, so that we can open up more in the future as we find the right balance between growth and friction.
-
-* We aim to build a fair and sustainable future for Shuffle and the Open Source community.
+- We have no plans to close-source Shuffle. 
+- We went hard on the first iteration of scale licensing, so that we can open up more in the future as we find the right balance between growth and friction.
+- We aim to build a fair and sustainable future for Shuffle and the Open Source community.
 
 As we are in the early phase, we appreciate any and all feedback on the approach at support@shuffler.io
 
