@@ -324,10 +324,10 @@ Deletes a key, completely removing all references to it.
 
 To delete a key from a specific category, add `"category": "name"` to the JSON body.
 
-Methods: DELETE
+Methods: POST
 
 ```bash
-curl -X DELETE https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
+curl -XPOST https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi", "category": ""}'
 ```
 
 
@@ -839,7 +839,7 @@ curl https://shuffler.io/api/v1/workflows/schedules -H "Authorization: Bearer AP
 ```
 
 ### Schedule a workflow
-Schedule a workflow to run at certain intervals. The node in the workflow must exist, and that the **execution argument MUST be a string**.
+Schedule a workflow to run at certain intervals. The node in the workflow must exist, and that the **execution argument MUST be a string**. May not update the ID within a workflow.
 
 Methods: POST 
 
