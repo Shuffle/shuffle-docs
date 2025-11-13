@@ -52,7 +52,7 @@ docker-compose up -d
 
 `From version v1.1 onwards, we are using ghcr.io/shuffle/* registry instead of ghcr.io/frikky/*`
 
-As long as you use Docker, updating Shuffle is straight forward. To use a specific version of Shuffle, check out [specific version](/docs/configuration#specific-versioning). We recommend always sticking to the `latest` tag, and if you want experimental changes, use the `nightly` tag. You may however in specific cases want to use a static tag, such as `2.0.0`
+As long as you use Docker, updating Shuffle is straight forward. To use a specific version of Shuffle, check out [specific version](/docs/configuration#specific-versioning). We recommend always sticking to the `latest` tag, and if you want experimental changes, use the `nightly` tag. You may however in specific cases want to use a static tag, such as `2.1.1`
 
 While being in the main repository, here is how to update Shuffle:
 
@@ -62,6 +62,10 @@ git pull
 docker-compose pull
 docker-compose up -d
 ```
+**Please note:**
+We will no longer provide support for older versions after this date. To ensure uninterrupted access and the best possible experience, please upgrade to **Shuffle v2.1.1 before January 31, 2026**.
+
+Versions v2.1.1+ include strict, enforced limitations. We are now actively enforcing the differences between the [Open Source (OSS) and Enterprise editions](https://shuffler.io/articles/Open_Source_vs_Enterprise), differences that have always existed but were not previously enforced.
 
 **PS: This will NOT update your apps, meaning they may be outdated. To update your apps, go to /apps and click both buttons in the top right corner (reload apps locally & Download from Github)**
 
