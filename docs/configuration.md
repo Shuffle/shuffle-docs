@@ -63,7 +63,7 @@ docker-compose pull
 docker-compose up -d
 ```
 **Please note:**
-We will no longer provide support for older versions after this date. To ensure uninterrupted access and the best possible experience, please upgrade to **Shuffle v2.1.1 before January 31, 2026**.
+We will no longer provide support for older versions after **January 31, 2026**. To ensure uninterrupted access and the best possible experience, please upgrade to **Shuffle v2.1.1**.
 
 Versions v2.1.1+ include strict, enforced limitations. We are now actively enforcing the differences between the [Open Source (OSS) and Enterprise editions](https://shuffler.io/articles/Open_Source_vs_Enterprise), differences that have always existed but were not previously enforced.
 
