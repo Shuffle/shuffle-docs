@@ -8,7 +8,7 @@ Our business model is based on:
 - Being a part of your scaling journey
 - Providing support to make the most of the powerful Shuffle automation platform
 
-All the features and functionality are available on Open Source, and no features are exclusive. Here's how our development cycle looks:
+All the [features and functionality](https://shuffler.io/docs/features) are available on Open Source, and no features are exclusive. Here's how our development cycle looks:
 - Everything new comes to [shuffler.io](shuffler.io) first, and then onprem after thorough onprem scale testing.
 - New features come through 'nightly' branch releases almost nightly, with 'latest' branch being well tested releases.
 
