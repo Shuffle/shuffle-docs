@@ -406,7 +406,7 @@ If you want to see whether your app was uploaded or not, you can always check th
 ## Stats and Timelines
 Stats and Timelines are a system built to help track changes to something over time. This is used both by internal systems in Shuffle, and is an option for you to use in Workflows or elsewhere to make timelines. Adding statistics was added in versions >1.4.3, and graphing of ANY value will be available soon. Graphs for default tracked information like App and Workflow utilisation is on the [statistics admin page for your Organisation](https://shuffler.io/admin?admin_tab=billing). 
 
-The [new dashboard page allows for customisation of a bar graph](/new-dashboard). You may view your custom stats easily here. 
+The [new dashboard page allows for customisation of a bar graph](/new-dashboard). You may view your custom stats here. We will introduce custom dashboard controls in future versions of Shuffle.
 
 <img width="1398" height="423" alt="image" src="https://github.com/user-attachments/assets/97212387-d376-4211-9321-157f6817b272" />
 
