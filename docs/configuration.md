@@ -467,6 +467,53 @@ SHUFFLE_SWARM_CONFIG=run
 SHUFFLE_MEMCACHED=shuffle-memcached:11211 # this depends on your setup.
 ```
 
+### Private apps on Kubernetes
+To run private apps on Kubernetes, you need a private container registry to pull images from. Once you configure `REGISTRY_URL` to point to your private registry, Shuffle will automatically pull app images from there.
+
+To install the Shuffle Helm chart pointing to your custom registry, run:
+```bash
+helm install shuffle oci://ghcr.io/shuffle/charts/shuffle \
+  --namespace shuffle \
+  --create-namespace \
+  --set env[0].name=REGISTRY_URL \
+  --set env[0].value="YOURIP:5000"
+```
+
+If your registry allows unauthenticated pushes (or you're not using Docker Hub), you can skip this step.
+However, if your private registry requires authentication, create and share a Docker registry secret using:
+```bash
+kubectl create secret docker-registry <your_secret_name> \
+  --docker-server=<registry-url> \
+  --docker-username=<user> \
+  --docker-password=<pass> \
+  --docker-email=<email> \
+  -n shuffle
+
+kubectl set env deployment/backend SHUFFLE_REGISTRY_SECRET="<your_secret_name>" -n shuffle
+```
+
+After switching to your private registry, the images for already-installed apps will not be available in the new registry. To avoid image-pull failures, you can mirror all existing Shuffle app images from Docker Hub into your private registry.
+
+You can use `skopeo` to mirror the entire repository (docker.io/frikky/shuffle) or run the following script to pull and push every tag manually:
+```bash
+registry="your-registry.domain:5000"
+
+page=1
+while true; do
+  tags=$(curl -s "https://hub.docker.com/v2/repositories/frikky/shuffle/tags?page=$page&page_size=100" | jq -r '.results[].name')
+  [ -z "$tags" ] && break
+
+  for tag in $tags; do
+    echo "-> $tag"
+    docker pull frikky/shuffle:$tag
+    docker tag frikky/shuffle:$tag $registry/shuffle:$tag
+    docker push $registry/shuffle:$tag
+  done
+
+  page=$((page+1))
+done
+```
+
 ## Networking
 Networking with Shuffle is pretty straight forward. What we check for are the following:
 
