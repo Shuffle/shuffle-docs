@@ -85,9 +85,6 @@ Shuffle adds the Partner to Shuffle’s partner discovery page, and creates a de
 #### Partnership Letter
 Shuffle provides the Partner, as a part of this partnership agreement, an official partnership letter confirming the details of the partnership. Partner can use this letter when necessary to prove relevant partnership and authorization to Partner’s customers.
 
-#### Partner Package (Optional)
-Shuffle can provide the Partner with an optional Partner package with Shuffle Public Training and Shuffle Professional Services. For more details, check Exhibit Training.
-
 ## Service Partner
 
 ### About Service Partner
@@ -111,8 +108,6 @@ Shuffle adds the Partner to Shuffle’s partner discovery page, and creates a de
 #### Partnership Letter
 Shuffle provides the Partner, as a part of this partnership agreement, an official partnership letter confirming the details of the partnership. Partner can use this letter when necessary to prove relevant partnership and authorization to Partner’s customers.
 
-#### Partner Package (Optional)
-Shuffle can provide the Partner with an optional Partner package with Shuffle Public Training and Shuffle Professional Services. For more details, check Exhibit Training.
 
 ## Integration Partner
 
@@ -137,9 +132,6 @@ Shuffle adds the Partner to Shuffle’s partner discovery page, and creates a de
 #### Partnership Letter
 Shuffle provides the Partner, as a part of this partnership agreement, an official partnership letter confirming the details of the partnership. Partner can use this letter when necessary to prove relevant partnership and authorization to Partner’s customers.
 
-#### Partner Package (Optional)
-Shuffle can provide the Partner with an optional Partner package with Shuffle Public Training and Shuffle Professional Services. For more details, check Exhibit Training.
-
 ## Technology Partner
 
 ### About Technology Partner
@@ -159,16 +151,6 @@ Shuffle adds the Partner to Shuffle’s partner discovery page, and creates a de
 
 #### Partnership Letter
 Shuffle provides the Partner, as a part of this partnership agreement, an official partnership letter confirming the details of the partnership. Partner can use this letter when necessary to prove relevant partnership and authorization to Partner’s customers.
-
-#### Partner Package (Optional)
-Shuffle can provide the Partner with an optional Partner package with Shuffle Public Training and Shuffle Professional Services. For more details, check Exhibit Training.
-
-## Partner Package
-
-### About the Shuffle Partner Package
-The Shuffle Partner Package is an optional package that can be availed only by Shuffle Partners. The goal of the package is to get the Partner started with the Shuffle platform at an expedited rate with Shuffle Public Training and Shuffle Professional Services at a combined discounted fee of $3500.
-
-It includes Shuffle Public Training for up to 5 people (that helps in training Partner’s team about the Shuffle platform) and 15 hours of Shuffle Professional Services (that helps in additional development or work required from the Shuffle team; check Exhibit Professional Services), which can be availed at any point by the partner but recommended at the beginning of the partnership.
 
 ## Legal
 
