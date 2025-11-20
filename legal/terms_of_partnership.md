@@ -77,7 +77,7 @@ Shuffle provides straight discounts (Direct Discount Model) (reseller discounts 
 Shuffle provides additional support to the Partner’s marketing and sales team during testing and POC phases for existing and new customers. Shuffle also provides additional technical support in case it’s mutually agreed upon by both parties.
 
 #### Better Resources
-Shuffle provides the Partner with additional material such as feature-set presentation and partner training (check Exhibit Training) to equip the Partner’s team with the right knowledge and skillset for distribution and reselling of Shuffle.
+Shuffle provides the Partner with additional material such as feature-set presentation, partner training, sales training, and more to equip the Partner’s team with the right knowledge and skillset for distribution and reselling of Shuffle.
 
 #### Mutual Co-Marketing
 Shuffle adds the Partner to Shuffle’s partner discovery page, and creates a dedicated page for the Partner with relevant details such as expertise, links, and articles. Shuffle will also publish an article about the partnership with the Partner detailing how the Partner can help customers make the most of Shuffle. Shuffle requires the Partner to do the same if the Partner has public facing Partner discovery and content pages.
@@ -100,7 +100,7 @@ Shuffle provides either straight discounts (Direct Discount Model) (reseller dis
 Shuffle provides additional support to the Partner’s technical, security, marketing, and sales team during testing, POC, and production phases for existing and new customers.
 
 #### Better Resources
-Shuffle provides the Partner with additional material such as feature-set presentation and partner training (check Exhibit Training) to equip the Partner’s team with the right knowledge and skillset for internal use and external servicing of the Shuffle platform.
+Shuffle provides the Partner with additional material such as feature-set presentation, partner training, sales training, and more to equip the Partner’s team with the right knowledge and skillset for internal use and external servicing of the Shuffle platform.
 
 #### Mutual Co-Marketing
 Shuffle adds the Partner to Shuffle’s partner discovery page, and creates a dedicated page for the Partner with relevant details such as expertise, links, and articles. Shuffle will also publish an article about the partnership with the Partner detailing how the Partner can help customers make the most of Shuffle. Shuffle requires the Partner to do the same if the Partner has public facing Partner discovery and content pages.
@@ -124,7 +124,7 @@ Shuffle provides usage-based discounts (Scale Discount Mode) (at-scale discount 
 Shuffle provides additional support to the Partner’s technical, IT, product, marketing, and sales team during testing, POC, and production phases for existing and new customers.
 
 #### Better Resources
-Shuffle provides the Partner with additional material such as feature-set presentation and partner training (check Exhibit Training) to equip the Partner’s team with the right knowledge and skillset for the integration of the Shuffle platform within Partner’s Product.
+Shuffle provides the Partner with additional material to equip the Partner’s team with the right knowledge and skillset for the integration of the Shuffle platform within Partner’s Product.
 
 #### Mutual Co-Marketing
 Shuffle adds the Partner to Shuffle’s partner discovery page, and creates a dedicated page for the Partner with relevant details such as expertise, links, and articles. Shuffle will also publish an article about the partnership with the Partner detailing how the Partner can help customers make the most of Shuffle. Shuffle requires the Partner to do the same if the Partner has public facing Partner discovery and content pages.
@@ -144,7 +144,7 @@ The goal of the Shuffle Technology Partner program is to help Partners get the b
 Shuffle provides additional support to the Partner’s technical, security, IT, product, marketing, and sales team during testing, POC, and production phases for existing and new customers.
 
 #### Better Resources
-Shuffle provides the Partner with additional material such as feature-set presentation and partner training (check Exhibit Training) to equip the Partner’s team with the right knowledge and skillset for the co-development, co-servicing, and co-marketing of Partner’s Product along-with the Shuffle platform.
+Shuffle provides the Partner with additional materialto equip the Partner’s team with the right knowledge and skillset for the co-development, co-servicing, and co-marketing of Partner’s Product along-with the Shuffle platform.
 
 #### Mutual Co-Marketing
 Shuffle adds the Partner to Shuffle’s partner discovery page, and creates a dedicated page for the Partner with relevant details such as expertise, links, and articles. Shuffle will also publish an article about the partnership with the Partner detailing how the Partner can help customers make the most of Shuffle. Shuffle requires the Partner to do the same if the Partner has public facing Partner discovery and content pages.
