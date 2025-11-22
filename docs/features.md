@@ -1,11 +1,7 @@
 # Shuffle Features 
-Describes the features included with Shuffle.
 
-* SaaS: [Shuffle Cloud](https://shuffler.io/pricing)
-* Open Source: [Shuffle onprem](https://github.com/frikky/shuffle)
-* Hybrid: [Shuffle Hybrid](/docs/configuration#hybrid_configuration)
+[![Shuffle Features Presentation PDF](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/Shuffle%20Features%20Presentation.png)](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/Shuffle%20Features%20Presentation.pdf)
 
-[Contact us](https://shuffler.io/contact) for more info
 
 ## Table of contents
 * [Introduction](#introduction)
