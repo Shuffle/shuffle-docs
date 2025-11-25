@@ -20,7 +20,9 @@ IMP: Only the actions that run are counted; the rest are ignored and not counted
 
 ## Why Shuffle Pricing Works
 
-Shuffle's pricing is market-leading. Why? Read single sentence explanations below...
+Shuffle's pricing is market-leading.
+
+Why? Read single sentence explanations below:
 
 1. App-Runs Based: Shuffle's licensing cost is only based on app-runs. Everything else is unlimited
 
