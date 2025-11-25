@@ -20,17 +20,15 @@ IMP: Only the actions that run are counted; the rest are ignored and not counted
 
 ## Why Shuffle Pricing Works
 
-Shuffle's pricing is market-leading.
+Shuffle's pricing is market-leading. Why? Read single sentence explanations below:
 
-Why? Read single sentence explanations below:
+1. **App-Runs Based**: Shuffle's licensing cost is only based on app-runs. Everything else is unlimited
 
-1. App-Runs Based: Shuffle's licensing cost is only based on app-runs. Everything else is unlimited
+2. **Cost Effective**: Shuffle's app-run pricing is the most inexpensive on the market, period.
 
-2. Cost Effective: Shuffle's app-run pricing is the most inexpensive on the market, period.
+3. **Incentivizes Efficiency**: Given that app-runs are actual actions that runs inside your workflow, it incentivizes everyone to build efficient and fast automations.
 
-3. Incentivizes Efficiency: Given that app-runs are actual actions that runs inside your workflow, it incentivizes everyone to build efficient and fast automations.
-
-4. Scale Discounts: Shuffle offers growing discounts so that your cost does not increase with increase in your scale.
+4. **Scale Discounts**: Shuffle offers growing discounts so that your cost does not increase linearly with increase in your scale.
 
 ## Questions?
 
