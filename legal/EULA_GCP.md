@@ -4,6 +4,23 @@
 **Effective Date:** December 4th, 2025  
 **Version:** 1.0  
 
+## Table of contents
+* [Definitions](#1-definitions)
+* [Proprietary Rights](#2-proprietary-rights)
+* [Grant of License](#3-grant-of-license)
+* [License Restrictions](#4-license-restrictions)
+* [Google Cloud Marketplace Terms](#5-google-cloud-marketplace-terms)
+* [Support and Updates](#6-support-and-updates)
+* [Data and Privacy](#7-data-and-privacy)
+* [Disclaimer of Warranties](#8-disclaimer-of-warranties)
+* [Limitation of Liability](#9-limitation-of-liability)
+* [Indemnification](#10-indemnification)
+* [Term and Termination](#11-term-and-termination)
+* [Export Compliance](#12-export-compliance)
+* [Governing Law and Dispute Resolution](#13-governing-law-and-dispute-resolution)
+* [General Provisions](#14-general-provisions)
+* [Contact Information](#15-contact-information)
+
 ---
 
 **IMPORTANT – READ CAREFULLY:** This End-User License Agreement ("Agreement" or "EULA") is a legal agreement between you ("Customer," "You," or "Your") and Shuffle LLC ("Shuffle," "We," "Us," or "Our"). By deploying, downloading, accessing, or using the Shuffle Terraform Module via Google Cloud Marketplace, you agree to be bound by the terms of this Agreement. If you do not agree to these terms, do not deploy, download, or use the Software.
