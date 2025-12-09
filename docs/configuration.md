@@ -52,7 +52,7 @@ docker-compose up -d
 
 `From version v1.1 onwards, we are using ghcr.io/shuffle/* registry instead of ghcr.io/frikky/*`
 
-As long as you use Docker, updating Shuffle is straight forward. To use a specific version of Shuffle, check out [specific version](/docs/configuration#specific-versioning). We recommend always sticking to the `latest` tag, and if you want experimental changes, use the `nightly` tag. You may however in specific cases want to use a static tag, such as `2.0.0`
+As long as you use Docker, updating Shuffle is straight forward. To use a specific version of Shuffle, check out [specific version](/docs/configuration#specific-versioning). We recommend always sticking to the `latest` tag, and if you want experimental changes, use the `nightly` tag. You may however in specific cases want to use a static tag, such as `2.1.1`
 
 While being in the main repository, here is how to update Shuffle:
 
@@ -62,6 +62,10 @@ git pull
 docker-compose pull
 docker-compose up -d
 ```
+**Please note:**
+We will no longer provide support for older versions after **January 31, 2026**. To ensure uninterrupted access and the best possible experience, please upgrade to **Shuffle v2.1.1**.
+
+Versions v2.1.1+ include strict, enforced limitations. We are now actively enforcing the differences between the [Open Source (OSS) and Enterprise editions](https://shuffler.io/articles/Open_Source_vs_Enterprise), differences that have always existed but were not previously enforced.
 
 **PS: This will NOT update your apps, meaning they may be outdated. To update your apps, go to /apps and click both buttons in the top right corner (reload apps locally & Download from Github)**
 
@@ -461,6 +465,53 @@ SHUFFLE_WORKER_IMAGE=ghcr.io/shuffle/shuffle-worker-scale:nightly
 IS_KUBERNETES=true
 SHUFFLE_SWARM_CONFIG=run
 SHUFFLE_MEMCACHED=shuffle-memcached:11211 # this depends on your setup.
+```
+
+### Private apps on Kubernetes
+To run private apps on Kubernetes, you need a private container registry to pull images from. Once you configure `REGISTRY_URL` to point to your private registry, Shuffle will automatically pull app images from there.
+
+To install the Shuffle Helm chart pointing to your custom registry, run:
+```bash
+helm install shuffle oci://ghcr.io/shuffle/charts/shuffle \
+  --namespace shuffle \
+  --create-namespace \
+  --set env[0].name=REGISTRY_URL \
+  --set env[0].value="YOURIP:5000"
+```
+
+If your registry allows unauthenticated pushes (or you're not using Docker Hub), you can skip this step.
+However, if your private registry requires authentication, create and share a Docker registry secret using:
+```bash
+kubectl create secret docker-registry <your_secret_name> \
+  --docker-server=<registry-url> \
+  --docker-username=<user> \
+  --docker-password=<pass> \
+  --docker-email=<email> \
+  -n shuffle
+
+kubectl set env deployment/backend SHUFFLE_REGISTRY_SECRET="<your_secret_name>" -n shuffle
+```
+
+After switching to your private registry, the images for already-installed apps will not be available in the new registry. To avoid image-pull failures, you can mirror all existing Shuffle app images from Docker Hub into your private registry.
+
+You can use `skopeo` to mirror the entire repository (docker.io/frikky/shuffle) or run the following script to pull and push every tag manually:
+```bash
+registry="your-registry.domain:5000"
+
+page=1
+while true; do
+  tags=$(curl -s "https://hub.docker.com/v2/repositories/frikky/shuffle/tags?page=$page&page_size=100" | jq -r '.results[].name')
+  [ -z "$tags" ] && break
+
+  for tag in $tags; do
+    echo "-> $tag"
+    docker pull frikky/shuffle:$tag
+    docker tag frikky/shuffle:$tag $registry/shuffle:$tag
+    docker push $registry/shuffle:$tag
+  done
+
+  page=$((page+1))
+done
 ```
 
 ## Networking

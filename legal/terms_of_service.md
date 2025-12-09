@@ -63,9 +63,6 @@ Public Training is not included by default. Public Training for Shuffle happens 
 ### About Private Training
 Private Training is not included by default. Private Training for Shuffle happens at a time agreed upon by Shuffle and User, and is accessible for up to any number of people as per agreement. It is a highly customizable (number of days, number of people, virtual or in-person, syllabus, pricing, timeline) course with a trainer from Shuffle, and includes but is not limited to: Workflow Development, App Development and Debugging, Organizational Control, Execution exploration and Information searching. The User can choose to add use cases and custom topics to cover for the Private Training. For more information, visit https://shuffler.io/training.
 
-### About Partner Training
-Partner Training is included by default with a partnership agreement. Partner Training for Shuffle happens at a time agreed upon by Shuffle and the Partner, and is accessible for up to any number of people as per agreement. It is of 2-3 hours and can be customized (number of people, syllabus) course with a trainer from Shuffle, and includes but is not limited to: Introduction to Shuffle, Workflow, App-runs, Usecases, Features and Differentiation, Architecture, Configuration, Deployment, Working, Data Management, Platform Walkthrough, Real-World Usecases, QnA.
-
 ## Support
 
 ### About Support

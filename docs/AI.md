@@ -38,6 +38,12 @@ Website: [https://singul.io](https://singul.io)
 ## Using AI in Workflows
 TBA: Coming soon
 
+### LLM inference
+TBA
+
+### Conditions
+TBA
+
 ## App generation
 App generation is a system built to generate Rest API apps from documentation URLs. It works by emulating a browser with which it crawls the documentation.
 

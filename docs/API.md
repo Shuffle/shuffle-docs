@@ -324,10 +324,10 @@ Deletes a key, completely removing all references to it.
 
 To delete a key from a specific category, add `"category": "name"` to the JSON body.
 
-Methods: DELETE
+Methods: POST
 
 ```bash
-curl -X DELETE https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi"}'
+curl -XPOST https://shuffler.io/api/v1/orgs/{org_id}/delete_cache  -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG_ID", "key": "hi", "category": ""}'
 ```
 
 
@@ -406,7 +406,9 @@ If you want to see whether your app was uploaded or not, you can always check th
 ## Stats and Timelines
 Stats and Timelines are a system built to help track changes to something over time. This is used both by internal systems in Shuffle, and is an option for you to use in Workflows or elsewhere to make timelines. Adding statistics was added in versions >1.4.3, and graphing of ANY value will be available soon. Graphs for default tracked information like App and Workflow utilisation is on the [statistics admin page for your Organisation](https://shuffler.io/admin?admin_tab=billing). 
 
-**PS: Statistics are visible to you for every 5th number counted. This means you need to count the number 1 five times, or any number higher than 5 one time for it to be visible.**
+The [new dashboard page allows for customisation of a bar graph](/new-dashboard). You may view your custom stats here. We will introduce custom dashboard controls in future versions of Shuffle.
+
+<img width="1398" height="423" alt="image" src="https://github.com/user-attachments/assets/97212387-d376-4211-9321-157f6817b272" />
 
 ### Get Stats
 Returns the statistics for an organisation
@@ -839,7 +841,7 @@ curl https://shuffler.io/api/v1/workflows/schedules -H "Authorization: Bearer AP
 ```
 
 ### Schedule a workflow
-Schedule a workflow to run at certain intervals. The node in the workflow must exist, and that the **execution argument MUST be a string**.
+Schedule a workflow to run at certain intervals. The node in the workflow must exist, and that the **execution argument MUST be a string**. May not update the ID within a workflow.
 
 Methods: POST 
 
