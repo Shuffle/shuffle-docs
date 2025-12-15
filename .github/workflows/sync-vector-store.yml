@@ -24,7 +24,7 @@ jobs:
       - name: Sync docs to vector store
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          VECTOR_STORE_ID: ${{ secrets.VECTOR_STORE_ID }}
+          OPENAI_DOCS_VS_ID: ${{ secrets.OPENAI_DOCS_VS_ID }}
         run: |
           python .github/scripts/sync_vector_store.py
 
