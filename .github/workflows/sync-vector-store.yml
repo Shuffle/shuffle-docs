@@ -26,7 +26,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           VECTOR_STORE_ID: ${{ secrets.VECTOR_STORE_ID }}
         run: |
-          python .github/workflows/scripts/sync_vector_store.py
+          python .github/scripts/sync_vector_store.py
 
       - name: Commit updated map
         run: |
