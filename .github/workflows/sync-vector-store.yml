@@ -4,71 +4,38 @@ on:
   push:
     branches:
       - master
-    paths:
-      - "docs/**"
 
 permissions:
   contents: write
 
 jobs:
-  detect-changes:
-    runs-on: ubuntu-latest
-
-    outputs:
-      docs_changed: ${{ steps.filter.outputs.docs }}
-      docs_added: ${{ steps.filter.outputs.docs_added_files }}
-      docs_modified: ${{ steps.filter.outputs.docs_modified_files }}
-      docs_deleted: ${{ steps.filter.outputs.docs_deleted_files }}
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Detect changed docs
-        id: filter
-        uses: dorny/paths-filter@v2
-        with:
-          list-files: json
-          filters: |
-            docs:
-              - added|modified: "docs/**"
-              - deleted: "docs/**"
-
-  sync-vector-store:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.docs_changed == 'true'
+  sync:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: pip install openai
+      - run: pip install openai
 
-      - name: Sync docs with OpenAI Vector Store
+      - name: Sync docs to vector store
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           VECTOR_STORE_ID: ${{ secrets.VECTOR_STORE_ID }}
-          FILES_ADDED: ${{ needs.detect-changes.outputs.docs_added }}
-          FILES_MODIFIED: ${{ needs.detect-changes.outputs.docs_modified }}
-          FILES_DELETED: ${{ needs.detect-changes.outputs.docs_deleted }}
         run: |
-          python .github/scripts/sync_vector_store.py
+          python .github/workflows/scripts/sync_vector_store.py
 
-      - name: Commit updated vector map (if changed)
+      - name: Commit updated map
         run: |
           if git status --porcelain | grep ".github/openai-file-map.json"; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add .github/openai-file-map.json
-            git commit -m "chore: sync vector store file map"
+            git commit -m "chore: sync vector store"
             git push
           else
-            echo "No changes to vector map"
+            echo "No changes"
           fi
