@@ -59,7 +59,7 @@ jobs:
           FILES_MODIFIED: ${{ needs.detect-changes.outputs.docs_modified }}
           FILES_DELETED: ${{ needs.detect-changes.outputs.docs_deleted }}
         run: |
-          python .github/workflows/scripts/sync_vector_store.py
+          python .github/scripts/sync_vector_store.py
 
       - name: Commit updated vector map (if changed)
         run: |
