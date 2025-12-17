@@ -1189,8 +1189,7 @@ Invalid email:
 **Important notes:**
 - The invite link format is: `https://shuffler.io/invite?invite_id={userId}_{inviteId}&org_id={orgId}`
 - If the organization has SSO enabled, `&sso=enabled` is added to the invite link
-- The invitation ID is stored in the organization's `invites` array
-- For new users, the region is automatically set to the organization's region (defaults to europe-west2)
+- For new users, the region is automatically set to the organization's region.
 
 
 ## Integration Layer
