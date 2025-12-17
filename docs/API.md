@@ -1154,10 +1154,8 @@ curl -XPOST https://shuffler.io/api/v1/users/register_org -H "Authorization: Bea
 
 **What happens:**
 1. If the user doesn't exist in Shuffle:
-   - A new user account is created with a temporary password
-   - The user is marked as unverified with `first_setup=true`
+   - A new user account is created
    - An invitation email is sent to the user with a link to join the organization
-   - The user is added to SendGrid mailing lists
 
 2. If the user already exists in Shuffle but not in your org:
    - The organization is added to the user's list of organizations
