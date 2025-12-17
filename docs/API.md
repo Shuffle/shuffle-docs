@@ -1130,6 +1130,70 @@ curl -XDELETE https://shuffler.io/api/v1/orgs/{org_id} -H "Authorization: Bearer
 {"success": true}
 ```
 
+### Invite user to organization
+Invites a user to join your organization. If the user doesn't exist, they will be created with a temporary password and invited via email. Only organization admins can invite users.
+
+Methods: POST
+
+```bash
+curl -XPOST https://shuffler.io/api/v1/register_org -H "Authorization: Bearer APIKEY" -d '{
+  "username": "user@example.com"
+}'
+```
+
+Alternative endpoint:
+```bash
+curl -XPOST https://shuffler.io/api/v1/users/register_org -H "Authorization: Bearer APIKEY" -d '{
+  "username": "user@example.com"
+}'
+```
+
+**Requirements:**
+- You must be an admin of the organization to invite users
+- The username must be a valid email address
+
+**What happens:**
+1. If the user doesn't exist in Shuffle:
+   - A new user account is created with a temporary password
+   - The user is marked as unverified with `first_setup=true`
+   - An invitation email is sent to the user with a link to join the organization
+   - The user is added to SendGrid mailing lists
+
+2. If the user already exists in Shuffle but not in your org:
+   - The organization is added to the user's list of organizations
+   - An invitation email is sent to the user with a link to join the organization
+
+3. If the user already exists in your organization:
+   - The user is already a member - no action is taken
+
+**Success response**
+```json
+{"success": true}
+```
+
+**Error responses**
+
+Admin permission required:
+```json
+{"success": false, "reason": "You don't have access to invite users to this organization"}
+```
+
+User already exists in organization:
+```json
+{"success": false, "reason": "User already exist in this organization"}
+```
+
+Invalid email:
+```json
+{"success": false, "reason": "Email is invalid"}
+```
+
+**Important notes:**
+- The invite link format is: `https://shuffler.io/invite?invite_id={userId}_{inviteId}&org_id={orgId}`
+- If the organization has SSO enabled, `&sso=enabled` is added to the invite link
+- The invitation ID is stored in the organization's `invites` array
+- For new users, the region is automatically set to the organization's region (defaults to europe-west2)
+
 
 ## Integration Layer
 The Integration Layer of Shuffle is a way to interact with apps a new way. It utilizes Apps that are Categorized and Labeled, and gives access to API's for specific actions for each of those labels. Behind the scenes there is always a workflow for each of these, and Shuffle wants to give granular control of each individual Workflow if wanted. The integration layer is based on [Shuffle's Schemaless translation technology](https://github.com/frikky/schemaless), built on top of LLMs, with the goal of making Shuffle be able to act as a Large **Action** Model (LAM).
