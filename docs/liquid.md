@@ -367,3 +367,28 @@ Error gotten:
 
 ![13 01 2022_06 18 16_REC](https://user-images.githubusercontent.com/31187099/149260752-e7f37489-9095-4080-a0b7-2b04c53405a4.png)
 
+## App Auth
+
+You can use liquid python to define app auth parameters dynamically. For example, you can create a JWT token for authentication using the `jwt` library in python.
+
+```
+{% python %}
+import jwt
+def generate_token():
+    key = {"customerName":"","accessID":"","description":"","accessKey":"","adminRestApiUrl":""}
+    exp = time.time() + 60 * 60 
+    jwt_claims = {
+        "iat": time.time(), # Set issued at time to the current time.
+        "exp": exp, # Set expiration time
+        "aud": key["adminRestApiUrl"],  # Audience of the claim.
+        "sub": key["accessID"], # Access ID from the Admin API Key.
+    }
+
+    # Use the accessKey from the Admin API key file and the RS256 algorithm to generate the JWT
+    return jwt.encode(jwt_claims, key["accessKey"], algorithm="RS256")
+    
+print(generate_token())
+{% endpython %}
+```
+
+Provide this python script in the app auth token field to generate a new JWT token for each execution. The code get executed when the app is used in a workflow. You can modify the code to fit your app auth requirements.
