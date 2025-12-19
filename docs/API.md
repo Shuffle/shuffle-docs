@@ -1089,18 +1089,25 @@ curl -XPOST https://shuffler.io/api/v1/orgs/{CURRENT_ORG_ID}/generate_sso_login_
 Generate an SSO provision URL for user provisioning in partner organizations (For now. Please contact support@shuffler.io if you would like to use this API.). This endpoint allows admin users in partner organizations to provision new users or generate login URLs for existing users.
 
 **Requirements:**
-- Admin role required
-- Organization must be a partner (DistributionPartner, IntegrationPartner, ServicePartner, TechPartner, or ChannelPartner)
+- Admin role required in the target organization (or its parent organization for child orgs)
+- Organization (or its parent) must be a partner (DistributionPartner, IntegrationPartner, ServicePartner, TechPartner, or ChannelPartner)
 - Auto provision must be disabled (SSOConfig.AutoProvision = false)
 - SSO must be configured (OpenIdClientId and OpenIdToken required)
 
 Methods: POST
 
 ```bash
-curl -XPOST https://shuffler.io/api/v1/orgs/sso/link -H "Authorization: Bearer APIKEY" -d '{
-  "email": "user@example.com"
-}'
+curl -XPOST https://shuffler.io/api/v1/orgs/sso/link \
+  -H "Authorization: Bearer APIKEY" \
+  -H "Org-Id: target_org_id" \
+  -d '{
+    "email": "user@example.com"
+  }'
 ```
+
+**Headers:**
+- `Authorization: Bearer APIKEY` (required) - Your API key for authentication
+- `Org-Id: target_org_id` (optional) - Specify the organization to provision in. If not provided, uses your current active organization. Can also be passed as query parameter `?org_id=target_org_id`
 
 **Request Body:**
 ```json
@@ -1137,7 +1144,7 @@ Authentication required:
 
 Admin access required:
 ```json
-{"success": false, "reason": "Admin access required"}
+{"success": false, "reason": "Admin access required in the relevant org"}
 ```
 
 Not a partner organization:
