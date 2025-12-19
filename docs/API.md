@@ -1086,7 +1086,7 @@ curl -XPOST https://shuffler.io/api/v1/orgs/{CURRENT_ORG_ID}/generate_sso_login_
 ```
 
 ### Generate SSO Provision URL
-Generate an SSO provision URL for user provisioning in partner organizations (For now. Please contact support@shuffler.io if you would like to use this API.). This endpoint allows admin users in partner organizations to provision new users or generate login URLs for existing users.
+Generate an SSO provision URL for user provisioning in partner organizations (For now. Please contact support@shuffler.io if you would like to use this API). This endpoint allows admin users in partner organizations to provision new users or generate login URLs for existing users.
 
 **Requirements:**
 - Admin role required in the target organization (or its parent organization for child orgs)
@@ -1107,7 +1107,7 @@ curl -XPOST https://shuffler.io/api/v1/orgs/sso/link \
 
 **Headers:**
 - `Authorization: Bearer APIKEY` (required) - Your API key for authentication
-- `Org-Id: target_org_id` (optional) - Specify the organization to provision in. If not provided, uses your current active organization. Can also be passed as query parameter `?org_id=target_org_id`
+- `Org-Id: target_org_id` (optional) - Specify the organization to provision in. If not provided, uses your current active organization.
 
 **Request Body:**
 ```json
