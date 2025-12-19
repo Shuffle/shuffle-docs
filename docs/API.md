@@ -1085,6 +1085,97 @@ curl -XPOST https://shuffler.io/api/v1/orgs/{CURRENT_ORG_ID}/generate_sso_login_
 {"success": true, "reason": "SSO_REDIRECT", "url": ""}
 ```
 
+### Generate SSO Provision URL
+Generate an SSO provision URL for user provisioning in partner organizations (For now. Please contact support@shuffler.io if you would like to use this API.). This endpoint allows admin users in partner organizations to provision new users or generate login URLs for existing users.
+
+**Requirements:**
+- Admin role required
+- Organization must be a partner (DistributionPartner, IntegrationPartner, ServicePartner, TechPartner, or ChannelPartner)
+- Auto provision must be disabled (SSOConfig.AutoProvision = false)
+- SSO must be configured (OpenIdClientId and OpenIdToken required)
+
+Methods: POST
+
+```bash
+curl -XPOST https://shuffler.io/api/v1/orgs/sso/link -H "Authorization: Bearer APIKEY" -d '{
+  "email": "user@example.com"
+}'
+```
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Success response for new user:**
+```json
+{
+  "success": true,
+  "sso_url": "https://auth.example.com/sso?state=...",
+  "user_id": "uuid-of-created-user"
+}
+```
+
+**Success response for existing user:**
+```json
+{
+  "success": true,
+  "sso_url": "https://auth.example.com/sso?state=...",
+  "existing_user": true,
+  "sso_configured": true
+}
+```
+
+**Error responses:**
+
+Authentication required:
+```json
+{"success": false, "reason": "Authentication required"}
+```
+
+Admin access required:
+```json
+{"success": false, "reason": "Admin access required"}
+```
+
+Not a partner organization:
+```json
+{"success": false, "reason": "Provisioning not allowed. We need a partner org for this."}
+```
+
+Auto provision disabled:
+```json
+{"success": false, "reason": "Provisioning not allowed. Auto provision is disabled."}
+```
+
+SSO not configured:
+```json
+{"success": false, "reason": "SSO not configured for this organization"}
+```
+
+Invalid email:
+```json
+{"success": false, "reason": "Invalid email address"}
+```
+
+Restricted email domain:
+```json
+{"success": false, "reason": "Cannot provision @shuffler.io email addresses"}
+```
+
+User already exists (not provisioned by this org):
+```json
+{"success": false, "reason": "User already exists"}
+```
+
+**What happens:**
+1. **For new users**: Creates a new user account, adds them to the organization, and returns an SSO setup URL
+2. **For existing users provisioned by this org**: 
+   - If SSO is already configured: Returns a login URL
+   - If SSO is not configured: Returns a setup URL to complete SSO configuration
+
 ### Edit Organization
 Edit an Organization. Each field is individually managed, except org_id which is required.
 
