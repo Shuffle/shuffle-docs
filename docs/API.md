@@ -1068,24 +1068,6 @@ curl -XPOST https://shuffler.io/api/v1/orgs/{CURRENT_ORG_ID}/change -H "Authoriz
 ```
 
 ### Generate SSO login link
-If you're using SSO, you can use the above API to also generate login link for your users who aren't already logged in. Please make **sure** to include the "mode" parameter as "login" in the request body.
-
-```bash
-curl -XPOST https://shuffler.io/api/v1/orgs/{CURRENT_ORG_ID}/generate_sso_login_link -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG TO CHANGE TO", "sso":true, "mode": "login"}'
-```
-
-Similarly, you can generate a link to allow your user to be connected to your organization as well by using the same request body but removing the "mode" parameter.
-
-```bash
-curl -XPOST https://shuffler.io/api/v1/orgs/{CURRENT_ORG_ID}/generate_sso_login_link -H "Authorization: Bearer APIKEY" -d '{"org_id": "ORG TO CHANGE TO", "sso":true}'
-```
-
-**Success response** 
-```json
-{"success": true, "reason": "SSO_REDIRECT", "url": ""}
-```
-
-### Generate SSO Provision URL
 Generate an SSO provision URL for user provisioning in partner organizations (For now. Please contact support@shuffler.io if you would like to use this API). This endpoint allows admin users in partner organizations to provision new users or generate login URLs for existing users.
 
 **Requirements:**
