@@ -1091,7 +1091,7 @@ Generate an SSO provision URL for user provisioning in partner organizations (Fo
 **Requirements:**
 - Admin role required in the target organization (or its parent organization for child orgs)
 - Organization (or its parent) must be a partner (DistributionPartner, IntegrationPartner, ServicePartner, TechPartner, or ChannelPartner)
-- Auto provision must be disabled (SSOConfig.AutoProvision = false)
+- Auto provision must be enabled
 - SSO must be configured (OpenIdClientId and OpenIdToken required)
 
 Methods: POST
