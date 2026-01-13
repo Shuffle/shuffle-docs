@@ -914,28 +914,189 @@ Now, you just need to configure and install Shuffler like in normal procedure
 
 To modify the database location, change "DB_LOCATION" in .env (root dir) to your new location.
 
-### Database indexes (opensearch)
+### Database indexes (OpenSearch)
 
-- workflowapp
-- workflowexecution
-- workflowapp
-- workflow
-- apikey
-- app_execution_values
-- environments
-- files
-- hooks
-- openapi3
-- organizations
-- schedules
-- sessions
-- syncjobs
-- trigger_auth
-- workflowappauth
-- users
-- workflowqueue-*
+Shuffle uses OpenSearch (or Elasticsearch) as its primary database. Below is a complete list of all indexes used by Shuffle, organized by category.
 
-PS: workflowqueue-* is based on the runtime location used for workflow execution (Orborus).
+#### Default Credentials
+The default OpenSearch credentials for Shuffle are:
+- **Username:** `admin`
+- **Password:** `StrongShufflePassword321!`
+
+These can be changed via environment variables in your `.env` file:
+- `SHUFFLE_OPENSEARCH_USERNAME`
+- `SHUFFLE_OPENSEARCH_PASSWORD`
+
+#### Index Prefix
+You can set a custom prefix for all indexes using the `SHUFFLE_OPENSEARCH_INDEX_PREFIX` environment variable. This is useful when running multiple Shuffle instances on a single OpenSearch cluster.
+
+Example: If `SHUFFLE_OPENSEARCH_INDEX_PREFIX=prod`, the `workflow` index becomes `prod_workflow`.
+
+#### Core Indexes
+
+| Index | Description |
+|-------|-------------|
+| `workflow` | Workflow definitions and configurations |
+| `workflowexecution` | Workflow execution records and results |
+| `workflowapp` | Workflow application definitions |
+| `workflowappauth` | App authentication configurations |
+| `workflowappauthgroup` | Authentication group configurations |
+| `workflowqueue-{env}` | Execution queue per environment (dynamic, based on Orborus environment) |
+| `workflow_revisions` | Workflow version history |
+| `app_revisions` | App version history |
+
+#### Organization & User Indexes
+
+| Index | Description |
+|-------|-------------|
+| `organizations` | Organization data and settings |
+| `users` | User accounts and profiles |
+| `sessions` | User session tokens |
+| `apikey` | API key storage |
+| `partners` | Partner organization data |
+| `org_statistics` | Organization usage statistics |
+| `org_cache` | Organization cache data (KV store) |
+| `org_cache_revisions` | Cache version history |
+
+#### Files & Storage Indexes
+
+| Index | Description |
+|-------|-------------|
+| `files` | File metadata storage |
+| `datastore_category` | Datastore category definitions |
+| `datastore_ngram` | N-gram data for search functionality |
+| `oauth2_storage` | OAuth2 token storage |
+
+#### Triggers & Automation Indexes
+
+| Index | Description |
+|-------|-------------|
+| `hooks` | Webhook configurations |
+| `schedules` | Scheduled task definitions |
+| `pipelines` | Pipeline definitions |
+| `trigger_auth` | Trigger authentication data |
+| `environments` | Environment configurations |
+| `gmail_subscription` | Gmail trigger subscriptions |
+
+#### Notifications & Communication Indexes
+
+| Index | Description |
+|-------|-------------|
+| `notifications` | Notification records |
+| `conversations` | AI conversation data |
+| `conversation_metadata` | Conversation metadata |
+| `suggestions` | System suggestions |
+
+#### Statistics & Monitoring Indexes
+
+| Index | Description |
+|-------|-------------|
+| `platform_health` | Platform health check data |
+| `app_execution_values` | App execution value cache |
+| `app_stats` | App usage statistics |
+| `creator_stats` | Creator statistics |
+| `environment_stats` | Environment statistics |
+| `singul_stats` | Singul integration stats |
+| `live_execution_status` | Real-time execution status |
+
+#### Detection & Rules Indexes
+
+| Index | Description |
+|-------|-------------|
+| `disabled_rules` | Disabled detection rules |
+| `selected_rules` | Selected/enabled detection rules |
+
+#### Other Indexes
+
+| Index | Description |
+|-------|-------------|
+| `openapi3` | OpenAPI spec storage |
+| `usecases` | Use case definitions |
+| `reseller_deal` | Reseller deal data |
+| `training` | Training/ML data |
+| `synckey` | Cloud sync key data |
+| `shuffle_logs` | Shuffle system logs |
+
+#### Indexes with Aliasing & Rollover
+
+The following 11 indexes are configured with **aliasing and automatic rollover** for better scaling. These indexes are created with the pattern `{index}-000001` and have an alias pointing to the write index. This is handled by `InitOpensearchIndexes()` on startup.
+
+```
+workflowexecution, datastore_ngram, org_cache, org_cache_revisions,
+notifications, shuffle_logs, environments, org_statistics,
+workflowapp, workflow, workflow_revisions
+```
+
+**Default rollover conditions:**
+- Max age: 90 days
+- Max size: 40GB
+- Max documents: 1,000,000
+
+**Default index settings:**
+- Shards: 3
+- Replicas: 1
+- Refresh interval: 30s
+
+You can customize these with environment variables:
+- `OPENSEARCH_INDEX_CONFIG` - Custom JSON for index settings/mappings
+- `OPENSEARCH_INDEX_ROLLOVER` - Custom JSON for rollover conditions
+- `SHUFFLE_SKIP_OPENSEARCH_INDEX_INIT=true` - Skip automatic index initialization
+
+### Re-indexing & Index Management
+
+#### When to Re-index
+Re-indexing may be necessary when:
+- Upgrading Shuffle versions with schema changes
+- Changing index settings (shards, replicas)
+- Migrating to a new OpenSearch cluster
+- Fixing corrupted indexes
+
+#### Re-indexing a Single Index
+```bash
+# Using OpenSearch API directly
+curl -X POST "https://localhost:9200/_reindex" -H 'Content-Type: application/json' -d'
+{
+  "source": { "index": "workflow" },
+  "dest": { "index": "workflow_new" }
+}'
+
+# Then swap the alias or update Shuffle to use the new index
+```
+
+#### Checking Index Health
+```bash
+# List all Shuffle indexes
+curl -X GET "https://localhost:9200/_cat/indices/*workflow*?v"
+
+# Check index aliases
+curl -X GET "https://localhost:9200/_cat/aliases?v"
+
+# Check rollover status for aliased indexes
+curl -X GET "https://localhost:9200/workflowexecution/_alias"
+```
+
+#### Manual Rollover
+If an index grows too large before automatic rollover triggers:
+```bash
+curl -X POST "https://localhost:9200/workflowexecution/_rollover" -H 'Content-Type: application/json' -d'
+{
+  "conditions": {
+    "max_docs": 500000
+  }
+}'
+```
+
+#### Deleting Old Index Data
+For indexes with rollover, you can delete old backing indexes:
+```bash
+# List backing indexes
+curl -X GET "https://localhost:9200/_cat/indices/workflowexecution-*?v"
+
+# Delete a specific old backing index (be careful!)
+curl -X DELETE "https://localhost:9200/workflowexecution-000001"
+```
+
+**Warning:** Always backup data before re-indexing or deleting indexes. Use OpenSearch snapshots for production environments.
 
 ## Debugging
 
