@@ -1045,11 +1045,13 @@ You can customize these with environment variables:
 ### Re-indexing & Index Management
 
 #### When to Re-index
-Re-indexing may be necessary when:
-- Upgrading Shuffle versions with schema changes
-- Changing index settings (shards, replicas)
-- Migrating to a new OpenSearch cluster
-- Fixing corrupted indexes
+Re-indexing is rarely needed since Shuffle uses automatic rollover for high-volume indexes. However, you may need to re-index when:
+
+- **`workflowexecution` is slow** - The most common issue. If this index grew large before rollover was configured, queries become slow. Re-index into a fresh index with proper aliasing.
+- **Changing shard count** - OpenSearch locks primary shard count at creation. If you need more shards for a large dataset, you must re-index.
+- **Field mapping changes** - OpenSearch doesn't allow changing field types (e.g., `text` to `keyword`). Schema changes require re-indexing.
+- **Index corruption** - Rare, but if an index gets corrupted, re-index from backups.
+- **Cluster migration** - Moving from single-node to clustered OpenSearch, or migrating between clusters.
 
 #### Re-indexing a Single Index
 ```bash
