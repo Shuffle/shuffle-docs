@@ -43,6 +43,8 @@ These integrations will typically entail third party services connecting to Shuf
 ## Single Signon
 Shuffle added Single Signon (SAML v1.0) from Shuffle version 0.9.16 & OpenID in Shuffle version 1.0.0. This allows you to log into Shuffle from other identity platforms, entirely controlled by you. SSO is available for **onprem AND cloud**. It works by setting an Entrypoint (IdP) and X509 Certificate, both used to validate who the requester is. This can be added in [your admin panel](/admin). 
 
+Note: This feature will be depreciated on cloud by 10th December 2025. Please migrate to OAuth2/OpenID Connect as soon as possible.
+
 ### Org Swapping behavior
 If an Organization requires SSO, it will FORCE you through the SSO login unless your session already has been through SSO for that organization. This may feel counter-intuitive at first, but is a required system as each organization is controlled for SSO individually, and there is no limit to how many organizations a user can have.
 
@@ -73,6 +75,17 @@ Once an application is made, it's time to find the required information. Go to t
 * X.509 																-> SSO Certificate (X509)
 
 After adding them, click "Save", saving the configuration. After saving, log out of your user to verify the SSO configuration. If you don't see a button for "Use SSO", you most likely configured the wrong organization.
+
+### Okta OpenID
+To use Okta OpenID with Shuffle, first make an app in Okta.
+
+**Configure the following in Okta:**
+* Sign-in redirect URIs -> `https://shuffler.io/api/v1/login_openid`
+* Initiate login URI -> `https://shuffler.io/api/v1/login_openid`
+* Under Client Credentials, enable "Require PKCE as additional verification"
+* Under Grant type, enable "Implicit (hybrid)" and "Allow ID Token with implicit grant type"
+
+After adding them, click "Save", saving the configuration. After saving, log out of your user to verify the SSO configuration.
 
 ### Google SAML SSO
 • Log in to your Google Workspace portal as admin -> Apps -> Web and mobile apps.
