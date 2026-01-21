@@ -101,32 +101,35 @@ The following section describes the basics of a workflow.
 ### Create
 Once logged in, creating a workflow can be done by going to the [workflows](/workflows) dashboard and clicking  "New workflow" as highlighted in the picture below. It will ask you for a name and description. These can be changed at any time. 
 
-![Create workflow1](https://github.com/user-attachments/assets/8938b032-db6f-4f25-b8bb-578f241c638c)
+<img width="1656" height="898" alt="Screenshot 2025-08-28 183003" src="https://github.com/user-attachments/assets/2d409adb-718c-4368-98c6-9bbd2f61bea7" />
 
+<img width="1913" height="862" alt="new-workflow" src="https://github.com/user-attachments/assets/92b74e0a-6d61-4ece-84bf-2bda60c7019a" />
 
 If you lose your way or want to edit it at a later point, it can always be found at [/workflows](/workflows).
 
 ### Edit
 Once a workflow is created, you will be presented with the following view: 
 
-![New workflow](https://github.com/user-attachments/assets/e8f9ff36-80eb-4b09-98f2-f98e9e36962d)
+<img width="1919" height="865" alt="Screenshot 2026-01-21 105702" src="https://github.com/user-attachments/assets/cc6ef7e2-5831-4e30-a4ce-e1833ee831d6" />
+
 
 Workflows are entirely based on [apps](/docs/apps), [triggers](/docs/triggers), [variables](/docs/apps#variables) and [conditions](/docs/conditions). You have access to all of these in the bottom left of the screen. Apps and triggers are draggable, meaning you can drag and drop them into the main window. 
 
 The workflow loads up with a default "change me" node in your main window, which can be edited or removed. You can drag apps from the left apps bar into your workflow's main window and click on them to edit and set them up. You can run executions using the play button and results are shown as in the picture below.
 
-![First node](https://github.com/user-attachments/assets/b42e9569-336a-4225-97c6-fd4b17e9e25e)
-
+<img width="1918" height="866" alt="Screenshot 2026-01-21 105952" src="https://github.com/user-attachments/assets/c1e822d7-1723-40b7-b7c7-734d150ff44b" />
 
 Clicking the node presents you with a new view. This is the view to configure the node. In our example case, the default name is "change_me". 
 
 The default action for the "shuffle tools" app is the "repeat back to me" action which does exactly what it says. This can be changed by clicking the dropdown menu. More about editing an app's actions can be found [here](#edit actions)
 
-![Node setup](https://github.com/user-attachments/assets/21f235ce-3bb4-46de-a88e-7b51913d4d42)
-
+<img width="424" height="707" alt="Screenshot 2026-01-21 110248" src="https://github.com/user-attachments/assets/8e184ca3-0a61-4c9c-be17-0f9041c2ae78" />
 
 ### Save 
 Now that we have a working workflow, click the "save" button next to the big play button (or click CTRL+S). This presents you with a notification at the bottom of the screen that saving is in progress. Saving is required to make your latest edits available for execution.
+
+<img width="1892" height="860" alt="save-workflow" src="https://github.com/user-attachments/assets/5f90977d-a046-4d4b-b7c6-1e60e7c9ebcb" />
+
 
 ### Execute
 With a saved workflow, you can now execute. The big orange play button will execute for you. Once clicked, this will start execution at your [starting node](#starting node), indicated by a round icon with a turquoise border. Whether successful or not, you will be presented with another notification indicating that the node has executed.
