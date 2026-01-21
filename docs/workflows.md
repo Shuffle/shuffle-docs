@@ -44,6 +44,35 @@ Workflows are the backbone of Shuffle, empowering you to automate your daily tas
 
 If you would like to learn more about how to create, test and automate your tasks, read on. 
 
+### What is a workflow
+
+In Shuffle, a workflow is simply a visual script. It is a canvas where you drag and drop actions to build a process.  
+Think of it like a flowchart, but every box actually does something. Instead of writing code to connect your tools, you visually connect them here.
+
+### How it works
+
+Every workflow operates on a simple logic: Input -> Action -> Output.  
+To build one, you need three main parts:
+
+- **The Trigger**: This is the "Start" button. It tells the workflow when to run. This could be a Webhook receiving data from another system, a schedule that runs every hour, or a manual click.  
+- **The Nodes (Apps)**: These are the steps. Each node represents an App doing a specific job. For example, one node might be VirusTotal scanning a file, and the next node might be Slack sending the results.  
+- **The Lines**: These connect your nodes. They decide the order of execution and pass data from one step to the next.
+
+#### Why use it?
+
+The goal is to take a manual task, like investigating an alert, and turn it into a process that runs itself. You build the logic once, and Shuffle executes it every time the trigger fires.
+
+### Why they matter in automation
+
+The main reason you build workflows is to stop doing the same boring tasks over and over again.  
+When you do things manually, you make mistakes. You might forget to check a specific log, or you might copy an ID wrong. A workflow doesn't get tired and it doesn't forget steps. It ensures that every time an event happens, it is handled exactly the same way.
+
+**Speed and Volume**  
+In security, speed matters. If you have to manually log into a firewall to block an IP, that takes minutes. A workflow does it in milliseconds. Also, humans are bad at scale. You can handle one alert, but you can't handle five hundred at once. Workflows can.
+
+**Connecting your tools**  
+You probably have too many tabs open right now. You have your ticketing system, your email, your chat app, and your security tools. Workflows act as the glue between them. Instead of switching tabs to copy-paste data from one tool to another, the workflow moves the data for you.
+
 ### What you need to know
 We encourage everyone to have checked out our [Workflow Development Exercises](https://github.com/Shuffle/Shuffle-docs/blob/master/handbook/engineering/workflow_development_exercises.md) before becoming a creator. This makes sure you know the fundamentals of using Shuffle and can build _anything_. The items below that aren't linked do have documentation, but may be missing a video.
 
@@ -72,7 +101,7 @@ The following section describes the basics of a workflow.
 ### Create
 Once logged in, creating a workflow can be done by going to the [workflows](/workflows) dashboard and clicking  "New workflow" as highlighted in the picture below. It will ask you for a name and description. These can be changed at any time. 
 
-![Create workflow1](https://github.com/user-attachments/assets/57b580b8-39fe-4f29-a0ae-b55c303565e3)
+![Create workflow1](https://github.com/user-attachments/assets/8938b032-db6f-4f25-b8bb-578f241c638c)
 
 
 If you lose your way or want to edit it at a later point, it can always be found at [/workflows](/workflows).
