@@ -132,13 +132,15 @@ Now that we have a working workflow, click the "save" button next to the big pla
 
 
 ### Execute
-With a saved workflow, you can now execute. The big orange play button will execute for you. Once clicked, this will start execution at your [starting node](#starting node), indicated by a round icon with a turquoise border. Whether successful or not, you will be presented with another notification indicating that the node has executed.
+With a saved workflow, you can now execute. The big green play button will execute for you. Once clicked, this will start execution at your starting node. Whether successful or not, you will see a side panel open, indicating that the node has executed
 
-![Node execute success](https://github.com/frikky/shuffle-docs/blob/master/assets/node-execute-success.PNG?raw=true)
+<img width="1117" height="175" alt="execute-button" src="https://github.com/user-attachments/assets/db498523-02bb-4ec8-93ed-438c71ee1a03" />
 
-If you want to see all your previous executions, you can go back to [workflows](/workflows), click the name of your workflow (in our case Example workflow), and see the status and result of all previous executions in detail.
+If you want to see all your previous executions, you can go back to [workflows](/workflows), click the name of your workflow (in our case Example workflow), and click on the running person icon to see the status and result of all previous executions in detail.
 
-![Execution view](https://github.com/frikky/shuffle-docs/blob/master/assets/execution-view.PNG?raw=true)
+<img width="1110" height="195" alt="running-person" src="https://github.com/user-attachments/assets/a2169c95-3357-4952-b7f6-258161a7b910" />
+
+<img width="600" height="700" alt="new-execution-list" src="https://github.com/user-attachments/assets/f84660c1-c8c6-4afb-8db5-13e782081fc4" />
 
 If you want to test more, go to the bottom of this article [How-to continuation](#how-to).
 
