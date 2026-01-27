@@ -73,6 +73,16 @@ In security, speed matters. If you have to manually log into a firewall to block
 **Connecting your tools**  
 You probably have too many tabs open right now. You have your ticketing system, your email, your chat app, and your security tools. Workflows act as the glue between them. Instead of switching tabs to copy-paste data from one tool to another, the workflow moves the data for you.
 
+### Ways to create a workflow
+
+**1. Start from Scratch**
+If you need custom logic that doesn't fit a template, open a blank workflow. This gives you a clean canvas where you can manually drag triggers, apps, and variables to build exactly what you need.
+[Go to workflows to get started ->](https://shuffler.io/workflows)
+
+**2. AI Generation**
+If you know what you want but aren't sure which nodes to use, let the AI handle the setup. You can type a plain English prompt, like "When a new ticket arrives, scan the IP address" and Shuffle will generate the nodes and connections for you automatically.
+[Read more about AI generation ->](https://shuffler.io/docs/AI#workflow-generation)
+
 ### What you need to know
 We encourage everyone to have checked out our [Workflow Development Exercises](https://github.com/Shuffle/Shuffle-docs/blob/master/handbook/engineering/workflow_development_exercises.md) before becoming a creator. This makes sure you know the fundamentals of using Shuffle and can build _anything_. The items below that aren't linked do have documentation, but may be missing a video.
 
