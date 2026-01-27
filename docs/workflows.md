@@ -44,6 +44,45 @@ Workflows are the backbone of Shuffle, empowering you to automate your daily tas
 
 If you would like to learn more about how to create, test and automate your tasks, read on. 
 
+### What is a workflow
+
+In Shuffle, a workflow is simply a visual script. It is a canvas where you drag and drop actions to build a process.  
+Think of it like a flowchart, but every box actually does something. Instead of writing code to connect your tools, you visually connect them here.
+
+### How it works
+
+Every workflow operates on a simple logic: Input -> Action -> Output.  
+To build one, you need three main parts:
+
+- **The Trigger**: This is the "Start" button. It tells the workflow when to run. This could be a Webhook receiving data from another system, a schedule that runs every hour, or a manual click.  
+- **The Nodes (Apps)**: These are the steps. Each node represents an App doing a specific job. For example, one node might be VirusTotal scanning a file, and the next node might be Slack sending the results.  
+- **The Lines**: These connect your nodes. They decide the order of execution and pass data from one step to the next.
+
+#### Why use it?
+
+The goal is to take a manual task, like investigating an alert, and turn it into a process that runs itself. You build the logic once, and Shuffle executes it every time the trigger fires.
+
+### Why they matter in automation
+
+The main reason you build workflows is to stop doing the same boring tasks over and over again.  
+When you do things manually, you make mistakes. You might forget to check a specific log, or you might copy an ID wrong. A workflow doesn't get tired and it doesn't forget steps. It ensures that every time an event happens, it is handled exactly the same way.
+
+**Speed and Volume**  
+In security, speed matters. If you have to manually log into a firewall to block an IP, that takes minutes. A workflow does it in milliseconds. Also, humans are bad at scale. You can handle one alert, but you can't handle five hundred at once. Workflows can.
+
+**Connecting your tools**  
+You probably have too many tabs open right now. You have your ticketing system, your email, your chat app, and your security tools. Workflows act as the glue between them. Instead of switching tabs to copy-paste data from one tool to another, the workflow moves the data for you.
+
+### Ways to create a workflow
+
+**1. Start from Scratch**
+If you need custom logic that doesn't fit a template, open a blank workflow. This gives you a clean canvas where you can manually drag triggers, apps, and variables to build exactly what you need.
+[Go to workflows to get started ->](https://shuffler.io/workflows)
+
+**2. AI Generation**
+If you know what you want but aren't sure which nodes to use, let the AI handle the setup. You can type a plain English prompt, like "When a new ticket arrives, scan the IP address" and Shuffle will generate the nodes and connections for you automatically.
+[Read more about AI generation ->](https://shuffler.io/docs/AI#workflow-generation)
+
 ### What you need to know
 We encourage everyone to have checked out our [Workflow Development Exercises](https://github.com/Shuffle/Shuffle-docs/blob/master/handbook/engineering/workflow_development_exercises.md) before becoming a creator. This makes sure you know the fundamentals of using Shuffle and can build _anything_. The items below that aren't linked do have documentation, but may be missing a video.
 
@@ -72,41 +111,46 @@ The following section describes the basics of a workflow.
 ### Create
 Once logged in, creating a workflow can be done by going to the [workflows](/workflows) dashboard and clicking  "New workflow" as highlighted in the picture below. It will ask you for a name and description. These can be changed at any time. 
 
-![Create workflow1](https://github.com/user-attachments/assets/57b580b8-39fe-4f29-a0ae-b55c303565e3)
+<img width="1656" height="898" alt="Screenshot 2025-08-28 183003" src="https://github.com/user-attachments/assets/2d409adb-718c-4368-98c6-9bbd2f61bea7" />
 
+<img width="1913" height="862" alt="new-workflow" src="https://github.com/user-attachments/assets/92b74e0a-6d61-4ece-84bf-2bda60c7019a" />
 
 If you lose your way or want to edit it at a later point, it can always be found at [/workflows](/workflows).
 
 ### Edit
 Once a workflow is created, you will be presented with the following view: 
 
-![New workflow](https://github.com/user-attachments/assets/e8f9ff36-80eb-4b09-98f2-f98e9e36962d)
+<img width="1919" height="865" alt="Screenshot 2026-01-21 105702" src="https://github.com/user-attachments/assets/cc6ef7e2-5831-4e30-a4ce-e1833ee831d6" />
+
 
 Workflows are entirely based on [apps](/docs/apps), [triggers](/docs/triggers), [variables](/docs/apps#variables) and [conditions](/docs/conditions). You have access to all of these in the bottom left of the screen. Apps and triggers are draggable, meaning you can drag and drop them into the main window. 
 
 The workflow loads up with a default "change me" node in your main window, which can be edited or removed. You can drag apps from the left apps bar into your workflow's main window and click on them to edit and set them up. You can run executions using the play button and results are shown as in the picture below.
 
-![First node](https://github.com/user-attachments/assets/b42e9569-336a-4225-97c6-fd4b17e9e25e)
-
+<img width="1918" height="866" alt="Screenshot 2026-01-21 105952" src="https://github.com/user-attachments/assets/c1e822d7-1723-40b7-b7c7-734d150ff44b" />
 
 Clicking the node presents you with a new view. This is the view to configure the node. In our example case, the default name is "change_me". 
 
 The default action for the "shuffle tools" app is the "repeat back to me" action which does exactly what it says. This can be changed by clicking the dropdown menu. More about editing an app's actions can be found [here](#edit actions)
 
-![Node setup](https://github.com/user-attachments/assets/21f235ce-3bb4-46de-a88e-7b51913d4d42)
-
+<img width="424" height="707" alt="Screenshot 2026-01-21 110248" src="https://github.com/user-attachments/assets/8e184ca3-0a61-4c9c-be17-0f9041c2ae78" />
 
 ### Save 
 Now that we have a working workflow, click the "save" button next to the big play button (or click CTRL+S). This presents you with a notification at the bottom of the screen that saving is in progress. Saving is required to make your latest edits available for execution.
 
+<img width="1892" height="860" alt="save-workflow" src="https://github.com/user-attachments/assets/5f90977d-a046-4d4b-b7c6-1e60e7c9ebcb" />
+
+
 ### Execute
-With a saved workflow, you can now execute. The big orange play button will execute for you. Once clicked, this will start execution at your [starting node](#starting node), indicated by a round icon with a turquoise border. Whether successful or not, you will be presented with another notification indicating that the node has executed.
+With a saved workflow, you can now execute. The big green play button will execute for you. Once clicked, this will start execution at your starting node. Whether successful or not, you will see a side panel open, indicating that the node has executed
 
-![Node execute success](https://github.com/frikky/shuffle-docs/blob/master/assets/node-execute-success.PNG?raw=true)
+<img width="1117" height="175" alt="execute-button" src="https://github.com/user-attachments/assets/db498523-02bb-4ec8-93ed-438c71ee1a03" />
 
-If you want to see all your previous executions, you can go back to [workflows](/workflows), click the name of your workflow (in our case Example workflow), and see the status and result of all previous executions in detail.
+If you want to see all your previous executions, you can go back to [workflows](/workflows), click the name of your workflow (in our case Example workflow), and click on the running person icon to see the status and result of all previous executions in detail.
 
-![Execution view](https://github.com/frikky/shuffle-docs/blob/master/assets/execution-view.PNG?raw=true)
+<img width="1110" height="195" alt="running-person" src="https://github.com/user-attachments/assets/a2169c95-3357-4952-b7f6-258161a7b910" />
+
+<img width="600" height="700" alt="new-execution-list" src="https://github.com/user-attachments/assets/f84660c1-c8c6-4afb-8db5-13e782081fc4" />
 
 If you want to test more, go to the bottom of this article [How-to continuation](#how-to).
 
