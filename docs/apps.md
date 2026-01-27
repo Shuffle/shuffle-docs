@@ -48,13 +48,14 @@ Arguments are the variables used to perform an action. Arguments with an orange 
 
 You can see what parameters and action has by going to /apps, selecting an app and then the action.
 
-![Apps view 3](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-3.png?raw=true)
+![Apps view 3](https://github.com/user-attachments/assets/97395c3b-f5de-4056-b740-7b42a1d8fd7c)
 
 ## Updating apps remotely
 **PS: This only applies to onprem**
 Going to /apps, there exists a button called "Download from Github" which by default will download apps from the directory https://github.com/frikky/shuffle-apps. You can type in your own repository along with authentication options if applicable.
 
-![Apps view 11](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-11.png?raw=true)
+![Apps view 11](https://github.com/frikky/shuffle-docs/blob/master/assets/hotloading-app.png?raw=true)
+
 
 When the modal opens, there are two buttons:
 * Submit - Downloads and builds NEW apps
@@ -108,7 +109,8 @@ The options for importing are:
 - Upload: A local file on your filesystem
 - Drag & drop: A local file on your filesystem. Drop it anywhere in the /apps view.
 
-![Apps view activation 17](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-17.png?raw=true)
+![Apps view activation 17](https://github.com/user-attachments/assets/7a99f7af-46ae-4d7d-a0a4-770749fc2895)
+
 
 ## Activating apps 
 Any public app can be activated, giving you access to a copy of the original app. This app is editable, meaning you can change the configuration of the app in it's entirety in your own Organization. Activation can be done by first [Finding the app](#finding_apps), then clicking the "Activate App" in the top right corner. If successful, you should se a notification that it's been activated.
@@ -117,7 +119,8 @@ Once an app is activated, you can use it within any Workflow, and find it under 
 
 If you want an app activated in your LOCAL environment, see [importing apps](#importing_apps)
 
-![Apps view activation 19](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-19.png?raw=true)
+![Apps view activation 19](https://github.com/user-attachments/assets/081f2e47-528b-45b7-976c-675740b31baa)
+
 
 
 ## Publishing apps 
@@ -129,7 +132,8 @@ All apps can be published. Published apps are available to EVERYONE using Shuffl
 **App Creator**:
 - To publish an app, find an app that you made and own, which is unique, and change "Sharing" to "public" as per the image below.
 
-![Apps view 20](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-20.png?raw=true)
+![Apps view 20](https://github.com/user-attachments/assets/47e122d6-7f0f-4e27-abaa-63054a733683)
+
 
 **PS:** To remove a public app, [contact us](https://shuffler.io/contact)
 
@@ -137,17 +141,11 @@ All apps can be published. Published apps are available to EVERYONE using Shuffl
 [Learn about app creation](/docs/app_creation)
 
 ## Importing remote apps
-**NOT CLOUD**
 
-If you have a repository (private or public) of custom apps for Shuffle (or WALKOFF), Shuffle can load all the apps by using the "Download from URL" button in the /apps view.
+Shuffle can load the apps by using the "Download OpenAPI" button in the /apps view.
 
-1. Click the "Download from URL" button
-![Apps view 9](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-9.png?raw=true)
-
-2. Fill in the github/gitlab URL, and if the repo is private, your username & password. These are used for BasicAuth when running git clone. 
-![Apps view 10](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-10.png?raw=true)
-
-3. Hit submit. If it's unsuccessful, it will throw an error, otherwise show a loading icon. This means it's working on getting your apps.
+#### Click the "Download OpenAPI" button
+![Apps view 9](https://github.com/user-attachments/assets/50a1feb7-b17b-4538-bbeb-df2295ae4d73)
 
 ## Delete app 
 **PS: There is nothing stopping you from deleting an app that is used by a workflow. This is a destructive action, and will make some workflows using the app unusable.**
@@ -207,7 +205,8 @@ The app creator in Shuffle is built to handle any integration for HTTP apps you 
 ### UI overview 
 Creating or editing an app in Shuffle is made to be as simple and fast as possible. These are a few of the main main things in the UI.
 
-![Apps view 6](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-6.png?raw=true)
+![Apps view 6](https://github.com/user-attachments/assets/0b7ce046-08a8-4069-805e-690dcc3ece2a)
+
 
 * Name: The app's name. Visible to everyone.
 * Description: A description for the app.
