@@ -134,6 +134,34 @@ Method: GET
 curl https://shuffler.io/api/v1/workflows/{workflow_id} -H "Authorization: Bearer APIKEY"
 ```
 
+### Upload a Workflow
+
+**Method:** `POST`
+
+To download a single workflow, provide the full repository path to the specific workflow file.  
+To download all workflows from a repository, provide the repository base URL.
+
+The `Org-Id` header is optional. If specified, the workflow(s) will be downloaded and imported into the given organization. If Org-Id not provided then they will be imported into the user’s currently active organization.
+
+If the Git provider is already configured at the organization, `username` and `password` is optional in the body. In such cases, the Shuffle will use the credentials configured for that organization.
+
+Currently, the following Git providers are supported:
+- GitHub  
+- GitLab  
+- Bitbucket  
+- Azure DevOps
+
+```bash
+curl -X POST "{BASE_URL}/api/v1/workflows/download_remote" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Org-Id: <ORG_ID>" \
+  -d '{
+    "url": "https://example.com/repo/path/workflow.json",
+    "branch": "main",
+    "username": "git-user",
+    "password": "PAT"
+  }'
+```
 
 ### Create new workflow
 Creates a basic workflow with a given name and description. Returns a startpoint for a workflow. 
