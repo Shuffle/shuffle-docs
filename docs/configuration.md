@@ -237,6 +237,45 @@ If you get EOFs or timeouts for workers in machine B, look [here](https://shuffl
 
 ![](Aspose.Words.81096d25-bbff-47b2-a5ee-1ac38ad8ca4e.001.jpeg)
 
+### Swarm: Manual worker service (Orborus scheduler-only)
+If you want Orborus to only schedule jobs while you manage workers as a Swarm service yourself, you can pre-create the `shuffle-workers` service and point Orborus at it. Orborus will still poll the backend queue and send execution requests to `/api/v1/execute`.
+
+1. Create the overlay network (if not already created):
+```
+docker network create --driver=overlay --attachable shuffle_swarm_executions
+```
+
+2. Create the worker service manually:
+```
+docker service create \
+  --name shuffle-workers \
+  --replicas 3 \
+  --network shuffle_swarm_executions \
+  --publish published=33333,target=33333 \
+  --env SHUFFLE_SWARM_CONFIG=run \
+  --env SHUFFLE_MEMCACHED=shuffle-memcached:11211 \
+  ghcr.io/shuffle/shuffle-worker:latest
+```
+
+3. Deploy `shuffle-orborus` after the worker service exists so the first execution can dispatch immediately.
+
+4. Configure Orborus to use the manual worker service:
+```
+- SHUFFLE_SWARM_CONFIG=run
+- SHUFFLE_WORKER_SERVER_URL=http://shuffle-workers:33333
+- SHUFFLE_SWARM_NETWORK_NAME=shuffle_swarm_executions
+- CLEANUP=false
+- SHUFFLE_LOGS_DISABLED=true
+```
+
+5. Ensure Orborus is attached to the same overlay network as `shuffle-workers`.
+
+**Limitations and gotchas**
+- Orborus still calls the Docker Swarm API (service list/create, network attach). It must run with manager-level Docker API access (direct socket or a socket proxy that exposes swarm/service/network endpoints).
+- Workers also need manager-level Docker API access to deploy app services during executions; without it, app execution fails.
+- If `shuffle-workers` is deleted or scaled to 0, Orborus will try to recreate it and may fail if it lacks permissions.
+- If the worker service is not reachable as `shuffle-workers:33333`, execution requests will fail. Use `SHUFFLE_WORKER_SERVER_URL` to point to the correct DNS/port.
+
 ### Environment Variables
 
 Shuffle has a few toggles that makes it straight up faster, but which removes a lot of the checks that are being done during your first tries of Shuffle.
