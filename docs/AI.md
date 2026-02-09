@@ -17,17 +17,23 @@ They can additionally talk to each other and be published for third party use.
 
 **This is in private Beta and is not generally available yet. If you would like to try it, please reach out to support@shuffler.io and ask about AI Agents.**
 
-### Agent Continuations
-TBA: Coming soon
-
 ### MCP
 TBA: Coming soon
 
-### App Control
-TBA: Coming soon
+### Agent Continuations
+Continuations are a way of changing or continuing the behavior of a previous AI Agent run. This makes it possible to "talk" to the agent after it is done with a task.
+
+The field will automatically show up at the bottom, below the final output of the Agent run. 
+
+<img width="1273" height="563" alt="image" src="https://github.com/user-attachments/assets/e09e937e-e9df-4a52-9d98-624b18e35d61" />
+
+### Finding AI Agent runs
+As with all platform-wide debugging in Shuffle, AI Agent runs are available in the [/workflows/debug](/workflows/debug) UI. By selecting "Agent Runs" at the top of the Workflow list, you will be given an overview of everything the agentic system has and will do in your environment.
+
+<img width="1211" height="556" alt="image" src="https://github.com/user-attachments/assets/fd5aec29-3052-4e94-ade5-7199faa96342" />
 
 ### Workflow Generation
-TBA: Coming soon
+TBA: Coming soon. The goal here is to take active actions and make tested and well-configured workflows out of them.
 
 ## Singul
 Singul works against vendor-locking with our translator for different providers of the same tools, such as Slack vs Teams vs Discord, or Splunk vs Elastic vs QRadar). It uses LLMs to understand the context of what you are trying to perform, and makes a determinsitic translation to use a standard such as OCSF or STIX. This is a powerful way to avoid vendor lock-in, and to make your automation more future-proof. Made by the Shuffle team.
