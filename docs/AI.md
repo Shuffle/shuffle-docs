@@ -18,7 +18,18 @@ They can additionally talk to each other and be published for third party use.
 **This is in private Beta and is not generally available yet. If you would like to try it, please reach out to support@shuffler.io and ask about AI Agents.**
 
 ### MCP
-TBA: Coming soon
+MCPs are the concept of having an AI Agent decide what actions to do within a specific pool of available actions. It is typically used by agents as to have them be specialised, but there is nothing stopping them from being used directly as well.
+
+In Shuffle, EVERY SINGLE APP has an MCP. This is available with the `POST /api/v1/apps/{appid}/mcp` API and is based on the [MCP standard](https://modelcontextprotocol.io/docs/getting-started/intro).
+
+The easiest way to try one in Shuffle is to go to [/agents](/agents), choosing an app (or more), and telling it what to use it for. This makes the agent act as an MCP. 
+
+<img width="946" height="316" alt="image" src="https://github.com/user-attachments/assets/662d05ef-b3ae-4bba-90d6-9cb4446fb0de" />
+
+They are also available for each app in our upcoming [Security Bundle product Shutdown](https://security.shuffler.io/apps/outlook_office365). 
+
+<img width="778" height="269" alt="image" src="https://github.com/user-attachments/assets/f9eed81b-4251-41b6-b3c6-c2a12c29d7e6" />
+
 
 ### Agent Continuations
 Continuations are a way of changing or continuing the behavior of a previous AI Agent run. This makes it possible to "talk" to the agent after it is done with a task.
