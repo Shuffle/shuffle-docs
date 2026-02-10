@@ -180,6 +180,8 @@ Our solution is to incentivise you into testing each node, by making it more obv
 
 The generalised AI Agent and Security bundle solves this further, as new users tend to want simplicity and solutions first, before getting into the complexity of manual building. 
 
+v2.2.0 pre-release is live, see the [GitHub release notes](https://github.com/Shuffle/Shuffle/releases/tag/v2.2.0) for full technical details.
+
 ---
 
 ## What It Means for You
