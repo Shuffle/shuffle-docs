@@ -4,8 +4,6 @@
 
 Shuffle is on the path to **solve** cybersecurity. While it is a grand task with a moving goal-post, it is exactly the challenge we aim to tackle. In this blog post we give a brief look into how Shuffle is building infrastructure to be able to take care of **any** cybersecurity‑oriented issue you can imagine, whether on‑premises or in public cloud environments, in an easily controllable environment. We delve into a future of possibility, while sticking to real‑world implications rather than pure hype.
 
----
-
 ## Overview
 
 Shuffle is now capable of everything necessary to build any cybersecurity service, and we are rapidly [working with partners](https://shuffler.io/partners) to make it reality. We are building every feature with a global focus, while keeping relevant controls for on‑prem systems front of mind.
@@ -17,8 +15,6 @@ Today we introduce a few new additions that can be tried immediately (links furt
 - **All apps are MCPs** – Choose one or more apps, and the AI Agent infrastructure will perform actions according to your needs.
 - **Modernised Workflow** – A refreshed interface that matches the rest of the platform, giving workflows a cleaner and more focused experience.
 
----
-
 ## The Security Bundle
 
 In our history, we have gone from **Workflows**, to **Public Workflows**, to **Use Cases** with multiple workflows, and now to the **Security Bundle**.
@@ -28,7 +24,7 @@ The Security Bundle has two core parts:
 1. Well‑defined security use cases for **any** tool
 2. An optional UI to interact with them
 
-![shuffle_2.2.0_0](https://github.com/user-attachments/assets/08460558-2688-4605-92b0-942ad2033066)
+![shuffle_2.2.0_0](https://github.com/user-attachments/assets/a75df297-56a4-400a-b426-fdfac45dce67)
 
 It is built entirely on features already present in Shuffle, including workflows, datastore, file management, AI Agents, detection pipelines, and more. Most importantly: **you are in control**. We have built it based on our own and the community's expectation of easy to set up security, which is exactly what we deliver. 
 
@@ -47,7 +43,7 @@ Here are some of the starter usecases we have built (with a lot more to come):
 4. **Detection at scale**
    - Since Shuffle can ingest and handle tickets, why not also have our own detection mechanism? We can! That is what the Data Pipeline system has been built for, and Shuffle can now ingest logs and run Sigma rules on them. More to come in 2026.
 
-![shuffle_2.2.0_1](https://github.com/user-attachments/assets/3bb54d86-5397-4419-95ed-00094c415d45)
+![shuffle_2.2.0_1](https://github.com/user-attachments/assets/27ebb800-0a67-4139-b20e-9185283ffcea)
 
 Above is a simple flowchart of how it works. Every step is controllable, and you can be a human in the loop in each action if you want to be. Since it is built on top of Workflows, **you are and will stay in control**.
 
@@ -55,11 +51,9 @@ Another important part that requires re-iteration: Everything is already include
 
 > Public release is planned for **Q2 2026**. Public preview access is already available on [https://shutdown.no](https://shutdown.no) to Shuffle users.
 
----
-
 ## Controllable [AI Agents and MCPs](https://shuffler.io/docs/AI#ai-agents)
 
-![shuffle_2.2.0_2](https://github.com/user-attachments/assets/54853cdc-37f4-46ac-a130-a96b3e25b32c)
+![shuffle_2.2.0_2](https://github.com/user-attachments/assets/f5a2d3de-a6a4-4f2d-8928-0fc427c3e45e)
 
 We have been [building and implementing narrow AI since early 2022](https://github.com/Shuffle/MetaMitre), when we were only a team of 3, and built a Mitre Attack tactics parser from any type of data. We are still huge advocates of narrow AI, and know it will be an important facet to the future. 
 
@@ -72,25 +66,23 @@ When we first released our Agent system in late 2023, we quickly learned where i
 - It lacked transparency (black-box behavior)
 - It struggled with real-world, multi-step tasks (chained events & reasoning)
 
-![shuffle_2.2.0_3](https://github.com/user-attachments/assets/aa2ec29b-5fcc-447b-b5a6-829a971f41b4)
+![shuffle_2.2.0_3](https://github.com/user-attachments/assets/b575903e-aece-4876-bf36-ae372643ef55)
 
 But a lot has changed since then. Models have gotten better. Our team has gotten better and larger. It is now possible to control and understand what is happening. And with that, we are releasing the public beta version of our controllable, distributed agent system to the world. It is [A2A](https://a2a-protocol.org/latest/) & [MCP compatible](https://modelcontextprotocol.io/docs/getting-started/intro) for multi-agent actions. By default it has very little permissions, and it is entirely controlled based on your apps, actions and authentication. These "permissions" are treated as actions that the agent can access, which is how our MCP API works. In turn, this makes every single app into an MCP server. The better defined the app and its actions are, the better it works. 
 
-![shuffle_2.2.0_4](https://github.com/user-attachments/assets/47ac2e6e-b8d0-410f-9d33-017e6c5b5051)
+![shuffle_2.2.0_4](https://github.com/user-attachments/assets/89df14c0-a8e4-4b97-8e37-2d7381994ed1)
 
 With MCPs and agents becoming more capable however, we are rapidly running head-first into a big problem. A lot of organisations want to replace the **predictability of code** with the **simplicity of agents** doing their job for them. And that makes sense, as it makes the current job faster. It does however have drastic pitfalls; it makes the job itself **semi-random and slow**. 
 
 And we have a solution to this that is being released later this year. 
 
-![shuffle_2.2.0_5](https://github.com/user-attachments/assets/07606763-b803-4cf3-bab0-04fafa72862c)
+![shuffle_2.2.0_5](https://github.com/user-attachments/assets/72c2c713-965c-4c99-aea9-baf539f987de)
 
 Read more about the technical implementation in our [GitHub release notes](https://github.com/Shuffle/Shuffle/releases/tag/v2.2.0)
 
----
-
 ## The Workflow Builder
 
-![shuffle_2.2.0_6](https://github.com/user-attachments/assets/c4882f6e-8bb9-4b1d-84d5-47d3071283b3)
+![shuffle_2.2.0_6](https://github.com/user-attachments/assets/16c1d0c8-0638-462f-aa63-fe13453cde2a)
 
 Back in the 2.0 release, we remade most pages. The work did not extend to the Workflow Builder at the time, which is core to Shuffle. The reason we started elsewhere is due to the complexity of this one UI as opposed to all others. The main goals of the workflow builder is is two-fold:
 
@@ -106,7 +98,7 @@ And so we focused on these ruthlessly. We are striving to improve user experienc
 
 The answer to all of the above-mentioned questions was always hard to figure out. But we are building the path, and you can now see parts of the solution.
 
-![shuffle_2.2.0_7](https://github.com/user-attachments/assets/f4ec2c9d-8510-4f2a-8f58-f59bfdd18579)
+![shuffle_2.2.0_7](https://github.com/user-attachments/assets/7547ac68-d03e-40ab-bfe8-f96e6028667f)
 
 Another larger, common issue has to do with inputs & testing. Experienced users tend to build in this order:
 
@@ -122,15 +114,13 @@ While a new user tends to struggle with the very concept of what to build. So th
 4. …
 5. Start testing once "done"
 
-![shuffle_2.2.0_8](https://github.com/user-attachments/assets/fa443ab8-e304-4e61-88d2-418a8103f936)
+![shuffle_2.2.0_8](https://github.com/user-attachments/assets/7366899b-621e-4244-8548-c4ffe9a32dc0)
 
 Our solution is to incentivise you into testing each node, by making it more obvious than before. These tests run the current node based on data from a previous execution, meaning it has real data, but is still fast and testable as it does not have to run all the nodes at once.
 
 The generalised AI Agent and Security bundle solves this further, as new users tend to want simplicity and solutions first, before getting into the complexity of manual building. 
 
 v2.2.0 [release is live](https://shuffler.io), see the [GitHub release notes](https://github.com/Shuffle/Shuffle/releases/tag/v2.2.0) for full technical details.
-
----
 
 ## What It Means for You
 
