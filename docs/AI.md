@@ -2,7 +2,7 @@
 With AI becoming a larger part of the Automation space, the goal with AI at Shuffle is provide it in a deterministic, controllable and responsible way. We do not intend to implement chat systems - just to make certain mechanisms in Shuffle easier to use over time.
 
 ## Using LLMs 
-Shuffle by default provides LLM credits using the OpenAI GPT-5-mini model. This is available to a certain level to those who use our Cloud or Hybrid offerings. [Read about self-hosted models](#how-to-set-up-a-self-hosted-ai-model-with-shuffle).
+Shuffle by default provides LLM credits using the OpenAI GPT-5-mini model. This is available to a certain level to those who use our Cloud or Hybrid offerings, but you can control this yourseelf. [Read about self-hosted models](#how-to-set-up-a-self-hosted-ai-model-with-shuffle).
 
 ## AI Agents
 Agents are a way to have an AI model interact with the world. In Shuffle, this means using tools (playbooks) to perform actions. We intend to provide controllable, deterministic Agents that can be used to perform tasks.
@@ -18,9 +18,9 @@ They can additionally talk to each other and be published for third party use.
 **This is in private Beta and is not generally available yet. If you would like to try it, please reach out to support@shuffler.io and ask about AI Agents.**
 
 ### MCP
-MCPs are the concept of having an AI Agent decide what actions to do within a specific pool of available actions. It is typically used by agents as to have them be specialised, but there is nothing stopping them from being used directly as well.
+MCPs (Model Context Protocol) are the concept of having an AI Agent decide what actions to do within a specific pool of available actions. It is typically used by agents as to have them be specialised, but there is nothing stopping them from being used directly as well.
 
-In Shuffle, EVERY SINGLE APP has an MCP. This is available with the `POST /api/v1/apps/{appid}/mcp` API and is based on the [MCP standard](https://modelcontextprotocol.io/docs/getting-started/intro).
+In Shuffle, **EVERY SINGLE APP** is an MCP. This is available with the `POST /api/v1/apps/{appid}/mcp` API and is based on the [MCP standard](https://modelcontextprotocol.io/docs/getting-started/intro).
 
 The easiest way to try one in Shuffle is to go to [/agents](/agents), choosing an app (or more), and telling it what to use it for. This makes the agent act as an MCP. 
 
@@ -30,6 +30,27 @@ They are also available for each app in our upcoming [Security Bundle product Sh
 
 <img width="778" height="269" alt="image" src="https://github.com/user-attachments/assets/f9eed81b-4251-41b6-b3c6-c2a12c29d7e6" />
 
+If you want to make your own API or Python script into an MCP, [make an app](/apps)! That is all it takes.
+
+<img width="840" height="581" alt="image" src="https://github.com/user-attachments/assets/083032e8-131b-42e1-b945-df9001bd02bc" />
+
+### Question handling
+Questions are a way for the agent to fill in knowledge-gaps. In these cases, it asks questions automatically.
+
+<img width="1463" height="762" alt="image" src="https://github.com/user-attachments/assets/f11cdf1f-75be-4829-b863-7c58ff396e1d" />
+
+**PS:** Questions do NOT reach out to you as a realtime Notification **yet**, which is the future intention.
+
+### Action Approvals
+For sensitive actions, the agent is required to set the field "approval_required": true. This is a mechanism that stops the decision from automatically running, and instead waits for user input. 
+
+If you want to see it in action, try `get my emails. Set approval_required: true for all API requests`
+
+<img width="1443" height="146" alt="image" src="https://github.com/user-attachments/assets/efaa9964-24da-4b96-bf08-1a2779a7f7b2" />
+
+This is currently 100% dynamically controlled by the agent directly, along with responding to pre-defined actions that should not run automatically.
+
+**PS:** Action Approvals do NOT reach out to you as a realtime Notification **yet**, which is the future intention.
 
 ### Agent Continuations
 Continuations are a way of changing or continuing the behavior of a previous AI Agent run. This makes it possible to "talk" to the agent after it is done with a task.
@@ -43,17 +64,21 @@ As with all platform-wide debugging in Shuffle, AI Agent runs are available in t
 
 <img width="1211" height="556" alt="image" src="https://github.com/user-attachments/assets/fd5aec29-3052-4e94-ade5-7199faa96342" />
 
-### Workflow Generation
-TBA: Coming soon. The goal here is to take active actions and make tested and well-configured workflows out of them.
+## Using agents in Workflows
+To use agents in Workflows, make a new workflow, then pull in "AI Agent" from the left side. 
+
+TBD: More details coming soon.
+
+<img width="1018" height="227" alt="image" src="https://github.com/user-attachments/assets/de6fddbc-a9d1-4456-85d9-2b3ac4aee8ba" />
+
+### Workflow building
+TBA: Coming soon. The goal is to take actions from a previous AI agent run and make well-tested and well-configured workflows out of them, as to keep determinism.
 
 ## Singul
 Singul works against vendor-locking with our translator for different providers of the same tools, such as Slack vs Teams vs Discord, or Splunk vs Elastic vs QRadar). It uses LLMs to understand the context of what you are trying to perform, and makes a determinsitic translation to use a standard such as OCSF or STIX. This is a powerful way to avoid vendor lock-in, and to make your automation more future-proof. Made by the Shuffle team.
 
 Read the [usage Shuffle Docs here](https://github.com/Shuffle/openapi-apps/blob/master/docs/singul.md)
 Website: [https://singul.io](https://singul.io)
-
-## Using AI in Workflows
-TBA: Coming soon
 
 ### LLM inference
 TBA
