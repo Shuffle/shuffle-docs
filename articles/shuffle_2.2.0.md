@@ -28,13 +28,7 @@ The Security Bundle has two core parts:
 1. Well‑defined security use cases for **any** tool
 2. An optional UI to interact with them
 
-<p align="center">   
-<img
-    src="https://github.com/user-attachments/assets/08460558-2688-4605-92b0-942ad2033066"
-    width="640"
-    alt="shuffle_2.2.0_0"
-  />
-</p>
+![shuffle_2.2.0_0](https://github.com/user-attachments/assets/08460558-2688-4605-92b0-942ad2033066)
 
 It is built entirely on features already present in Shuffle, including workflows, datastore, file management, AI Agents, detection pipelines, and more. Most importantly: **you are in control**. We have built it based on our own and the community's expectation of easy to set up security, which is exactly what we deliver. 
 
@@ -53,13 +47,7 @@ Here are some of the starter usecases we have built (with a lot more to come):
 4. **Detection at scale**
    - Since Shuffle can ingest and handle tickets, why not also have our own detection mechanism? We can! That is what the Data Pipeline system has been built for, and Shuffle can now ingest logs and run Sigma rules on them. More to come in 2026.
 
-<p align="center">   
-<img
-    src="https://github.com/user-attachments/assets/3bb54d86-5397-4419-95ed-00094c415d45"
-    width="640"
-    alt="shuffle_2.2.0_1"
-  />
-</p>
+![shuffle_2.2.0_1](https://github.com/user-attachments/assets/3bb54d86-5397-4419-95ed-00094c415d45)
 
 Above is a simple flowchart of how it works. Every step is controllable, and you can be a human in the loop in each action if you want to be. Since it is built on top of Workflows, **you are and will stay in control**.
 
@@ -71,13 +59,7 @@ Another important part that requires re-iteration: Everything is already include
 
 ## Controllable [AI Agents and MCPs](https://shuffler.io/docs/AI#ai-agents)
 
-<p align="center">   
-<img
-    src="https://github.com/user-attachments/assets/54853cdc-37f4-46ac-a130-a96b3e25b32c"
-    width="640"
-    alt="shuffle_2.2.0_2"
-  />
-</p>
+![shuffle_2.2.0_2](https://github.com/user-attachments/assets/54853cdc-37f4-46ac-a130-a96b3e25b32c)
 
 We have been [building and implementing narrow AI since early 2022](https://github.com/Shuffle/MetaMitre), when we were only a team of 3, and built a Mitre Attack tactics parser from any type of data. We are still huge advocates of narrow AI, and know it will be an important facet to the future. 
 
@@ -90,35 +72,17 @@ When we first released our Agent system in late 2023, we quickly learned where i
 - It lacked transparency (black-box behavior)
 - It struggled with real-world, multi-step tasks (chained events & reasoning)
 
-<p align="center">   
-<img
-    src="https://github.com/user-attachments/assets/aa2ec29b-5fcc-447b-b5a6-829a971f41b4"
-    width="640"
-    alt="shuffle_2.2.0_3"
-  />
-</p>
+![shuffle_2.2.0_3](https://github.com/user-attachments/assets/aa2ec29b-5fcc-447b-b5a6-829a971f41b4)
 
 But a lot has changed since then. Models have gotten better. Our team has gotten better and larger. It is now possible to control and understand what is happening. And with that, we are releasing the public beta version of our controllable, distributed agent system to the world. It is [A2A](https://a2a-protocol.org/latest/) & [MCP compatible](https://modelcontextprotocol.io/docs/getting-started/intro) for multi-agent actions. By default it has very little permissions, and it is entirely controlled based on your apps, actions and authentication. These "permissions" are treated as actions that the agent can access, which is how our MCP API works. In turn, this makes every single app into an MCP server. The better defined the app and its actions are, the better it works. 
 
-<p align="center">   
-<img
-    src="https://github.com/user-attachments/assets/47ac2e6e-b8d0-410f-9d33-017e6c5b5051"
-    width="640"
-    alt="shuffle_2.2.0_4"
-  />
-</p>
+![shuffle_2.2.0_4](https://github.com/user-attachments/assets/47ac2e6e-b8d0-410f-9d33-017e6c5b5051)
 
 With MCPs and agents becoming more capable however, we are rapidly running head-first into a big problem. A lot of organisations want to replace the **predictability of code** with the **simplicity of agents** doing their job for them. And that makes sense, as it makes the current job faster. It does however have drastic pitfalls; it makes the job itself **semi-random and slow**. 
 
 And we have a solution to this that is being released later this year. 
 
-<p align="center">   
-<img
-    src="https://github.com/user-attachments/assets/07606763-b803-4cf3-bab0-04fafa72862c"
-    width="640"
-    alt="shuffle_2.2.0_5"
-  />
-</p>
+![shuffle_2.2.0_5](https://github.com/user-attachments/assets/07606763-b803-4cf3-bab0-04fafa72862c)
 
 Read more about the technical implementation in our [GitHub release notes](https://github.com/Shuffle/Shuffle/releases/tag/v2.2.0)
 
@@ -126,13 +90,7 @@ Read more about the technical implementation in our [GitHub release notes](https
 
 ## The Workflow Builder
 
-<p align="center">   
-<img
-    src="https://github.com/user-attachments/assets/c4882f6e-8bb9-4b1d-84d5-47d3071283b3"
-    width="640"
-    alt="shuffle_2.2.0_6"
-  />
-</p>
+![shuffle_2.2.0_6](https://github.com/user-attachments/assets/c4882f6e-8bb9-4b1d-84d5-47d3071283b3)
 
 Back in the 2.0 release, we remade most pages. The work did not extend to the Workflow Builder at the time, which is core to Shuffle. The reason we started elsewhere is due to the complexity of this one UI as opposed to all others. The main goals of the workflow builder is is two-fold:
 
@@ -148,13 +106,7 @@ And so we focused on these ruthlessly. We are striving to improve user experienc
 
 The answer to all of the above-mentioned questions was always hard to figure out. But we are building the path, and you can now see parts of the solution.
 
-<p align="center">   
-<img
-    src="https://github.com/user-attachments/assets/f4ec2c9d-8510-4f2a-8f58-f59bfdd18579"
-    width="640"
-    alt="shuffle_2.2.0_7"
-  />
-</p>
+![shuffle_2.2.0_7](https://github.com/user-attachments/assets/f4ec2c9d-8510-4f2a-8f58-f59bfdd18579)
 
 Another larger, common issue has to do with inputs & testing. Experienced users tend to build in this order:
 
@@ -170,13 +122,7 @@ While a new user tends to struggle with the very concept of what to build. So th
 4. …
 5. Start testing once "done"
 
-<p align="left">   
-<img
-    src="https://github.com/user-attachments/assets/fa443ab8-e304-4e61-88d2-418a8103f936"
-    width="340"
-    alt="shuffle_2.2.0_8"
-  />
-</p>
+![shuffle_2.2.0_8](https://github.com/user-attachments/assets/fa443ab8-e304-4e61-88d2-418a8103f936)
 
 Our solution is to incentivise you into testing each node, by making it more obvious than before. These tests run the current node based on data from a previous execution, meaning it has real data, but is still fast and testable as it does not have to run all the nodes at once.
 
