@@ -2,15 +2,15 @@
 
 # Shuffle 2.2.0 – Agents, Security and Staying in Control
 
-Shuffle is on the path to **solve** cybersecurity. This is a grand task with a moving goal‑post, but a task we aim to achieve. In this blog post we give a brief look into how Shuffle is building infrastructure to be able to take care of any cybersecurity‑oriented issue you can imagine, whether on‑premises or in public cloud environments, in an easily controllable environment. We delve into future possibilities, while sticking to real‑world implications rather than pure hype.
+Shuffle is on the path to **solve** cybersecurity. While it is a grand task with a moving goal-post, it is exactly the challenge we aim to tackle. In this blog post we give a brief look into how Shuffle is building infrastructure to be able to take care of **any** cybersecurity‑oriented issue you can imagine, whether on‑premises or in public cloud environments, in an easily controllable environment. We delve into a future of possibility, while sticking to real‑world implications rather than pure hype.
 
 ---
 
 ## Overview
 
-Shuffle is now capable of everything necessary to build any cybersecurity service, and we are rapidly working with partners to make it reality. We are building every feature with a global focus on the controls required for on‑prem systems front of mind.
+Shuffle is now capable of everything necessary to build any cybersecurity service, and we are rapidly [working with partners](https://shuffler.io/partners) to make it reality. We are building every feature with a global focus, while keeping relevant controls for on‑prem systems front of mind.
 
-Today we introduce a few new additions that can be tried immediately(links further down):
+Today we introduce a few new additions that can be tried immediately (links further down):
 
 - **The Security Bundle** – Automatically triages any incident you want, from anywhere. Uses hand-crafting usecases, with a controllable AI Agent in the middle that **CAN** use your tools where you allow it. Oh, and a shiny new UI if you want to dig deeper!
 - **AI Agents for your tools** – This is not focused on Shuffle itself. We want all your tools to shine and work well together. Whether cloud, on-prem or otherwise.
@@ -61,15 +61,15 @@ Here are some of the starter usecases we have built (with a lot more to come):
   />
 </p>
 
-Above is a simple flowchart of how it works. Every step is controllable, and you can be a human in the loop in the agent actions if you want to be. Since it is built on top of Workflows, you are and will stay in control.
+Above is a simple flowchart of how it works. Every step is controllable, and you can be a human in the loop in each action if you want to be. Since it is built on top of Workflows, **you are and will stay in control**.
 
-Another important part that requires re-iteration: Everything is already included in Shuffle. Since everything is built on top of existing infrastructure, it has no additional cost. You decide whether to bring your own model, to use ours, or to not use AI at all. A great benefit is that this system can be extended into other areas, such as: vulnerability discovery, automatic detection engineering, and agentic protection.  
+Another important part that requires re-iteration: Everything is already included in Shuffle. With everything being built on top of existing Shuffle infrastructure, it has no additional cost. You decide whether to bring your own model, to use ours, or whether to not use AI at all. A great benefit is that this system can easily be extended into other areas, such as: vulnerability discovery, automatic detection engineering, agentic protection, etc.  
 
-> Public release is planned for **March 2026**. Beta access is available by contacting **support@shuffler.io**.
+> Public release is planned for **Q2 2026**. Public preview access is already available on [https://shutdown.no](https://shutdown.no) to Shuffle users.
 
 ---
 
-## Controllable AI Agents and MCPs
+## Controllable [AI Agents and MCPs](https://shuffler.io/docs/AI#ai-agents)
 
 <p align="center">   
 <img
@@ -79,16 +79,16 @@ Another important part that requires re-iteration: Everything is already include
   />
 </p>
 
-We have been building and implementing AI since 2022, when we were only a team of 3, and built a Mitre Attack tactics parser from any type of data. We are still huge advocates of such narrow AI, and know it will be an important facet to the future of what we do. 
+We have been [building and implementing narrow AI since early 2022](https://github.com/Shuffle/MetaMitre), when we were only a team of 3, and built a Mitre Attack tactics parser from any type of data. We are still huge advocates of narrow AI, and know it will be an important facet to the future. 
 
-For now however, with the pace at which LLMs are improving, they have taken center stage, however silly they can be when badly utilized. Shuffle is always looking to bring native capabilities rather than "chatbots", but have been experimenting with all of it since our first Shuffle-GPT release in 2023. This project has since been sunset, as to release the now new, transparent, controllable, open source version.
+For now, with the pace at which LLMs are improving, they have taken center stage. Shuffle is always looking to bring native capabilities rather than "chatbots", but have been experimenting with all of it since our first [Shuffle-GPT release in 2023](https://shuffler.io/chat). This project will soon been sunset, as to release the now new, [transparent, controllable, open source version version of our agent](https://shuffler.io/agents).
 
-We have written our own Agentic algorithm, and made it work natively with all our apps and runtime locations, allowing it to run anywhere you may want it to, in a secure execution environment. 
+We have written our own Agentic algorithm, and made it work natively with all our apps and runtime locations, allowing it to run anywhere you may want it to, within the secure execution environment of Shuffle. 
 
 When we first released our Agent system in late 2023, we quickly learned where it needed to improve:
 - On-prem support was limited due to vendor lock-in (control & customisation)
 - It lacked transparency (black-box behavior)
-- It struggled with real-world, multi-step tasks (chained events)
+- It struggled with real-world, multi-step tasks (chained events & reasoning)
 
 <p align="center">   
 <img
@@ -98,7 +98,7 @@ When we first released our Agent system in late 2023, we quickly learned where i
   />
 </p>
 
-But a lot has changed since then. Models have gotten better. Our team and resources have grown. It is now possible to control and understand what is happening. And with that, we are releasing the beta version of our controllable, distributed agent system to the world. It is A2A compatible for multi-agent actions. By default it has very little permissions, and it is entirely controlled based on authentication you have put in place. These "permissions" are treated as actions that the agent can access, which is how our MCP API works. In turn, this makes every single app into an MCP server. The better defined the app and its actions are, the better it works. 
+But a lot has changed since then. Models have gotten better. Our team has gotten better and larger. It is now possible to control and understand what is happening. And with that, we are releasing the public beta version of our controllable, distributed agent system to the world. It is [A2A](https://a2a-protocol.org/latest/) & [MCP compatible](https://modelcontextprotocol.io/docs/getting-started/intro) for multi-agent actions. By default it has very little permissions, and it is entirely controlled based on your apps, actions and authentication. These "permissions" are treated as actions that the agent can access, which is how our MCP API works. In turn, this makes every single app into an MCP server. The better defined the app and its actions are, the better it works. 
 
 <p align="center">   
 <img
@@ -120,6 +120,8 @@ And we have a solution to this that is being released later this year.
   />
 </p>
 
+Read more about the technical implementation in our [GitHub release notes](https://github.com/Shuffle/Shuffle/releases/tag/v2.2.0)
+
 ---
 
 ## The Workflow Builder
@@ -132,19 +134,19 @@ And we have a solution to this that is being released later this year.
   />
 </p>
 
-In the 2.0 release, we remade most pages. The work did not extend to the Workflow Builder however, which is core to Shuffle. The reason we started elsewhere is due to the complexity of this one UI as opposed to all others. The main goal of the workflow builder is is two-fold:
+Back in the 2.0 release, we remade most pages. The work did not extend to the Workflow Builder at the time, which is core to Shuffle. The reason we started elsewhere is due to the complexity of this one UI as opposed to all others. The main goals of the workflow builder is is two-fold:
 
-1. **Control** – Full visibility and configuration
-2. **Debugging** – Clear understanding of failures
+1. **Control** – Full visibility and configuration capability
+2. **Debugging** – Clear understanding of failures and how to fix them
 
-With these two in mind, we started thinking about the flow of building a workflow, and how to improve it. Through it we discovered that two different users have different motives:
+Keeping these goals in mind, we started thinking about the user experience of building a workflow, and how to improve it. Through this process we discovered two different users with different motives:
 
 - New users typically struggle finding WHAT to do
-- Experienced users had some trouble with complex debugging
+- Experienced users could struggle with complex debugging
 
-And so we focused on these ruthlessly. We are striving to improve user experience for new users, while retaining complex capabilities for experienced users. Questions like "Horizontal or Vertical building?", "Does free-flow workflows help you build?", "How many steps should be built at once?".
+And so we focused on these ruthlessly. We are striving to improve user experience for new users, while retaining complex capabilities for experienced users. Questions like "Horizontal or Vertical building?", "Does free-flow workflows help you build?", "How many steps should be built at once?" are all commonplace. [We want your feedback as well](https://shuffler.io/contact?category=technical_question). 
 
-The answer to all of these was always hard to decide. But we are building the path, and you will see parts of the solution in this release.
+The answer to all of the above-mentioned questions was always hard to figure out. But we are building the path, and you can now see parts of the solution.
 
 <p align="center">   
 <img
@@ -154,7 +156,7 @@ The answer to all of these was always hard to decide. But we are building the pa
   />
 </p>
 
-Another issue has to do with inputs & testing. Experienced users tend to build in this order:
+Another larger, common issue has to do with inputs & testing. Experienced users tend to build in this order:
 
 1. Add an app
 2. Configure and test it
@@ -176,21 +178,21 @@ While a new user tends to struggle with the very concept of what to build. So th
   />
 </p>
 
-Our solution is to incentivise you into testing each node, by making it more obvious than before. These tests run the current node based on data from a previous execution, meaning it has real data, but is still fast as it does not have to run all the nodes at once.
+Our solution is to incentivise you into testing each node, by making it more obvious than before. These tests run the current node based on data from a previous execution, meaning it has real data, but is still fast and testable as it does not have to run all the nodes at once.
 
 The generalised AI Agent and Security bundle solves this further, as new users tend to want simplicity and solutions first, before getting into the complexity of manual building. 
 
-v2.2.0 pre-release is live, see the [GitHub release notes](https://github.com/Shuffle/Shuffle/releases/tag/v2.2.0) for full technical details.
+v2.2.0 [release is live](https://shuffler.io), see the [GitHub release notes](https://github.com/Shuffle/Shuffle/releases/tag/v2.2.0) for full technical details.
 
 ---
 
 ## What It Means for You
 
-This release has no direct impact on existing, running automation. The Security Bundle and general Agents are all in public beta, where the release of Shuffle 2.2 is to make it available to you early on. These additions are direct upgrades to how Shuffle can and will be used, rather than optimisation of what the product does itself. We are very focused on backwards compatibility, and are and will keep using the Workflow system. 
+This release has no direct impact on existing, running automation. The Security Bundle and general Agents are all in public preview, but we wanted to release it early to gather feedback. These additions are direct upgrades to how Shuffle can and will be used, rather than optimisation of what the product itself does today. We are very focused on backwards compatibility, and are and will keep improving the Workflow system with relevant capabilities. 
 
 We recommend upgrading if you are in any of these camps:
 
-- Looking for easier building and debugging of workflows
+- Looking for [easier building and debugging of workflows](https://shuffler.io/workflows/31d1a492-9fe0-4c4a-807d-b44d9cb81fc0?queryID=96afca0c5a232b1c8114d4bc07f60ee7)
 - Wanting to [try the AI Agent and MCP system(s)](https://shuffler.io/agents)
 - Wanting to [try the security bundle](https://security.shuffler.io/)
 
