@@ -26,7 +26,8 @@ The Security Bundle has two core parts:
 
 ![shuffle_2.2.0_0](https://github.com/user-attachments/assets/a75df297-56a4-400a-b426-fdfac45dce67)
 
-It is built entirely on features already present in Shuffle, including workflows, datastore, file management, AI Agents, detection pipelines, and more. Most importantly: **you are in control**. We have built it based on our own and the community's expectation of easy to set up security, which is exactly what we deliver. 
+It is built entirely on features already present in Shuffle, including workflows, datastore, file management, AI Agents, detection pipelines, and more. 
+Most importantly: **you are in control**. We have built it based on our own and the community's expectation of easy to set up security, which is exactly what we deliver. 
 
 Here are some of the starter usecases we have built (with a lot more to come):
 
@@ -57,7 +58,7 @@ Another important part that requires re-iteration: Everything is already include
 
 We have been [building and implementing narrow AI since early 2022](https://github.com/Shuffle/MetaMitre), when we were only a team of 3, and built a Mitre Attack tactics parser from any type of data. We are still huge advocates of narrow AI, and know it will be an important facet to the future. 
 
-For now, with the pace at which LLMs are improving, they have taken center stage. Shuffle is always looking to bring native capabilities rather than "chatbots", but have been experimenting with all of it since our first [Shuffle-GPT release in 2023](https://shuffler.io/chat). This project will soon been sunset, as to release the now new, [transparent, controllable, open source version version of our agent](https://shuffler.io/agents).
+For now, with the pace at which LLMs are improving, they have taken center stage. Shuffle is always looking to bring native capabilities rather than "chatbots", but have been experimenting with all of it since our first [Shuffle-GPT release in 2023](https://shuffler.io/chat). This project will soon be sunset, as to release the now new, [transparent, controllable, open source version of our agent](https://shuffler.io/agents).
 
 We have written our own Agentic algorithm, and made it work natively with all our apps and runtime locations, allowing it to run anywhere you may want it to, within the secure execution environment of Shuffle. 
 
@@ -124,7 +125,7 @@ v2.2.0 [release is live](https://shuffler.io), see the [GitHub release notes](ht
 
 ## What It Means for You
 
-This release has no direct impact on existing, running automation. The Security Bundle and general Agents are all in public preview, but we wanted to release it early to gather feedback. These additions are direct upgrades to how Shuffle can and will be used, rather than optimisation of what the product itself does today. We are very focused on backwards compatibility, and are and will keep improving the Workflow system with relevant capabilities. 
+This release has no direct impact on existing, running automation. The Security Bundle and general Agents are all in public preview, but we wanted to release it early to gather feedback. These additions are direct upgrades to how Shuffle can and will be used, rather than optimisation of what the product itself does today. We are very focused on backwards compatibility, and will keep improving the Workflow system with relevant capabilities. 
 
 We recommend upgrading if you are in any of these camps:
 
