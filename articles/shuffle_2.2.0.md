@@ -10,7 +10,7 @@ Shuffle is now capable of everything necessary to build any cybersecurity servic
 
 Today we introduce a few new additions that can be tried immediately (links further down):
 
-- **The Security Bundle** – Automatically triages any incident you want, from anywhere. Uses hand-crafting usecases, with a controllable AI Agent in the middle that **CAN** use your tools where you allow it. Oh, and a shiny new UI if you want to dig deeper!
+- **The Security Bundle** – Automatically triages any incident you want, from anywhere. Uses hand-crafted usecases, with a controllable AI Agent in the middle that **CAN** use your tools where you allow it. Oh, and a shiny new UI if you want to dig deeper!
 - **AI Agents for your tools** – This is not focused on Shuffle itself. We want all your tools to shine and work well together. Whether cloud, on-prem or otherwise.
 - **All apps are MCPs** – Choose one or more apps, and the AI Agent infrastructure will perform actions according to your needs.
 - **Modernised Workflow** – A refreshed interface that matches the rest of the platform, giving workflows a cleaner and more focused experience.
