@@ -10,6 +10,7 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 * [Shuffle Scaling](#scaling-shuffle)
 * [Distributed Caching](#distributed-caching)
 * [Kubernetes](#kubernetes)
+* [Shuffle Apps on Kubernetes](#shuffle-apps-on-kubernetes)
 * [No Internet Install](#no-internet-install)
 * [Proxy Configuration](#proxy-configuration)
 * [App Certificates](#app-certificates)
@@ -493,6 +494,76 @@ You need to change the value of the environment `BASE_URL` of this Dockerfile, s
 Shuffle use with Kubernetes is now possible due to help from our contributors. You can read more about how it works on our [Github page](https://github.com/Shuffle/Shuffle/tree/main/functions/kubernetes), which includes extensive helm charts and configuration possibilities.
 
 Due to Kubernetes not being capable of building Shuffle Apps directly, an additional container for building them is available.
+
+### Shuffle Apps on Kubernetes
+By default, Shuffle Worker creates a Kubernetes Deployment and Service for each app. Each app and version has its own Deployment and Service. Shuffle automatically deploys a set of apps, and other apps are deployed on demand when they are first used.
+
+You can use `app.*` Helm values to control parts of the app deployment (resources, security context, etc.). These values are converted to environment variables on Orborus, and Orborus passes them to Worker when creating app Deployments. When `worker.enableHelmDeployment` is set, the app configuration is set on the worker directly. This configuration applies to all apps (you cannot scale or resource-tune individual apps in this mode).
+
+If you want to set CPU and memory for apps that are created dynamically by Worker, use `app.resources` (or `app.resourcesPreset`) in the chart. These values are applied to all dynamically created app Deployments.
+
+If you want full control, you can deploy apps using Helm instead. This gives you:
+- full control over app deployments via Helm values
+- granular control per app and version (replicas, resources, etc.)
+- fewer issues with on-demand started apps (see https://github.com/Shuffle/Shuffle/issues/1739)
+
+To deploy apps using Helm, set `apps.enabled=true`. By default, this deploys `shuffle-tools`, `shuffle-subflow`, and `http`. You can add your own apps as well.
+
+```yaml
+app:
+  replicaCount: 1
+  resources: {}
+
+apps:
+  enabled: true
+
+  shuffleTools:
+    enabled: true
+  shuffleSubflow:
+    enabled: true
+  http:
+    enabled: true
+    replicaCount: 1
+    resources: {}
+
+  opensearch:
+    enabled: true
+    name: opensearch
+    version: 1.1.0
+    replicaCount: 3
+    resources: {}
+```
+
+Notes:
+- The key under `apps` is only used to identify the app in values. It can be any unique name.
+- You can override any `app.*` value for a specific app via `apps.<appKey>.*` (for example, `apps.shuffleTools.replicaCount`).
+- Hybrid mode is supported: deploy some apps with Helm while still letting Worker create others on demand.
+
+If you do not want Worker to manage app deployments, set `worker.manageAppDeployments=true`. This removes the required permissions from the Shuffle Worker Kubernetes Service Account and requires you to deploy all apps manually using Helm.
+
+#### Shuffle App Service Accounts
+By default, apps use a shared `shuffle-app` service account. If you deploy apps with Helm, you can use a dedicated service account per app.
+
+```yaml
+apps:
+  myAppWithCustomServiceAccount:
+    enabled: true
+    name: my-custom-service-account
+    version: 1.0.0
+    serviceAccount:
+      create: true
+      name: shuffle-app-myapp
+
+  anotherAppWithExistingServiceAccount:
+    enabled: true
+    name: another-app
+    version: 1.0.0
+    serviceAccount:
+      create: false
+      name: existing-service-account-name
+```
+
+All app service accounts use the `shuffle-app` role by default.
 
 ### Orborus with Kubernetes
 To configure Kubernetes, you need to specify a single environment variable for Orborus: RUNNING_MODE. By setting the environment variable RUNNING_MODE=kubernetes, execution should work as expected!
