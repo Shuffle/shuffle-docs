@@ -11,6 +11,7 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 * [Distributed Caching](#distributed-caching)
 * [Kubernetes](#kubernetes)
 * [Shuffle Apps on Kubernetes](#shuffle-apps-on-kubernetes)
+* [Swarm HAProxy for worker load balancing](#swarm-haproxy-for-worker-load-balancing)
 * [No Internet Install](#no-internet-install)
 * [Proxy Configuration](#proxy-configuration)
 * [App Certificates](#app-certificates)
@@ -623,6 +624,77 @@ while true; do
 
   page=$((page+1))
 done
+```
+
+### Swarm HAProxy for worker load balancing
+In Docker Swarm, Orborus sends requests to `shuffle-workers:33333` through the Swarm VIP. The routing mesh is not load-aware, so requests can hit saturated workers and time out under load. You can improve distribution by placing HAProxy in front of the worker tasks and pointing Orborus to HAProxy.
+
+This can be done after the Swarm stack is up, without changing how Orborus deploys workers or apps.
+
+#### 1) Create the HAProxy config
+Create a file named `haproxy.cfg` on a Swarm manager:
+```cfg
+global
+  log stdout format raw local0
+  maxconn 4000
+
+defaults
+  mode http
+  log global
+  option httplog
+  option dontlognull
+  timeout connect 5s
+  timeout client  120s
+  timeout server  120s
+
+resolvers docker
+  nameserver dns 127.0.0.11:53
+  resolve_retries 3
+  timeout retry 1s
+  hold valid 10s
+
+frontend worker_front
+  bind *:33333
+  default_backend worker_back
+
+backend worker_back
+  balance leastconn
+  option tcp-check
+  server-template worker 1-50 tasks.shuffle-workers:33333 check resolvers docker init-addr last,libc,none
+```
+
+#### 2) Deploy HAProxy as a Swarm service
+Ensure the worker overlay network exists (Orborus creates `shuffle_swarm_executions` by default):
+```bash
+docker network create --driver=overlay --attachable shuffle_swarm_executions
+```
+
+Create the HAProxy config and deploy it. Do not publish port 33333 on HAProxy if the worker service already uses it (Swarm only allows one published service per port). Orborus can reach HAProxy over the overlay network:
+```bash
+docker config create haproxy-cfg ./haproxy.cfg
+
+docker service create \
+  --name shuffle-haproxy \
+  --config source=haproxy-cfg,target=/usr/local/etc/haproxy/haproxy.cfg \
+  --network shuffle_swarm_executions \
+  haproxy:2.9
+```
+
+#### 3) Point Orborus to HAProxy
+Set the worker server URL so Orborus sends executions through HAProxy:
+```bash
+SHUFFLE_WORKER_SERVER_URL=http://shuffle-haproxy:33333
+```
+
+Restart Orborus after updating the environment:
+```bash
+docker restart shuffle-orborus
+```
+
+#### 4) Verify
+```bash
+docker service logs shuffle-haproxy --tail 200
+docker service ps shuffle-haproxy
 ```
 
 ## Networking
