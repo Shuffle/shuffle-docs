@@ -338,7 +338,7 @@ While the open-source version of Shuffle includes all core workflow automation f
 
 Licensing ensures access to premium features such as high-performance scaling, multi-tenant management, multi-environment configurations, and full platform branding empowering organizations to customize, optimize, and securely manage their automation infrastructure.
 
-#### Default Limits
+### Default Limits
 By default, Shuffle onprem instance includes the following limits:
 
 - **Workflow Executions:** 10,000 per month  
