@@ -20,6 +20,7 @@ Documentation for the Admin view of Shuffle. Best used by administrators.
 * [Notifications](#notifications)
 * [Billing](#billing)
   * [Onprem Licensing](#onprem_license)
+    * [Default Limits](#default-limits)
   	* [Cloud Synchronization](#cloud_synchronization)
   	* [License Key](#license_key)
   * [Production Readiness](#production_readiness)
@@ -337,6 +338,19 @@ While the open-source version of Shuffle includes all core workflow automation f
 
 Licensing ensures access to premium features such as high-performance scaling, multi-tenant management, multi-environment configurations, and full platform branding empowering organizations to customize, optimize, and securely manage their automation infrastructure.
 
+#### Default Limits
+By default, Shuffle onprem instance includes the following limits:
+
+- **Workflow Executions:** 10,000 per month  
+- **Sub-Organizations:** Up to 3  
+- **Environments:** 1
+- **Branding** not Enabled
+
+To run Shuffle **in production** or to **scale beyond default limits**, a valid **on-premise Shuffle license** is required.  
+Licensing ensures access to advanced scaling, customization, and management features designed for enterprise and high-availability deployments.
+
+For more information or to obtain an on-premise license, please contact **[support@shuffler.io](mailto:support@shuffler.io)**
+
 ### Cloud Synchronization
 Cloud synchronization is a feature used to get more capabilities on-premises, that otherwise wouldn't be possible. These range from scalability to collaboration, support, public workflow generation, accessibility and more. The goal is to give access to features that otherwise are impossible to build in a location solution. See [Hybrid Features](#hybrid_features) for more info.
 
@@ -368,19 +382,6 @@ Setting up cloud synchronization requires two things:
 A valid **Shuffle license** is required to unlock advanced enterprise capabilities on your on-premise instance.  
 
 With a valid license, connecting your instance to the cloud allows you to access features such as **multi-tenant management**, **multi-environment setups**, **workflow executions**, and **branding customization**.
-
-#### Default Limits
-By default, Shuffle onprem instance includes the following limits:
-
-- **Workflow Executions:** 10,000 per month  
-- **Sub-Organizations:** Up to 3  
-- **Environments:** 1
-- **Branding** not Enabled
-
-To run Shuffle **in production** or to **scale beyond default limits**, a valid **on-premise Shuffle license** is required.  
-Licensing ensures access to advanced scaling, customization, and management features designed for enterprise and high-availability deployments.
-
-For more information or to obtain an on-premise license, please contact **[support@shuffler.io](mailto:support@shuffler.io)**
 
 ### License Key
 
