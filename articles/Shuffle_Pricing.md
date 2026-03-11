@@ -1,4 +1,4 @@
-![Shuffle Pricing](https://github.com/frikky/shuffle-docs/blob/master/assets/Shuffle_Pricing.png?raw=true)
+![Shuffle Pricing](https://github.com/shuffle/shuffle-docs/blob/master/assets/Shuffle_Pricing.png?raw=true)
 
 # Overview
 
@@ -16,7 +16,7 @@ For example, the workflow below has many nodes or 'actions'. Whenever it runs, t
 
 IMP: Only the actions that run are counted; the rest are ignored and not counted. In the workflow below, even though it has many actions, if it stops at the (red) filter action, only 4 app-runs are counted.
 
-![Shuffle Pricing](https://github.com/frikky/shuffle-docs/blob/master/assets/Shuffle_Pricing_Workflow.png?raw=true)
+![Shuffle Pricing](https://github.com/shuffle/shuffle-docs/blob/master/assets/Shuffle_Pricing_Workflow.png?raw=true)
 
 ## Why Shuffle Pricing Works
 
