@@ -819,6 +819,8 @@ curl -k -u admin:StrongShufflePassword321! https://localhost:9200/users/_update/
 
 If you want to install a custom module like pandas (although, 'execute python' isn't made for heavy processing. We recommend making a custom python app for it).
 
+**Important:** Shuffle automatically pulls and updates the Shuffle Tools image on startup, which may overwrite your custom-built image. To prevent this, set the environment variable `SHUFFLE_AUTO_IMAGE_DOWNLOAD=false` in your Orborus/worker configuration before building a custom image.
+
 There are two primary ways to it:
 1. Learn about dynamic library loading in your code (not recommended)
 2. Build the Shuffle Tools app again locally and add the libraries you want to it! Library configuration is over in this [requirements.txt file](https://github.com/Shuffle/python-apps/blob/master/shuffle-tools/1.2.0/requirements.txt)
