@@ -697,6 +697,284 @@ docker service logs shuffle-haproxy --tail 200
 docker service ps shuffle-haproxy
 ```
 
+### Swarm HA deployment (Gateway + API + Runtime)
+
+This is a production-style Swarm setup that is reliable for first deployment and easy to scale later.
+
+Traffic flow:
+
+- Users hit `gateway` on `:8080`.
+- `gateway` routes `/api/*` to `shuffle-backend` and `/` to `frontend`.
+- `shuffle-backend` talks to OpenSearch and Memcached over internal overlay DNS.
+- `orborus` runs execution scheduling and uses a dedicated execution overlay network.
+
+#### Pre-flight (run once)
+
+```bash
+# 1) Initialize swarm if needed
+docker swarm init || true
+
+# 2) Create persistent folders
+mkdir -p /srv/shuffle/shuffle-apps /srv/shuffle/shuffle-files /srv/shuffle/shuffle-database
+
+# 3) Make sure this node can schedule services
+docker node ls
+```
+
+#### File 1: `docker-stack.ha.yml`
+
+```yaml
+version: "3.9"
+
+services:
+  gateway:
+    image: nginx:1.27-alpine
+    ports:
+      - target: 80
+        published: 8080
+        protocol: tcp
+        mode: host
+    configs:
+      - source: shuffle_gateway_nginx
+        target: /etc/nginx/conf.d/default.conf
+    networks:
+      - shuffle
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  frontend:
+    image: ghcr.io/shuffle/shuffle-frontend:latest
+    environment:
+      - BACKEND_HOSTNAME=shuffle-backend
+    networks:
+      - shuffle
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  shuffle-backend:
+    image: ghcr.io/shuffle/shuffle-backend:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /srv/shuffle/shuffle-apps:/shuffle-apps
+      - /srv/shuffle/shuffle-files:/shuffle-files
+    environment:
+      - SHUFFLE_APP_HOTLOAD_FOLDER=/shuffle-apps
+      - SHUFFLE_FILE_LOCATION=/shuffle-files
+      - SHUFFLE_OPENSEARCH_URL=http://tasks.shuffle-opensearch:9200
+      - SHUFFLE_MEMCACHED=tasks.shuffle-cache:11211
+      - SHUFFLE_OPENSEARCH_SKIPSSL_VERIFY=true
+    networks:
+      - shuffle
+      - swarm_executions
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  orborus:
+    image: ghcr.io/shuffle/shuffle-orborus:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - SHUFFLE_SWARM_CONFIG=run
+      - SHUFFLE_SWARM_NETWORK_NAME=swarm_executions
+      - SHUFFLE_WORKER_SERVER_URL=http://shuffle-workers:33333
+      - BASE_URL=http://shuffle-backend:5001
+      - SHUFFLE_MEMCACHED=tasks.shuffle-cache:11211
+    networks:
+      - shuffle
+      - swarm_executions
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  shuffle-opensearch:
+    image: opensearchproject/opensearch:3.2.0
+    environment:
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_JAVA_OPTS=-Xms1024m -Xmx1024m
+    volumes:
+      - /srv/shuffle/shuffle-database:/usr/share/opensearch/data
+    networks:
+      - shuffle
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr
+      restart_policy:
+        condition: on-failure
+
+  shuffle-cache:
+    image: memcached:1.6-alpine
+    command: ["-m", "1024", "-c", "2048"]
+    networks:
+      - shuffle
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr
+      restart_policy:
+        condition: on-failure
+
+configs:
+  shuffle_gateway_nginx:
+    file: ./swarm-nginx.conf
+
+networks:
+  shuffle:
+    driver: overlay
+    attachable: true
+  swarm_executions:
+    driver: overlay
+    attachable: true
+```
+
+#### File 2: `swarm-nginx.conf`
+
+```nginx
+resolver 127.0.0.11;
+
+upstream backend {
+    server tasks.shuffle-backend:5001;
+    keepalive 32;
+}
+
+upstream frontend {
+    server tasks.frontend:80;
+    keepalive 32;
+}
+
+server {
+    listen 80;
+    server_name _;
+    client_max_body_size 256m;
+
+    location /api/ {
+        proxy_pass http://backend;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+
+    location / {
+        proxy_pass http://frontend;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+}
+```
+
+#### Deploy
+
+```bash
+docker stack deploy -c docker-stack.ha.yml shuffleha
+```
+
+#### Verify (must pass)
+
+```bash
+docker service ls | grep shuffleha_
+docker service ps shuffleha_gateway
+docker service ps shuffleha_frontend
+docker service ps shuffleha_shuffle-backend
+docker service ps shuffleha_shuffle-opensearch
+docker service ps shuffleha_shuffle-cache
+docker service ps shuffleha_orborus
+```
+
+Quick API checks:
+
+```bash
+curl -i http://localhost:8080/
+curl -i http://localhost:8080/api/v1/checkusers
+```
+
+If startup feels slow in the first 1-3 minutes, this is usually normal due to backend init tasks and OpenSearch warmup.
+
+#### Single-node vs multi-node replicas
+
+- The example above is tuned to work on a single node on the first try.
+- For multi-node HA, increase replicas after initial validation:
+
+```bash
+docker service scale shuffleha_frontend=2
+docker service scale shuffleha_shuffle-backend=2
+docker service scale shuffleha_orborus=2
+```
+
+If you use `max_replicas_per_node: 1`, make sure you have enough swarm nodes. Otherwise replicas stay pending.
+
+#### Important Swarm DNS notes
+
+- In some Swarm environments, service VIP routing can become unstable after many updates.
+- If you see `no route to host` or random internal timeouts, prefer `tasks.<service-name>` for internal service-to-service traffic.
+- `endpoint_mode: dnsrr` on OpenSearch and Memcached reduces reliance on VIP routing.
+
+#### Slow backend response troubleshooting
+
+If backend APIs are slow after deployment, check these first:
+
+1. Backend startup/init window:
+   - Backend may perform index checks, rollovers, and startup validation.
+   - During this phase, response times can be temporarily high.
+
+2. Memcached connectivity:
+   - Repeated memcache timeouts add latency to many API calls.
+   - Validate from backend container:
+
+```bash
+docker exec -it <backend-container> sh -lc 'getent hosts shuffle-cache tasks.shuffle-cache'
+docker exec -it <backend-container> sh -lc 'nc -vz -w2 tasks.shuffle-cache 11211'
+```
+
+3. OpenSearch connectivity:
+
+```bash
+docker exec -it <backend-container> sh -lc 'nc -vz -w2 tasks.shuffle-opensearch 9200'
+```
+
+4. Live logs:
+
+```bash
+docker service logs --since 10m shuffleha_shuffle-backend
+docker service logs --since 10m shuffleha_shuffle-cache
+docker service logs --since 10m shuffleha_shuffle-opensearch
+```
+
+Temporary mitigation if memcached routing is unstable:
+
+- Remove `SHUFFLE_MEMCACHED` from backend/orborus and redeploy.
+- This usually improves API responsiveness immediately while you fix cache routing.
+
+#### Production recommendations
+
+- Use at least 3 Swarm manager/worker nodes for HA.
+- Run OpenSearch as a proper multi-node cluster for production data durability.
+- Mount persistent volumes for:
+  - OpenSearch data (`shuffle-database`),
+  - Shuffle files (`shuffle-files`),
+  - app hotload directory (`shuffle-apps`).
+- Keep gateway, backend, and frontend on the same overlay network.
+- Keep execution workloads isolated on `swarm_executions`.
+- Monitor `docker service ps` and `docker service logs` continuously during upgrades.
+
 ## Networking
 Networking with Shuffle is pretty straight forward. What we check for are the following:
 
