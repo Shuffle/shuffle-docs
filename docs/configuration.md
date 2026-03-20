@@ -975,6 +975,116 @@ Temporary mitigation if memcached routing is unstable:
 - Keep execution workloads isolated on `swarm_executions`.
 - Monitor `docker service ps` and `docker service logs` continuously during upgrades.
 
+#### Preferred OpenSearch HA setup
+
+The `shuffle-opensearch` service in the Swarm HA example above is intentionally single-node. It is suitable for first deployment validation, but it is **not** the preferred production architecture for durable data.
+
+For production, the recommended setup is:
+
+- 3 dedicated OpenSearch nodes
+- one persistent data path per OpenSearch node
+- replication handled by OpenSearch itself, not by sharing one filesystem
+- Shuffle backend configured with all OpenSearch endpoints
+
+The most important storage rule is:
+
+- do **not** mount the same shared `shuffle-database` folder into multiple OpenSearch nodes
+- do **not** use one NFS path as `/usr/share/opensearch/data` for several OpenSearch nodes
+- do give each node its own local persistent disk or block volume
+
+This means the storage model is different for different Shuffle components:
+
+- `shuffle-files`: shared storage is fine, and NFS is a common option
+- `shuffle-apps`: shared storage is fine if you want hotload content available across nodes
+- `shuffle-database`: should be local and dedicated per OpenSearch node
+
+Example topology:
+
+- `opensearch-1` on node A with `/srv/opensearch-data`
+- `opensearch-2` on node B with `/srv/opensearch-data`
+- `opensearch-3` on node C with `/srv/opensearch-data`
+
+Each OpenSearch node should have equivalent settings to the following:
+
+```yaml
+environment:
+  - cluster.name=shuffle-cluster
+  - node.name=opensearch-1
+  - network.host=_site_
+  - discovery.seed_hosts=opensearch-1,opensearch-2,opensearch-3
+  - cluster.initial_cluster_manager_nodes=opensearch-1,opensearch-2,opensearch-3
+  - bootstrap.memory_lock=true
+  - node.store.allow_mmap=false
+  - OPENSEARCH_JAVA_OPTS=-Xms4g -Xmx4g
+```
+
+Notes:
+
+- `node.name` must be unique on each node
+- `discovery.seed_hosts` and `cluster.initial_cluster_manager_nodes` should contain all 3 OpenSearch nodes
+- `network.host` must be reachable from the other OpenSearch nodes and from Shuffle backend
+- size the Java heap according to available memory; a common starting point is 50% of RAM, with equal `-Xms` and `-Xmx`
+
+Once the OpenSearch cluster is healthy, configure Shuffle backend to talk to all nodes:
+
+```bash
+SHUFFLE_OPENSEARCH_URL=https://10.0.0.30:9200,https://10.0.0.31:9200,https://10.0.0.32:9200
+```
+
+If you use TLS or authentication on OpenSearch, keep the matching backend settings in place as well, such as:
+
+```bash
+SHUFFLE_OPENSEARCH_SKIPSSL_VERIFY=false
+SHUFFLE_OPENSEARCH_CERTIFICATE_FILE=/shuffle-files/es_certificate
+```
+
+If you prefer to keep OpenSearch inside Swarm, treat each node as a fixed service instead of one floating replicated service:
+
+- deploy one OpenSearch service per host
+- add placement constraints so each service stays on its intended node
+- mount that host's local disk path into that service
+- configure all OpenSearch nodes to join the same cluster
+
+This avoids the common failure mode where one OpenSearch container is rescheduled onto another node that does not have the original data path.
+
+#### OpenSearch HA validation checklist
+
+Before pointing production Shuffle traffic at the new cluster, validate in this order:
+
+1. Confirm cluster formation from OpenSearch:
+
+```bash
+curl -k -u admin:'<password>' https://10.0.0.30:9200/_cluster/health?pretty
+curl -k -u admin:'<password>' https://10.0.0.30:9200/_cat/nodes?v
+curl -k -u admin:'<password>' https://10.0.0.30:9200/_cat/shards?v
+```
+
+2. Update `SHUFFLE_OPENSEARCH_URL` on backend and redeploy Shuffle backend.
+
+3. Validate Shuffle itself:
+
+```bash
+curl -i http://localhost:8080/api/v1/checkusers
+```
+
+Then log in, save a workflow, execute a workflow, and confirm execution history is written successfully.
+
+4. Run a failover test:
+
+- stop one OpenSearch node
+- confirm Shuffle remains usable
+- confirm cluster health degrades but stays operational
+- start the node again and verify it rejoins
+
+5. Run a persistence test:
+
+- restart OpenSearch nodes one at a time
+- confirm indices and execution history remain intact
+
+For additional OpenSearch sizing, shard allocation, and cluster tuning guidance, follow the official OpenSearch documentation:
+
+- https://opensearch.org/docs/latest/tuning-your-cluster/
+
 ## Networking
 Networking with Shuffle is pretty straight forward. What we check for are the following:
 
