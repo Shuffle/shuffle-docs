@@ -1,0 +1,77 @@
+name: Reset Docs Cache
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "docs/**"
+      - "articles/**"
+      - "legal/**"
+
+jobs:
+  reset-cache:
+    runs-on: ubuntu-latest
+    env:
+      DOCS_BASE_URL: ${{ vars.DOCS_CACHE_RESET_BASE_URL || 'https://shuffler.io' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine changed docs
+        id: changed
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BEFORE_SHA="${{ github.event.before }}"
+          AFTER_SHA="${{ github.sha }}"
+
+          if [[ -z "${BEFORE_SHA}" || "${BEFORE_SHA}" == "0000000000000000000000000000000000000000" ]]; then
+            CHANGED_FILES="$(git ls-files 'docs/*.md' 'articles/*.md' 'legal/*.md')"
+          else
+            CHANGED_FILES="$(git diff --name-only "${BEFORE_SHA}" "${AFTER_SHA}" -- 'docs/*.md' 'articles/*.md' 'legal/*.md')"
+          fi
+
+          {
+            echo "files<<EOF"
+            echo "${CHANGED_FILES}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Reset docs cache
+        if: ${{ steps.changed.outputs.files != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_URL="${DOCS_BASE_URL%/}"
+          declare -A FOLDERS=()
+
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+
+            folder="${file%%/*}"
+            docname="$(basename "$file" .md)"
+            encoded_docname="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$docname")"
+
+            FOLDERS["$folder"]=1
+
+            echo "Refreshing doc cache for ${folder}/${docname}"
+            curl --fail --silent --show-error \
+              "${BASE_URL}/api/v1/docs/${encoded_docname}?folder=${folder}&resetCache=true" \
+              > /dev/null
+          done <<< "${{ steps.changed.outputs.files }}"
+
+          for folder in "${!FOLDERS[@]}"; do
+            echo "Refreshing list cache for ${folder}"
+            curl --fail --silent --show-error \
+              "${BASE_URL}/api/v1/docs?folder=${folder}&resetCache=true" \
+              > /dev/null
+          done
+
+      - name: No changed docs
+        if: ${{ steps.changed.outputs.files == '' }}
+        run: echo "No markdown docs changed. Skipping cache reset."
