@@ -975,7 +975,7 @@ Temporary mitigation if memcached routing is unstable:
 - Keep execution workloads isolated on `swarm_executions`.
 - Monitor `docker service ps` and `docker service logs` continuously during upgrades.
 
-#### Preferred OpenSearch HA setup
+#### Preferred-OpenSearch-HA-setup
 
 The `shuffle-opensearch` service in the Swarm HA example above is intentionally single-node. It is suitable for first deployment validation, but it is **not** the preferred production architecture for durable data.
 
