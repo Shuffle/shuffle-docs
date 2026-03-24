@@ -315,13 +315,13 @@ SHUFFLE_ORBORUS_EXECUTION_CONCURRENCY=10
 # Configures a HTTP proxy to use when talking to the Shuffle Backend
 HTTP_PROXY=
 # Configures a HTTPS proxy when speaking to the Shuffle Backend
-HTTPs_PROXY=
+HTTPS_PROXY=
 
-# Decides if the Worker should use the same proxy as Orborus (HTTP_PROXY). Default=true
+# Set to true to pass HTTP_PROXY/HTTPS_PROXY/NO_PROXY from Orborus to Worker
 SHUFFLE_PASS_WORKER_PROXY=true
 
-# Decides if the Apps should use the same proxy as Orborus (HTTP_PROXY). Default=false
-SHUFFLE_PASS_WORKER_PROXY=true
+# Set to true to pass HTTP_PROXY/HTTPS_PROXY/NO_PROXY from Worker to Apps
+SHUFFLE_PASS_APP_PROXY=false
 
 
 ### PAID: The environment variables below only work when you've acquired a paid license of Shuffle (not required, but VERY useful when scaling Shuffle):
@@ -1108,15 +1108,22 @@ To configure these, there are two options:
 * Individual containers
 * Globally for Docker
 
-To **DISABLE** proxy for **internal** Shuffle traffic (between internal containers), add the following environment variable to Orborus ([origin](https://jamboard.google.com/d/1KNr4JJXmTcH44r5j_5goQYinIe52lWzW-12Ii_joi-w/edit?usp=sharing)):
+To **DISABLE** proxy for **internal** Shuffle traffic (between internal containers), add the following environment variables to Orborus:
 ```
-- SHUFFLE_INTERNAL_HTTP_PROXY=noproxy
-- SHUFFLE_INTERNAL_HTTPS_PROXY=noproxy
+SHUFFLE_INTERNAL_HTTP_PROXY=noproxy
+SHUFFLE_INTERNAL_HTTPS_PROXY=noproxy
 ```
 
 To disable proxy use for specific domains, use NO_PROXY with comma separation between domains:
 ```
 NO_PROXY=myinternal-domain.com,random.org
+```
+
+If you need a separate no-proxy list for internal Shuffle traffic, set one of these on Orborus:
+```
+SHUFFLE_INTERNAL_NO_PROXY=shuffle-backend,shuffle-workers
+# Legacy alias also supported by backend/shared code:
+SHUFFLE_INTERNAL_NOPROXY=shuffle-backend,shuffle-workers
 ```
 
 #### Global Docker proxy configuration
@@ -1125,7 +1132,15 @@ Follow this guide from Docker: https://docs.docker.com/network/proxy/
 
 ### Internal Proxy settings
 
-The main proxy issues may arise with the "Backend", along with 3the "Orborus" container, which runs workflows. This has to do with how this server can contact the backend (Orborus), along with how apps can be downloaded (Worker), down to how apps engage with external systems (Apps).
+The main proxy issues may arise with the Backend and Orborus containers. This is related to how Orborus reaches the backend, how the worker downloads apps, and how apps connect to external systems.
+
+Current behavior in code:
+
+- `SHUFFLE_PASS_WORKER_PROXY=true`: Orborus passes `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` to Worker containers.
+- `SHUFFLE_PASS_APP_PROXY=true`: Worker passes `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`, and `no_proxy` to App containers.
+- If set, `SHUFFLE_INTERNAL_HTTP_PROXY` and `SHUFFLE_INTERNAL_HTTPS_PROXY` are also forwarded down to Worker and App containers.
+- Backend internal HTTP clients switch to `SHUFFLE_INTERNAL_*` when talking to internal Shuffle targets (`shuffle-*` hosts, worker/app ports, and the `BASE_URL` host match).
+- Setting `SHUFFLE_INTERNAL_HTTP_PROXY=noproxy` and `SHUFFLE_INTERNAL_HTTPS_PROXY=noproxy` disables internal proxying for those internal routes.
 
 Environment variables to be sent to the Orborus container:
 
@@ -1133,13 +1148,16 @@ Environment variables to be sent to the Orborus container:
 # Configures a HTTP proxy to use when talking to the Shuffle Backend
 HTTP_PROXY=
 # Configures a HTTPS proxy when speaking to the Shuffle Backend
-HTTPs_PROXY=
+HTTPS_PROXY=
 
-# Decides if the Worker should use the same proxy as Orborus (HTTP_PROXY). Default=true
+# Set to true to pass HTTP_PROXY/HTTPS_PROXY/NO_PROXY from Orborus to Worker
 SHUFFLE_PASS_WORKER_PROXY=true
 
-# Decides if the Apps should use the same proxy as Orborus (HTTP_PROXY). Default=false
-SHUFFLE_PASS_WORKER_PROXY=true
+# Set to true to pass HTTP_PROXY/HTTPS_PROXY/NO_PROXY from Worker to Apps
+SHUFFLE_PASS_APP_PROXY=false
+
+# Optional: separate no-proxy list for internal Shuffle routes
+SHUFFLE_INTERNAL_NO_PROXY=
 ```
 
 Environment variables for the Backend container:
@@ -1151,7 +1169,7 @@ SHUFFLE_OPENSEARCH_PROXY
 # Configures a HTTP proxy for external downloads
 HTTP_PROXY=
 # Configures a HTTPS proxy for external downloads
-HTTPs_PROXY=
+HTTPS_PROXY=
 ```
 
 ### Opensearch / Elasticsearch proxies
@@ -1175,15 +1193,30 @@ As of November 2023, we added another way to configure a difference between thes
 - Internal tools like Backend -> Orborus -> Worker <-> Apps
 - Apps -> External tools
 
-This is in order to make it possible to have the an internal proxy different from those apps use for external services. These environment variables should be added to the "Orborus" container.
+This makes it possible to have an internal proxy that is different from what apps use for external services. These environment variables should be added to the Orborus container.
 
 ```
 HTTP_PROXY=<external proxy>                     # used by default for everything
+HTTPS_PROXY=<external https proxy>
 
 SHUFFLE_INTERNAL_HTTP_PROXY=<internal proxy>     # Overrides HTTP_PROXY, making internal services in Shuffle use this proxy instead of HTTP_PROXY.
+SHUFFLE_INTERNAL_HTTPS_PROXY=<internal https proxy>
+SHUFFLE_INTERNAL_NO_PROXY=shuffle-backend,shuffle-workers
 ```
 
 **PS: This is in beta. Reach out to support@shuffler.io if you have any trouble with this.**
+
+### App SDK proxy behavior
+
+`shuffle_sdk` initializes proxy settings in this order:
+
+1. `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`
+2. Override with `SHUFFLE_INTERNAL_HTTP_PROXY`, `SHUFFLE_INTERNAL_HTTPS_PROXY`, and `SHUFFLE_INTERNAL_NO_PROXY` when set
+3. If proxy value is `noproxy`, it is treated as disabled
+
+The SDK applies this proxy config to its own HTTP calls (for example: results streaming, datastore/cache APIs, and file APIs).
+
+Current implementation note: when `SHUFFLE_INTERNAL_HTTPS_PROXY` is set, the SDK currently applies the value from `SHUFFLE_INTERNAL_HTTP_PROXY` for HTTPS traffic as well. Set both internal proxy vars to the same value if you need consistent behavior.
 
 ### HTTPS
 
