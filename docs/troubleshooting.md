@@ -28,6 +28,7 @@ Documentation for troubleshooting and debugging known issues in Shuffle.
 * [How to handle wrong or bad images on old versions of docker](#how-to-handle-wrong-or-bad-images-on-old-versions-of-docker)
 * [Docker not working](#docker_not_working)
 * [Troubleshooting for executions not running in swarm mode](#Troubleshooting_for_executions_not_running_in_swarm_mode)
+* [Swarm init advertise address error (manual fix)](#swarm_init_advertise_address_error_manual_fix)
 * [Find app creator Python function](#find_code_openapi_app)
 * [Tenants/Suborgs seem to be lost](#reinstate_lost_tenants)
 * [Find top index items opensearch](#find-top-index-items-opensearch)
@@ -722,6 +723,38 @@ docker ps
 docker logs <name_of_worker>
 ```
 * All you have to do now is comb the logs and identify where the problem is, if you can't figure out where the problem is reach out to our community on discord.
+
+## Swarm init advertise address error manual fix
+
+If you see Orborus logs like this:
+
+```
+[ERROR] Swarm init issue: Error response from daemon: must specify a listening address because the address to advertise is not recognized as a system address, and a system's IP address to use could not be uniquely identified
+```
+
+it usually means Docker can not choose a unique host IP automatically.
+
+Use a host NIC IP (not a container IP) and pin it:
+
+1. Find your host IP (example output: `10.0.10.25`):
+
+```bash
+ip route get 1.1.1.1
+```
+
+2. If swarm is partially initialized, reset it first:
+
+```bash
+docker swarm leave --force || true
+```
+
+3. Initialize swarm with the same IP:
+
+```bash
+docker swarm init --listen-addr 0.0.0.0:2377 --advertise-addr 10.0.10.25:2377
+```
+
+4. Restart Orborus / stack.
 
 ## Find code OpenAPI app 
 You may have had problems with an app and need some help getting it fixed. Apps created in the app creator of Shuffle also do generate underlying Python code utilizing the same capabilities as if you make a Python function from scratch. Here's how to find the code for a function.
