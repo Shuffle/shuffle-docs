@@ -16,6 +16,7 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 * [Proxy Configuration](#proxy-configuration)
 * [App Certificates](#app-certificates)
 * [HTTPS](#https)
+* [OpenSearch TLS certificate setup](#opensearch-tls-certificate-setup)
 * [IPv6](#ipv6)
 * [Database](#database)
 * [Database Change](#change-the-database-from-opensearch-to-elasticsearch)
@@ -1037,6 +1038,83 @@ If you use TLS or authentication on OpenSearch, keep the matching backend settin
 SHUFFLE_OPENSEARCH_SKIPSSL_VERIFY=false
 SHUFFLE_OPENSEARCH_CERTIFICATE_FILE=/shuffle-files/es_certificate
 ```
+
+#### OpenSearch TLS certificate setup
+
+`SHUFFLE_OPENSEARCH_CERTIFICATE_FILE` should point to a CA certificate file inside the backend container/pod. Shuffle reads this file and uses it as the CA trust when connecting to OpenSearch.
+
+##### Quick start
+
+1. Place your OpenSearch CA certificate on the host (PEM format), for example `./certs/es-ca.pem`.
+2. Mount it into backend at a stable path (for example `/shuffle-files/es_certificate`).
+3. Set backend environment variables:
+
+```bash
+SHUFFLE_OPENSEARCH_URL=https://<opensearch-host>:9200
+SHUFFLE_OPENSEARCH_USERNAME=<username>
+SHUFFLE_OPENSEARCH_PASSWORD=<password>
+SHUFFLE_OPENSEARCH_CERTIFICATE_FILE=/shuffle-files/es_certificate
+SHUFFLE_OPENSEARCH_SKIPSSL_VERIFY=false
+```
+
+4. Restart/redeploy backend.
+5. Verify:
+
+```bash
+curl -i http://localhost:8080/api/v1/checkusers
+```
+
+Expected backend log line:
+
+```text
+[INFO] Added certificate /shuffle-files/es_certificate elastic client.
+```
+
+Compose example (backend service):
+
+```yaml
+volumes:
+  - ./certs/es-ca.pem:/shuffle-files/es_certificate:ro
+environment:
+  - SHUFFLE_OPENSEARCH_URL=https://shuffle-opensearch:9200
+  - SHUFFLE_OPENSEARCH_CERTIFICATE_FILE=/shuffle-files/es_certificate
+  - SHUFFLE_OPENSEARCH_SKIPSSL_VERIFY=false
+```
+
+Kubernetes/Helm example:
+
+```yaml
+backend:
+  openSearch:
+    url: https://opensearch.example.svc:9200
+    certificateFile: /certs/es-ca.pem
+    skipSSLVerify: false
+    username: admin
+  extraVolumes:
+    - name: opensearch-ca
+      secret:
+        secretName: opensearch-ca
+  extraVolumeMounts:
+    - name: opensearch-ca
+      mountPath: /certs
+      readOnly: true
+```
+
+##### Production hardening checklist
+
+- Keep `SHUFFLE_OPENSEARCH_SKIPSSL_VERIFY=false` in production.
+- Make sure every hostname in `SHUFFLE_OPENSEARCH_URL` exists in certificate SANs.
+- Use `https://` endpoints only when OpenSearch security/TLS is enabled.
+- Store OpenSearch credentials as secrets (not plaintext in committed files).
+- Rotate certs and credentials regularly; test rollover in staging first.
+- Validate failover with one OpenSearch node down while Shuffle remains operational.
+
+Common failure patterns:
+
+- `x509: certificate signed by unknown authority`: wrong/missing CA file mount or path.
+- `certificate is valid for X, not Y`: endpoint hostname does not match cert SAN.
+- `401/403`: bad username/password or role permissions.
+- HTTP/HTTPS mismatch errors: `SHUFFLE_OPENSEARCH_URL` protocol does not match OpenSearch security mode.
 
 If you prefer to keep OpenSearch inside Swarm, treat each node as a fixed service instead of one floating replicated service:
 

@@ -19,6 +19,7 @@ Documentation for troubleshooting and debugging known issues in Shuffle.
 * [Rebuilding an OpenSearch index](#rebuilding_an_opsearch_index)
 * [Updates Failing](#updates_failing)
 * [Database not starting](#database_not_starting)
+* [OpenSearch TLS certificate setup reference](#opensearch_tls_certificate_setup_reference)
 * [TLS timeout error/Timeout Errors/EOF Errors](#TLS_timeout_error/Timeout_Errors/EOF_Errors)
 * [Shuffle on ARM](#shuffle_on_arm)
 * [Orborus can't connect to backend](#orborus_backend_connection_problems)
@@ -436,6 +437,12 @@ In certain cases, you may experience OpenSearch continuously restarting. PS: All
 1. Is there enough RAM on the device?
 1. Is there enough storage space on the device?
 1. Do you have security enabled (https & username & password), but not configured it in the `.env` file?
+
+## OpenSearch TLS certificate setup reference
+
+For full setup instructions for `SHUFFLE_OPENSEARCH_CERTIFICATE_FILE` (quick start + production hardening), see:
+
+- [/docs/configuration#opensearch-tls-certificate-setup](/docs/configuration#opensearch-tls-certificate-setup)
 
 
 ## TLS timeout error/Timeout Errors/EOF Errors
