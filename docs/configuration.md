@@ -994,7 +994,7 @@ If tasks stay `Pending`, lower replicas or add more eligible nodes.
 - If you see `no route to host` or random internal timeouts, prefer `tasks.<service-name>` for internal service-to-service traffic.
 - `endpoint_mode: dnsrr` on OpenSearch and Memcached reduces reliance on VIP routing.
 
-#### Swarm overlay-network-encryption
+#### Swarm-overlay-network-encryption
 
 If you want encrypted node-to-node traffic on Swarm overlays, pre-create encrypted networks and point your stack file to those external networks.
 
