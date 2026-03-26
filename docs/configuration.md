@@ -12,6 +12,7 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 * [Kubernetes](#kubernetes)
 * [Shuffle Apps on Kubernetes](#shuffle-apps-on-kubernetes)
 * [Swarm HAProxy for worker load balancing](#swarm-haproxy-for-worker-load-balancing)
+* [Swarm overlay network encryption](#swarm-overlay-network-encryption)
 * [No Internet Install](#no-internet-install)
 * [Proxy Configuration](#proxy-configuration)
 * [App Certificates](#app-certificates)
@@ -709,6 +710,34 @@ Traffic flow:
 - `shuffle-backend` talks to OpenSearch and Memcached over internal overlay DNS.
 - `orborus` runs execution scheduling and uses a dedicated execution overlay network.
 
+#### Nginx HA behavior
+
+In this setup, `gateway` is Nginx and acts as the edge router for both API and UI traffic.
+
+- `/api/*` is proxied to backend tasks.
+- `/` is proxied to frontend tasks.
+- If one backend/frontend task fails, Nginx continues routing to remaining healthy tasks.
+
+To make Nginx itself highly available:
+
+- run `gateway` with 2+ replicas,
+- spread replicas across nodes,
+- use an external load balancer or DNS round-robin to route traffic to node IPs when using `ports.mode: host`.
+
+Example scaling:
+
+```bash
+docker service scale shuffleha_gateway=2
+docker service scale shuffleha_frontend=2
+docker service scale shuffleha_shuffle-backend=2
+```
+
+When using host-published ports, avoid scheduling all `gateway` replicas on one node. Verify distribution with:
+
+```bash
+docker service ps shuffleha_gateway
+```
+
 #### Pre-flight (run once)
 
 ```bash
@@ -922,11 +951,92 @@ docker service scale shuffleha_orborus=2
 
 If you use `max_replicas_per_node: 1`, make sure you have enough swarm nodes. Otherwise replicas stay pending.
 
+`max_replicas_per_node: 1` can be useful for HA spreading when you run multiple nodes.
+
+Recommended usage:
+
+- Set it on services you want distributed, for example `shuffle-backend` and `orborus`.
+- Keep replicas equal to or lower than the number of eligible nodes.
+- For `orborus`, eligible nodes are manager nodes because of `node.role == manager` constraint.
+
+Example:
+
+```yaml
+services:
+  shuffle-backend:
+    deploy:
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+
+  orborus:
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == manager
+        max_replicas_per_node: 1
+```
+
+Practical checks:
+
+```bash
+docker node ls
+docker service ps shuffleha_shuffle-backend
+docker service ps shuffleha_orborus
+```
+
+If tasks stay `Pending`, lower replicas or add more eligible nodes.
+
 #### Important Swarm DNS notes
 
 - In some Swarm environments, service VIP routing can become unstable after many updates.
 - If you see `no route to host` or random internal timeouts, prefer `tasks.<service-name>` for internal service-to-service traffic.
 - `endpoint_mode: dnsrr` on OpenSearch and Memcached reduces reliance on VIP routing.
+
+#### Swarm overlay network encryption
+
+If you want encrypted node-to-node traffic on Swarm overlays, pre-create encrypted networks and point your stack file to those external networks.
+
+1) Pre-create encrypted overlays:
+
+```bash
+docker network create --driver overlay --attachable --opt encrypted shuffle
+docker network create --driver overlay --attachable --opt encrypted swarm_executions
+```
+
+2) In your stack/compose config file, use external networks:
+
+```yaml
+networks:
+  shuffle:
+    external: true
+    name: shuffle
+  swarm_executions:
+    external: true
+    name: swarm_executions
+```
+
+3) Deploy as normal:
+
+```bash
+docker stack deploy -c docker-compose.yml shuffle
+```
+
+4) Verify encryption and service attachment:
+
+```bash
+docker network inspect shuffle | grep -i encrypted
+docker network inspect swarm_executions | grep -i encrypted
+docker service inspect shuffle_backend --format '{{json .Spec.TaskTemplate.Networks}}'
+docker service inspect shuffle_orborus --format '{{json .Spec.TaskTemplate.Networks}}'
+```
+
+Notes:
+
+- Overlay encryption secures node-to-node container traffic on those overlays.
+- It does not replace HTTPS/TLS for user-facing traffic.
+- Orborus can create missing Swarm networks dynamically; pre-creating encrypted overlays avoids accidental unencrypted network creation.
 
 #### Slow backend response troubleshooting
 
