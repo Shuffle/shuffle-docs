@@ -603,7 +603,7 @@ This one is pretty easily explained. Go to Shuffle an make a new Workflow.
 **2. Add a Webhook to the workflow**
 [Add a webhook](/docs/triggers#webhook) and find the Webhook URL. Remember to start the Webhook!
 
-![Extend Shuffle with Wazuh](https://github.com/frikky/shuffle-docs/blob/master/assets/extensions_example_1.png?raw=true)
+![Extend Shuffle with Wazuh](https://github.com/user-attachments/assets/a85ec865-c991-4ffc-98f3-5009a094dc8a)
 
 Copy the URL and keep it for the next steps
 ![Extend Shuffle with Wazuh 2](https://github.com/frikky/shuffle-docs/blob/master/assets/extensions_example_2.png?raw=true)
