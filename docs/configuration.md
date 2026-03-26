@@ -710,7 +710,7 @@ Traffic flow:
 - `shuffle-backend` talks to OpenSearch and Memcached over internal overlay DNS.
 - `orborus` runs execution scheduling and uses a dedicated execution overlay network.
 
-#### Nginx HA behavior
+#### Nginx-HA-behavior
 
 In this setup, `gateway` is Nginx and acts as the edge router for both API and UI traffic.
 
@@ -938,7 +938,7 @@ curl -i http://localhost:8080/api/v1/checkusers
 
 If startup feels slow in the first 1-3 minutes, this is usually normal due to backend init tasks and OpenSearch warmup.
 
-#### Single-node vs multi-node replicas
+#### Single-node-vs-multi-node-replicas
 
 - The example above is tuned to work on a single node on the first try.
 - For multi-node HA, increase replicas after initial validation:
@@ -994,7 +994,7 @@ If tasks stay `Pending`, lower replicas or add more eligible nodes.
 - If you see `no route to host` or random internal timeouts, prefer `tasks.<service-name>` for internal service-to-service traffic.
 - `endpoint_mode: dnsrr` on OpenSearch and Memcached reduces reliance on VIP routing.
 
-#### Swarm overlay network encryption
+#### Swarm overlay-network-encryption
 
 If you want encrypted node-to-node traffic on Swarm overlays, pre-create encrypted networks and point your stack file to those external networks.
 
