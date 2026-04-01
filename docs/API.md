@@ -1222,6 +1222,20 @@ curl https://shuffler.io/api/v1/orgs -H "Authorization: Bearer APIKEY"
 [{"name":"Testing","description":"Description","company_type":"","image": "base64 image", "id":"583816e5-40ab-4212-8c7a-e54c8edd6b51","org":"new suborg","users":[],"role":"","roles":["admin","user"],"active_apps":["eb6b633ebbb77575ad17789eecf36cdf"],"cloud_sync":false,"cloud_sync_active":true,"sync_config":{"interval":0,"api_key":"","source":""},"sync_features": {}, "invites":null,"child_orgs":[],"manager_orgs":null,"creator_org":"PARENT_ORG_ID","disabled":false,"partner_info":{"reseller":false,"reseller_level":""},"sso_config":{"sso_entrypoint":"","sso_certificate":"","client_id":"","client_secret":"","openid_authorization":"","openid_token":""},"main_priority":"","region":"","region_url":"","tutorials":[]}]
 ```
 
+### List Child Organizations
+Lists the child organizations of a parent organization
+
+Methods: GET 
+
+```bash
+curl https://shuffler.io/api/v1/orgs/{parentOrgId}/suborgs?cursor=<cursor> -H "Authorization: Bearer APIKEY" 
+```
+
+**Success response** 
+```
+{"cursor": "cursor", "parentOrg": {"name": "Parentorg_name", "id": "parentorg_id"}, "subOrgs": [{"name":"Testing","description":"Description","company_type":"","image": "base64 image", "id":"583816e5-40ab-4212-8c7a-e54c8edd6b51","org":"new suborg","users":[],"role":"","roles":["admin","user"],"active_apps":["eb6b633ebbb77575ad17789eecf36cdf"],"cloud_sync":false,"cloud_sync_active":true,"sync_config":{"interval":0,"api_key":"","source":""},"sync_features": {}, "invites":null,"child_orgs":[],"manager_orgs":null,"creator_org":"PARENT_ORG_ID","disabled":false,"partner_info":{"reseller":false,"reseller_level":""},"sso_config":{"sso_entrypoint":"","sso_certificate":"","client_id":"","client_secret":"","openid_authorization":"","openid_token":""},"main_priority":"","region":"","region_url":"","tutorials":[]}]}
+```
+
 ### Delete Organizations
 Deletes an organization. Only possible for sub-organizations. 
 
