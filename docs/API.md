@@ -965,12 +965,19 @@ curl -XPOST https://shuffler.io/api/v1/notifications -H "Authorization: Bearer A
 
 
 ### Get all notifications
-Get all notifications assigned to your user from your organizations 
+Get all notifications assigned to your user from your organizations. 
 
 Methods: GET 
 
+Available queries:
+- status: open => only returns open
+- type: agent_question => only returns notifications of type 'agent_question' 
+- severity: MEDIUM => only returns "MEDIUM" severity
+
+Queries can be mixed for better filtering.
+
 ```bash
-curl https://shuffler.io/api/v1/notifications -H "Authorization: Bearer APIKEY" 
+curl https://shuffler.io/api/v1/notifications?status=open -H "Authorization: Bearer APIKEY" 
 ```
 
 
