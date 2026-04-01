@@ -27,7 +27,8 @@ Check your current location on the [/admin page](https://shuffler.io). Use the d
 * [Notifications](#notifications)
 * [Priorities](#priorities)
 * [Environments](#environments)
-* [Integration Layer - Beta](#integration-layer)
+* [Detection](#detection-api)
+* [Singul](#singul)
 
 
 
@@ -1299,9 +1300,15 @@ Invalid email:
 - If the organization has SSO enabled, `&sso=enabled` is added to the invite link
 - For new users, the region is automatically set to the organization's region.
 
+## Detection API
+Below are the endpoints related to manage detections in the Shuffle platform. The Detection APIs are based on the [File API in Shuffle](#file-api), but has some custom management interfaces to make it easier to use. The primary area this is currently used heavily is in [Shuffle Security](https://security.shuffler.io/detection).
 
-## Integration Layer
-The Integration Layer of Shuffle is a way to interact with apps a new way. It utilizes Apps that are Categorized and Labeled, and gives access to API's for specific actions for each of those labels. Behind the scenes there is always a workflow for each of these, and Shuffle wants to give granular control of each individual Workflow if wanted. The integration layer is based on [Shuffle's Schemaless translation technology](https://github.com/frikky/schemaless), built on top of LLMs, with the goal of making Shuffle be able to act as a Large **Action** Model (LAM).
+The detection system is both used for internal Detection, as well as for distributed third party detection management in multiple environments simultaneously.
+
+If you want to know more about these endpoints, reach out to [support@shuffler.io](mailto:support@shuffler.io). 
+
+## Singul
+The Integration Layer of Shuffle, [also named Singul](https://singul.io), is a way to interact with apps a new way. It utilizes Apps and MCPs that are auto-generated, auto-Categorized and auto-Labeled, and gives access to API's for specific actions for each of those labels. The integration layer is based on [Shuffle's Schemaless translation technology](https://github.com/frikky/schemaless), with the goal of making Shuffle able to act as a Large **Action** Model (LAM).
 
 <img width="713" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/e806707d-9635-465b-8040-b3e26b1786a0">
 
