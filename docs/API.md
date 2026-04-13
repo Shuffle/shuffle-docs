@@ -276,7 +276,7 @@ curl https://shuffler.io/api/v1/workflows/{workflow_id}/executions/{execution_id
 Datastore is a persistent storage mechanism you can use for workflows to talk to each other between executions, or for normal storage. Below are the endpoints related to datastore (cache) creation, listing, deletion and more. This API is available to Python apps by using self.set_cache("key", "value") and self.get_cache("key")
 
 ### Add a key
-To add a key to a specific category, add `"category": "name"` to the JSON body.
+Add a key to the Shuffle Datastore (previously called `cache`). To add a key to a specific category, add `"category": "name"` to the JSON body. The `value` field can be anything, but preferrably JSON. You can add Enrichments using the `enrichments` field with the format `[{"type": "ip", "value": 1.2.3.4"}]` which is used heavily in Shuffle Security. 
 
 Methods: POST, PUT
 
