@@ -273,15 +273,15 @@ curl https://shuffler.io/api/v1/workflows/{workflow_id}/executions/{execution_id
 ```
 
 ## Datastore API
-Datastore is a persistent storage mechanism you can use for workflows to talk to each other between executions, or for normal storage. Below are the endpoints related to datastore (cache) creation, listing, deletion and more. This API is available to Python apps by using self.set_cache("key", "value") and self.get_cache("key")
+Datastore is a persistent storage mechanism you can use for workflows to talk to each other between executions, or for normal storage. Below are the endpoints related to datastore (cache) creation, listing, deletion and more. This API is available to Python apps by using self.set_cache("key", "value", category="category") and self.get_cache("key", category="category")
 
-### Add a key
-Add a key to the Shuffle Datastore (previously called `cache`). To add a key to a specific category, add `"category": "name"` to the JSON body. The `value` field can be anything, but preferrably JSON. You can add Enrichments using the `enrichments` field with the format `[{"type": "ip", "value": 1.2.3.4"}]` which is used heavily in Shuffle Security. 
+### Set a key
+Add a key to the Shuffle Datastore (previously called `cache`). To add a key to a specific category, add `"category": "name"` to the JSON body. The `value` field can be anything, but preferrably JSON. You can add Enrichments using the `enrichments` field with the format `[{"type": "ip", "value": 1.2.3.4"}]` which is used heavily in Shuffle Security. `ignore_security_rules` is only relevant IF you have enabled security rules for the category you are in, which restricts who and what can write to a key.
 
 Methods: POST, PUT
 
 ```bash
-curl https://shuffler.io/api/v1/orgs/{org_id}/set_cache -H "Authorization: Bearer APIKEY" -d '{"key":"hi", "value":"1234", "category": "category"}'
+curl https://shuffler.io/api/v1/orgs/{org_id}/set_cache -H "Authorization: Bearer APIKEY" -d '{"key":"hi", "value":"1234", "category": "category", "ignore_security_rules": false}'
 ```
 
 
@@ -290,8 +290,8 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/set_cache -H "Authorization: Beare
 {"success": true, "keys_existed": [{"key": "hi", "existed": true }]}
 ```
 
-### Add multiple keys
-To add a key to a specific category, add `"category": "name"` to the JSON body. Only keys of the first discovered category will be added.
+### Set multiple keys
+Accepts a list in the same format as [Set a key](#set_a_key), and is very efficient at bulk updates. Returns which keys are new and which were updated. To add a key to a specific category, add `"category": "name"` to the JSON body. **PS:** Only keys of the first discovered category will be added.
 
 Methods: POST, PUT
 
