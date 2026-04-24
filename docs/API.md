@@ -1321,6 +1321,47 @@ Invalid email:
 - If the organization has SSO enabled, `&sso=enabled` is added to the invite link
 - For new users, the region is automatically set to the organization's region.
 
+## Promote Sub-Organization API (Support Only API)
+Promotes a sub-organization into a standalone organization and removes it from its parent organization.
+
+## 2. Method and Example Request
+**Method:** POST  
+**Endpoint:** /api/v1/orgs/{orgId}/promote_sub_org
+
+```bash
+curl -X POST "https://shuffler.io/api/v1/orgs/<parent-org-id>/promote_sub_org" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "org_id": "<parent-org-id>",
+    "suborg_id": "<sub-org-id>"
+  }'
+```
+
+## 3. Header
+- Authorization: Bearer <token>
+- Content-Type: application/json
+
+## 4. Body
+```json
+{
+  "org_id": "<parent-org-id>",
+  "suborg_id": "<sub-org-id>"
+}
+```
+
+## 5. Success Response
+**Status:** 200 OK
+
+```json
+{
+  "success": true,
+  "reason": "Sub-organization promoted successfully",
+  "removed_from_parent": true,
+  "updated_workflows": 3
+}
+```
+
 ## Detection API
 Below are the endpoints related to manage detections in the Shuffle platform. The Detection APIs are based on the [File API in Shuffle](#file-api), but has some custom management interfaces to make it easier to use. The primary area this is currently used heavily is in [Shuffle Security](https://security.shuffler.io/detection).
 
