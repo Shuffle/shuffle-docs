@@ -24,7 +24,7 @@ MCPs (Model Context Protocol) are the concept of having an AI Agent decide what 
 
 The easiest way to try one in Shuffle is by going to [/agents](/agents), choosing an app (or more), and telling it what to use it for. This makes the agent act as an MCP. 
 
-<img width="946" height="316" alt="image" src="https://github.com/user-attachments/assets/662d05ef-b3ae-4bba-90d6-9cb4446fb0de" />
+<img width="840" height="397" alt="image" src="https://github.com/user-attachments/assets/e0b2894f-2b4d-4d0c-a8ce-63561f780e97" />
 
 They are also available for each app in our upcoming [Security Bundle product Shutdown](https://security.shuffler.io/apps/outlook_office365). 
 
@@ -75,16 +75,12 @@ TBD: More details coming soon.
 TBA: Coming soon. The goal is to take actions from a previous AI agent run and make well-tested and well-configured workflows out of them, as to keep determinism.
 
 ## Singul
-Singul works against vendor-locking with our translator for different providers of the same tools, such as Slack vs Teams vs Discord, or Splunk vs Elastic vs QRadar). It uses LLMs to understand the context of what you are trying to perform, and makes a determinsitic translation to use a standard such as OCSF or STIX. This is a powerful way to avoid vendor lock-in, and to make your automation more future-proof. Made by the Shuffle team.
+Singul works against vendor-locking with our translator for different providers of the same tools, such as Slack vs Teams vs Discord (communication), or Splunk vs Elastic vs QRadar (SIEM). It uses LLMs to understand the context of what you are trying to perform, and makes a determinsitic translation to use a standard such as OCSF or STIX. This is a powerful way to avoid vendor lock-in, and to make your automation more future-proof. 
+
+A good example of this being used actively is [Shuffle Security](https://security.shuffler.io), where we ingest tickets and handle enrichment in a standardised format.
 
 Read the [usage Shuffle Docs here](https://github.com/Shuffle/openapi-apps/blob/master/docs/singul.md)
 Website: [https://singul.io](https://singul.io)
-
-### LLM inference
-TBA
-
-### Conditions
-TBA
 
 ## App generation
 App generation is a system built to generate Rest API apps from documentation URLs. It works by emulating a browser with which it crawls the documentation.
