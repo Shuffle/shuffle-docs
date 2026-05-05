@@ -76,11 +76,11 @@ Shuffle responses follow the response codes listed below. The data you can expec
 | 500    | A backend error occurred. |
 
 ## MCP
-The MCP- and Agent-API is built to handle MCP workloads when the speed and determinism of workflows is not required. This is typically in cases of analysis, or to perform tasks you otherwise would not know how to. 
+The MCP- and Agent-API is built to handle MCP workloads when the speed and determinism of workflows is not required. This is typically in cases of analysis, long-term processing or to perform tasks you otherwise would not know how to. 
 
 Shuffle follows the [Model Context Protocol (MCP) strictly](https://modelcontextprotocol.io/docs/getting-started/intro), to be as interoperable with other platforms as possible. We support both short- and long-running tasks (hours and days), including the control of agent reasoning as well as self-hosted LLM models.  The MCP system in Shuffle is built on HTTP, and is built for both cloud- and on-premises remote-controlled actions.
 
-Shuffle version required: `>=2.2.1`. ALL MCP and Agent actions are available to look into [in the Runtime Debugger](/workflows/debug).
+Shuffle version required: `>=2.2.1`. ALL MCP and Agent actions are available to look into [in the Runtime Debugger](/workflows/debug). The [frontend library Shuffle MCPs](https://security.shuffler.io/shuffle-mcp-demo) is available to be put in your platform as well.
 
 <img width="1180" height="279" alt="image" src="https://github.com/user-attachments/assets/d981ce44-15b4-4393-be0f-51c1aeac67ff" />
 
@@ -1430,6 +1430,8 @@ If you want to know more about these endpoints, reach out to [support@shuffler.i
 
 ## Singul
 The Integration Layer of Shuffle, [also named Singul](https://singul.io), is a way to interact with apps a new way. It utilizes Apps and MCPs that are auto-generated, auto-Categorized and auto-Labeled, and gives access to API's for specific actions for each of those labels. The integration layer is based on [Shuffle's Schemaless translation technology](https://github.com/frikky/schemaless), with the goal of making Shuffle able to act as a Large **Action** Model (LAM).
+
+[A frontend library is also available to handle integrations in your own platform. Learn more here.](https://security.shuffler.io/shuffle-mcp-demo)
 
 <img width="713" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/e806707d-9635-465b-8040-b3e26b1786a0">
 
