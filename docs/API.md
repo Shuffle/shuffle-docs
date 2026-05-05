@@ -80,14 +80,12 @@ The MCP- and Agent-API is built to handle MCP workloads when the speed and deter
 
 Shuffle follows the [Model Context Protocol (MCP) strictly](https://modelcontextprotocol.io/docs/getting-started/intro), to be as interoperable with other platforms as possible. We support both short- and long-running tasks (hours and days), including the control of agent reasoning as well as self-hosted LLM models.  The MCP system in Shuffle is built on HTTP, and is built for both cloud- and on-premises remote-controlled actions.
 
-Shuffle version required: `>=2.2.1`. 
-
-ALL MCP and Agent actions are available to look into [in the Runtime Debugger](/workflows/debug).
+Shuffle version required: `>=2.2.1`. ALL MCP and Agent actions are available to look into [in the Runtime Debugger](/workflows/debug).
 
 <img width="1180" height="279" alt="image" src="https://github.com/user-attachments/assets/d981ce44-15b4-4393-be0f-51c1aeac67ff" />
 
 ### Run an MCP action
-Validates if the Shuffle Agent & MCP system is available or not
+Runs a task using the chosen tools. In the output, `result.message` is the raw output from the MCP server, with the rest talking about time and how it ran. If it does not return within 1 minute, use the execution_id and authorization to poll for it to finish.
 
 Supported body parameters:
 
@@ -106,20 +104,18 @@ curl localhost:5002/api/v1/mcp -d '{"method": "tools/call", "params": {"tool_nam
 ```json
 {
   "jsonrpc": "2.0",
-  "id": 0,
   "result": {
     "allowed_actions": [
       ""
     ],
-    "authorization": "28bb827f-4a9c-4d7b-8ed5-f9a0ff994a9b",
+    "authorization": "28bb827f-4a9c-4d7b-8ed5-f9a0ff994a9c",
     "completed_at": 1777973989995,
     "completion_tokens": 219,
     "execution_id": "49d01bec-b10b-49ae-a639-d5e79f21652f",
-    "input": "send me an email with the subject 'heloo",
     "llm_call_count": 1,
     "message": "An email has been sent. Look into the execution if you need further details.",
     "notifications": 0,
-    "original_input": "6 characters",
+    "original_input": "send me an email with the subject 'heloo'",
     "prompt_tokens": 1293,
     "started_at": 1777973989995,
     "status": "FINISHED",
@@ -127,6 +123,25 @@ curl localhost:5002/api/v1/mcp -d '{"method": "tools/call", "params": {"tool_nam
   }
 }
 ```
+
+### Run an agent action
+Running the agent action is the EXACT same as the MCP API, with the only difference being that it responds immediately with the execution ID and authorization instead of waiting for the full execution to finish. After getting the execution_id and authorization, you can call `POST /api/v1/streams {"execution_id": "id", "authorization": "auth"}` to poll for it finishing. This has no timeout. 
+
+Method: POST
+
+```bash
+curl localhost:5002/api/v1/agent -d '{"method": "tools/call", "params": {"tool_name": "outlook", "input": {"text": "send me an email with the subject 'heloo'"}, "reasoning": "minimal"}}'
+```
+
+**Success response**
+```json
+{
+  "success": true,
+  "execution_id": "49d01bec-b10b-49ae-a639-d5e79f21652f",
+  "authorization": "28bb827f-4a9c-4d7b-8ed5-f9a0ff994a9c"
+}
+```
+
 
 ### Ping
 Validates if the Shuffle Agent & MCP system is available or not
