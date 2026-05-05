@@ -1,8 +1,8 @@
 # AI at Shuffle
-With AI becoming a larger part of the Automation space, the goal with AI at Shuffle is provide it in a deterministic, controllable and responsible way. We do not intend to implement chat systems - just to make certain mechanisms in Shuffle easier to use over time.
+With AI becoming a larger part of the Automation space, the goal with AI at Shuffle is provide it in a deterministic, controllable and responsible way. The main use is for Workflow building, [Shuffle Security](https://security.shuffler.io) and [MCP connectivity](/docs/API#MCP) with third party platforms.
 
 ## Using LLMs 
-Shuffle by default provides LLM credits using the OpenAI GPT-5-mini model. This is available to a certain level to those who use our Cloud or Hybrid offerings, but you can control this yourseelf. [Read about self-hosted models](#how-to-set-up-a-self-hosted-ai-model-with-shuffle).
+Shuffle by default provides LLM credits. This is available to a certain level to those who use our Cloud or Hybrid offerings, and works infinitely with [self-hosted models](#how-to-set-up-a-self-hosted-ai-model-with-shuffle).
 
 ## AI Agents
 Agents are a way to have an AI model interact with the world. In Shuffle, this means using tools (playbooks) to perform actions. We intend to provide controllable, deterministic Agents that can be used to perform tasks.
