@@ -4,18 +4,15 @@ With AI becoming a larger part of the Automation space, the goal with AI at Shuf
 ## Using LLMs 
 Shuffle by default provides LLM credits. This is available to a certain level to those who use our Cloud or Hybrid offerings, and works infinitely with [self-hosted models](#how-to-set-up-a-self-hosted-ai-model-with-shuffle).
 
+Since Shuffle's Agentic system is built by the Shuffle team from scratch, it means that it all runs locally where you want it with no third party requirements. 
+
 ## AI Agents
 Agents are a way to have an AI model interact with the world. In Shuffle, this means using tools (playbooks) to perform actions. We intend to provide controllable, deterministic Agents that can be used to perform tasks.
 
 **Some areas has been built for:**
-- Tool Usage  (Detection, Collection, Enrichment & Response)
+- Tool Usage  (MCP: Detection, Collection, Enrichment & Response)
 - Reasoning   (E.g. for workflow building and other heavy tasks)
 - Correlation (Historical alerts and cases)
-- RAG         (Docs: Knowledge base usage)
-
-They can additionally talk to each other and be published for third party use. 
-
-**This is in private Beta and is not generally available yet. If you would like to try it, please reach out to support@shuffler.io and ask about AI Agents.**
 
 ### MCP
 MCPs (Model Context Protocol) are the concept of having an AI Agent decide what actions to perform within a specific pool of available actions. It is typically used by agents as to have them be specialised, but there is nothing stopping them from being used directly as well.
