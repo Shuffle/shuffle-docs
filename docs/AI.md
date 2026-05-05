@@ -23,7 +23,7 @@ The easiest way to try one in Shuffle is by going to [/agents](/agents), choosin
 
 <img width="840" height="397" alt="image" src="https://github.com/user-attachments/assets/e0b2894f-2b4d-4d0c-a8ce-63561f780e97" />
 
-They are also available for each app in our upcoming [Security Bundle product Shutdown](https://security.shuffler.io/apps/outlook_office365). 
+They are also available for all apps in [Shuffle Security](https://security.shuffler.io/apps/outlook_office365). 
 
 <img width="778" height="269" alt="image" src="https://github.com/user-attachments/assets/f9eed81b-4251-41b6-b3c6-c2a12c29d7e6" />
 
