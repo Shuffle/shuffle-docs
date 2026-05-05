@@ -15,6 +15,7 @@ Check your current location on the [/admin page](https://shuffler.io). Use the d
 * [Introduction](#introduction)
 * [Authentication](#authentication)
 * [Responses](#responses)
+* [MCP & Agents](#MCP)
 * [Workflows](#workflow-api)
 * [Stats & Timelines](#stats-and-timelines)
 * [Triggers](#triggers)
@@ -74,6 +75,88 @@ Shuffle responses follow the response codes listed below. The data you can expec
 | 405    | Method not allowed. We use GET/POST/PUT/DELETE |
 | 500    | A backend error occurred. |
 
+## MCP
+The MCP- and Agent-API is built to handle MCP workloads when the speed and determinism of workflows is not required. This is typically in cases of analysis, or to perform tasks you otherwise would not know how to. 
+
+Shuffle follows the [Model Context Protocol (MCP) strictly](https://modelcontextprotocol.io/docs/getting-started/intro), to be as interoperable with other platforms as possible. We support both short- and long-running tasks (hours and days), including the control of agent reasoning as well as self-hosted LLM models.  The MCP system in Shuffle is built on HTTP, and is built for both cloud- and on-premises remote-controlled actions.
+
+Shuffle version required: `>=2.2.1`. 
+
+ALL MCP and Agent actions are available to look into [in the Runtime Debugger](/workflows/debug).
+
+<img width="1180" height="279" alt="image" src="https://github.com/user-attachments/assets/d981ce44-15b4-4393-be0f-51c1aeac67ff" />
+
+### Run an MCP action
+Validates if the Shuffle Agent & MCP system is available or not
+
+Supported body parameters:
+`params.reasoning = minimal/low/medium/high` - How much reasoning effort the model should use. Tokens affect this.
+`params.environment = <runtime_location>` - Which [runtime location to run actions in](/admin?tab=runtime_locations). Allows for remote-control of servers (in safe container environments).
+`params.enable_questions = true` - If you want the MCP to be able to ask questions. Requires polling `POST /api/v1/streams {"execution_id": "id", "authorization": "auth"}` and/or `GET /api/v1/notifications?type=agent_questions`
+`params.authentication_id = <specific authentication>` - If you want to use a specific authentication ID for the app(s).
+
+Method: POST
+
+```bash
+curl localhost:5002/api/v1/mcp -d '{"method": "tools/call", "params": {"tool_name": "outlook", "input": {"text": "send me an email with the subject 'heloo'"}, "reasoning": "minimal"}}'
+```
+
+**Success response**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 0,
+  "result": {
+    "allowed_actions": [
+      ""
+    ],
+    "authorization": "28bb827f-4a9c-4d7b-8ed5-f9a0ff994a9b",
+    "completed_at": 1777973989995,
+    "completion_tokens": 219,
+    "execution_id": "49d01bec-b10b-49ae-a639-d5e79f21652f",
+    "input": "send me an email with the subject 'heloo",
+    "llm_call_count": 1,
+    "message": "An email has been sent. Look into the execution if you need further details.",
+    "notifications": 0,
+    "original_input": "6 characters",
+    "prompt_tokens": 1293,
+    "started_at": 1777973989995,
+    "status": "FINISHED",
+    "total_tokens": 1512
+  }
+}
+```
+
+### Ping
+Validates if the Shuffle Agent & MCP system is available or not
+
+Method: POST
+
+```bash
+curl localhost:5002/api/v1/mcp -d '{"id": 1337, "method": "ping"}'
+```
+
+**Success response**
+```json
+{"jsonrpc":"2.0","id":1337,"result":{"timestamp":"2026-05-05T09:21:03Z","uptime":3600}}
+```
+
+### Listing available tools
+Lists the most used actions within an App using the `tools/list` Method. Works for a single app. 
+
+If you want a specific app ID, use `tool_id`. This works with private apps as well:
+`params.tool_id = <app ID>`
+
+Method: POST
+
+```bash
+curl localhost:5002/api/v1/mcp -d '{"id": 1337, "method": "tools/list", "params": {"tool_name": "outlook"}}'
+```
+
+**Success response**
+```json
+{"jsonrpc":"2.0","id":1337,"result":{"protocolVersion":"2024-11-05","capabilities":{"tools":{"list":false,"call":false}},"serverInfo":{"name":"shuffle","version":"0.0.1"},"tools":[{"name":"post_move_message","description":"Move a message to another folder within the specified user's mailbox.\n\nhttps://graph.microsoft.com/v1.0/me/messages/{id}/move","inputSchema":{"type":"object","properties":{"body":{"type":"string"},"headers":{"type":"string","description":"Add or edit headers"},"id":{"type":"string"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"}},"required":["id","headers","queries","ssl_verify","to_file","body"]}},{"name":"get_raw_email_as_file","description":"\n\nhttps://graph.microsoft.com/v1.0/me/messages/{message_id}/$value","inputSchema":{"type":"object","properties":{"headers":{"type":"string","description":"Add or edit headers"},"message_id":{"type":"string"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"}},"required":["message_id","headers","queries","ssl_verify","to_file"]}},{"name":"get_list_users_mailfolders","description":"List mailFolders\n\nhttps://graph.microsoft.com/v1.0/users/{user_id}/mailFolders","inputSchema":{"type":"object","properties":{"headers":{"type":"string","description":"Add or edit headers"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"},"user_id":{"type":"string"}},"required":["user_id","headers","queries","ssl_verify","to_file"]}},{"name":"post_search_emails","description":"Searches the email mailbox\n\nhttps://graph.microsoft.com/v1.0/search/query","inputSchema":{"type":"object","properties":{"body":{"type":"string"},"headers":{"type":"string","description":"Add or edit headers"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"}},"required":["headers","queries","ssl_verify","to_file","body"]}},{"name":"post_add_attachment","description":"Use this API to add an attachment to an existing event. This operation limits the size of the attachment you can add to under 3 MB.\n\nhttps://graph.microsoft.com/v1.0/me/events/{id}/attachments","inputSchema":{"type":"object","properties":{"body":{"type":"string"},"headers":{"type":"string","description":"Add or edit headers"},"id":{"type":"string"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"}},"required":["id","headers","queries","ssl_verify","to_file","body"]}},{"name":"get_list_mailfolders_","description":"List mailFolders\n\nhttps://graph.microsoft.com/v1.0/me/mailFolders","inputSchema":{"type":"object","properties":{"headers":{"type":"string","description":"Add or edit headers"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"}},"required":["headers","queries","ssl_verify","to_file"]}},{"name":"post_forward_a_message_","description":"Forward a message. The message is then saved in the Sent Items folder.\n\nhttps://graph.microsoft.com/v1.0/me/messages/{id}/forward","inputSchema":{"type":"object","properties":{"body":{"type":"string"},"headers":{"type":"string","description":"Add or edit headers"},"id":{"type":"string"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"}},"required":["id","headers","queries","ssl_verify","to_file","body"]}},{"name":"post_forward_message","description":"Forward a message using JSON forma\n\nhttps://graph.microsoft.com/v1.0/me/messages/{id}/forward","inputSchema":{"type":"object","properties":{"body":{"type":"string"},"headers":{"type":"string","description":"Add or edit headers"},"id":{"type":"string"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"}},"required":["id","headers","queries","ssl_verify","to_file","body"]}},{"name":"get_me_calendar","description":"Get calendar\n\nhttps://graph.microsoft.com/v1.0/me/calendar","inputSchema":{"type":"object","properties":{"headers":{"type":"string","description":"Add or edit headers"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"}},"required":["headers","queries","ssl_verify","to_file"]}},{"name":"get_child_folders_in_folder","description":"\n\nhttps://graph.microsoft.com/v1.0/me/mailFolders/{id}/childFolders","inputSchema":{"type":"object","properties":{"headers":{"type":"string","description":"Add or edit headers"},"id":{"type":"string"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"}},"required":["id","headers","queries","ssl_verify","to_file"]}},{"name":"get_list_rules_shared_mail","description":"Get all the messageRule objects defined for the user's inbox.\n\nhttps://graph.microsoft.com/v1.0/users/{id}/mailFolders/inbox/messagerules","inputSchema":{"type":"object","properties":{"headers":{"type":"string","description":"Add or edit headers"},"id":{"type":"string"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"}},"required":["id","headers","queries","ssl_verify","to_file"]}},{"name":"delete_approleassignment","description":"Delete appRoleAssignment\n\nhttps://graph.microsoft.com/v1.0/users/{user_id}/appRoleAssignments/{id}","inputSchema":{"type":"object","properties":{"body":{"type":"string"},"headers":{"type":"string","description":"Add or edit headers"},"id":{"type":"string"},"queries":{"type":"string","description":"Add or edit queries"},"ssl_verify":{"type":"string","description":"Check if you want to verify request"},"to_file":{"type":"string","description":"Choose if we should write the result straight to a file or not"},"user_id":{"type":"string"}},"required":["user_id","id","headers","queries","ssl_verify","to_file","body"]}}]}}
+```
 
 ## Workflow API
 Workflows are used to execute your automations, and has endpoints related to creation, triggers, saving and deleting, aborting and listing.
