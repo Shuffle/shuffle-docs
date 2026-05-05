@@ -90,10 +90,11 @@ ALL MCP and Agent actions are available to look into [in the Runtime Debugger](/
 Validates if the Shuffle Agent & MCP system is available or not
 
 Supported body parameters:
-`params.reasoning = minimal/low/medium/high` - How much reasoning effort the model should use. Tokens affect this.
-`params.environment = <runtime_location>` - Which [runtime location to run actions in](/admin?tab=runtime_locations). Allows for remote-control of servers (in safe container environments).
-`params.enable_questions = true` - If you want the MCP to be able to ask questions. Requires polling `POST /api/v1/streams {"execution_id": "id", "authorization": "auth"}` and/or `GET /api/v1/notifications?type=agent_questions`
-`params.authentication_id = <specific authentication>` - If you want to use a specific authentication ID for the app(s).
+
+- `params.reasoning = minimal/low/medium/high` - How much reasoning effort the model should use. Tokens affect this.
+- `params.environment = <runtime_location>` - Which [runtime location to run actions in](/admin?tab=runtime_locations). Allows for remote-control of servers (in safe container environments).
+- `params.enable_questions = true` - If you want the MCP to be able to ask questions. Requires polling `POST /api/v1/streams {"execution_id": "id", "authorization": "auth"}` and/or `GET /api/v1/notifications?type=agent_questions`
+- `params.authentication_id = <specific authentication>` - If you want to use a specific authentication ID for the app(s).
 
 Method: POST
 
@@ -145,7 +146,8 @@ curl localhost:5002/api/v1/mcp -d '{"id": 1337, "method": "ping"}'
 Lists the most used actions within an App using the `tools/list` Method. Works for a single app. 
 
 If you want a specific app ID, use `tool_id`. This works with private apps as well:
-`params.tool_id = <app ID>`
+
+- `params.tool_id = <app ID>`
 
 Method: POST
 
