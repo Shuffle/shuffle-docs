@@ -8,8 +8,8 @@ Shuffle by default provides LLM credits using the OpenAI GPT-5-mini model. This 
 Agents are a way to have an AI model interact with the world. In Shuffle, this means using tools (playbooks) to perform actions. We intend to provide controllable, deterministic Agents that can be used to perform tasks.
 
 **Some areas has been built for:**
-- Tool Usage  (Collection, Enrichment, Detection & Response)
-- Reasoning   (Helps with workflow building)
+- Tool Usage  (Detection, Collection, Enrichment & Response)
+- Reasoning   (E.g. for workflow building and other heavy tasks)
 - Correlation (Historical alerts and cases)
 - RAG         (Docs: Knowledge base usage)
 
@@ -18,11 +18,11 @@ They can additionally talk to each other and be published for third party use.
 **This is in private Beta and is not generally available yet. If you would like to try it, please reach out to support@shuffler.io and ask about AI Agents.**
 
 ### MCP
-MCPs (Model Context Protocol) are the concept of having an AI Agent decide what actions to do within a specific pool of available actions. It is typically used by agents as to have them be specialised, but there is nothing stopping them from being used directly as well.
+MCPs (Model Context Protocol) are the concept of having an AI Agent decide what actions to perform within a specific pool of available actions. It is typically used by agents as to have them be specialised, but there is nothing stopping them from being used directly as well.
 
-In Shuffle, **EVERY SINGLE APP** is an MCP. This is available with the `POST /api/v1/apps/{appid}/mcp` API and is based on the [MCP standard](https://modelcontextprotocol.io/docs/getting-started/intro).
+[In Shuffle, **EVERY SINGLE APP** is an MCP](/docs/API#MCP). This is available with the  `POST /api/v1/mcp` API and is based on the [MCP standard](https://modelcontextprotocol.io/docs/getting-started/intro). You may even point to multiple apps at once.
 
-The easiest way to try one in Shuffle is to go to [/agents](/agents), choosing an app (or more), and telling it what to use it for. This makes the agent act as an MCP. 
+The easiest way to try one in Shuffle is by going to [/agents](/agents), choosing an app (or more), and telling it what to use it for. This makes the agent act as an MCP. 
 
 <img width="946" height="316" alt="image" src="https://github.com/user-attachments/assets/662d05ef-b3ae-4bba-90d6-9cb4446fb0de" />
 
