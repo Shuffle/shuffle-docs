@@ -15,6 +15,7 @@ Documentation for troubleshooting and debugging known issues in Shuffle.
 * [Delete user](#delete_user)
 * [Docker client version too new](#docker_client_version)
 * [Useful OpenSearch Queries](#useful_opensearch_queries)
+* [OpenSearch Dashboards](#opensearch-dashboards)
 * [Extract all workflows](#extract_all_workflows)
 * [Moving from Docker in a VM to Kubernetes or SaaS](#moving_from_docker_in_a_vm_to_kubernetes_or_saas)
 * [Rebuilding an OpenSearch index](#rebuilding_an_opsearch_index)
@@ -329,6 +330,72 @@ Find all org IDs
 ```
 curl -X GET "https://localhost:9200/organizations/_search?pretty"  -u <opensearch_user>:<opensearch_password> --insecure -H 'Content-Type: application/json' -d' { "size": 10000, "query": { "match_all": {}}}' | grep "\"id\" : \"" | sed 's/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' | uniq -u
 ```
+
+## OpenSearch Dashboards
+
+If you prefer a visual interface over curl commands, you can add [OpenSearch Dashboards](https://opensearch.org/docs/latest/dashboards/) to your on-prem Shuffle deployment. This gives you a UI to browse indexes, run queries, inspect documents, and monitor index health.
+
+### Adding to docker-compose.yml
+
+Add this service to your existing `docker-compose.yml`, inside the `services:` block:
+
+```yaml
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:3.2.0
+    container_name: opensearch-dashboards
+    hostname: opensearch-dashboards
+    ports:
+      - 5601:5601
+    environment:
+      - OPENSEARCH_HOSTS=https://shuffle-opensearch:9200
+    networks:
+      - shuffle
+    depends_on:
+      - opensearch
+    restart: unless-stopped
+```
+
+Then start it:
+```bash
+docker-compose up -d opensearch-dashboards
+```
+
+The Dashboards version must match your OpenSearch major version. Check yours with:
+```bash
+curl -sk -u admin:<password> https://localhost:9200/ | grep number
+```
+
+### Accessing the Dashboard
+
+Open `http://<your-server-ip>:5601` in your browser. Log in with your OpenSearch credentials (default: `admin` / the value of `SHUFFLE_OPENSEARCH_PASSWORD` in your `.env` file).
+
+### Using Dev Tools
+
+Go to **Dev Tools** (wrench icon in the left sidebar) to run queries directly against OpenSearch without needing curl. All the queries from the [Useful OpenSearch Queries](#useful_opensearch_queries) section work here.
+
+List all Shuffle indexes:
+```
+GET _cat/indices?v
+```
+
+Find a user:
+```
+GET users/_search
+{
+  "query": {
+    "match": {
+      "username": "myuser"
+    }
+  }
+}
+```
+
+### Security Note
+
+OpenSearch Dashboards exposes read/write access to your database. Do **not** expose port 5601 to the public internet. Access it via:
+- SSH tunnel: `ssh -L 5601:localhost:5601 your-server`
+- VPN
+- Firewall rules restricted to your IP
 
 ## Extract all workflows
 
