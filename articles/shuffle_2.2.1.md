@@ -40,23 +40,9 @@ We expect this to be sufficient for most environments, with the goal being of fi
 
 Shuffle is now listed on the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-typ7upg6kwntk) and [Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/shuffle-public/shuffle).
 
-<p align="left">
-  <a href="https://aws.amazon.com/marketplace/pp/prodview-typ7upg6kwntk">
-    <img 
-      src="https://github.com/user-attachments/assets/250e00d7-2a23-4b4e-95e1-5db4db1f7864"
-      height="80"
-    />
-  </a>
-</p>
+[![AWS Marketplace](https://github.com/user-attachments/assets/250e00d7-2a23-4b4e-95e1-5db4db1f7864)](https://aws.amazon.com/marketplace/pp/prodview-typ7upg6kwntk)
 
-<p align="left">
-  <a href="https://console.cloud.google.com/marketplace/product/shuffle-public/shuffle">
-    <img 
-      src="https://github.com/user-attachments/assets/37858273-eaeb-42a9-b228-a425026ca82d"
-      height="80"
-    />
-  </a>
-</p>
+[![Google Cloud Marketplace](https://github.com/user-attachments/assets/37858273-eaeb-42a9-b228-a425026ca82d)](https://console.cloud.google.com/marketplace/product/shuffle-public/shuffle)
 
 ## Reliability and performance:
 
