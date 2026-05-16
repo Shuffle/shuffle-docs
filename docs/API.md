@@ -1,7 +1,7 @@
 # Shuffle API 
 Documentation for the Shuffle API. Change https://shuffler.io with your local domain/IP for on-premises usage.
 
-- UK (London - default): https://shuffler.io
+- UK (London - default): https://uk.shuffler.io
 - Germany (Frankfurt): https://frankfurt.shuffler.io
 - US (California): https://california.shuffler.io
 - Canada (Montréal): https://ca.shuffler.io
