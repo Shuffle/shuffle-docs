@@ -260,7 +260,7 @@ Each Party (Shuffle and the Customer) shall be liable for any damage caused to t
 
 6. Shuffle retains all intellectual property rights to the software we provide.
 
-7. Shuffle may display the User's name or logo for showcase purposes. Shuffle and the User (if a Shuffle Partner) may use each other’s name or logo for partnership announcements, marketing materials, or case studies, subject to prior written approval. Both the Parties can use each other’s logo without written approval only if it’s for the sole purpose of showcasing it on their respective website as a partner.
+7. Shuffle may display the customer or partner's name or logo for showcase purposes. Shuffle and the customer or partner may use each other’s name or logo for partnership or launch announcements, marketing materials, or case studies, subject to prior written approval. Both the Parties can use each other’s logo without written approval only if it’s for the sole purpose of showcasing it on their respective websites and official handles.
 
 8. The agreement or subscription will automatically renew for successive periods of 1 year each (or 1 month each as per the subscription chosen), unless either party gives written termination notice to the other at least 60 days prior to the date of expiration. This automatic renewal will continue until either party provides termination notice, at which point the agreement will terminate at the end of the then-current term.
 
