@@ -1,10 +1,10 @@
-# Organizations 
-Documentation for the Admin view of Shuffle. Best used by administrators.
+# Tenants 
+Documentation for the Admin view of Shuffle. Best used by administrators. Previously called Organizations, now standardised to Tenants. 
 
 ## Table of contents
 * [Introduction](#introduction)
-* [Organization Overview](#organization_overview)
-* [App runs management for Suborgs (Enterprise)](#app_runs_management_suborg)
+* [Tenant Overview](#organization_overview)
+* [App runs management for Sub-tenants (Enterprise)](#app_runs_management_sub-tenants)
 * [Data collection](#data_collection)
 * [Pricing](#pricing)
 * [Licensing](#licensing)
@@ -29,15 +29,15 @@ Documentation for the Admin view of Shuffle. Best used by administrators.
   * [Upgrading or Increasing Limits](#upgrading_limits)
 
 ## Introduction
-Organizations are Shuffle's way of organizing data, and can be thought of as tenants. Data from Apps, Workflows, Notifications, Files etc. are all related to an organization from which users gain access based on their access rights. This document is made to explain what the different options for organizations are.
+Tenants are Shuffle's way of organizing data, and can be thought of as tenants. Data from Apps, Workflows, Notifications, Files etc. are all related to an organization from which users gain access based on their access rights. This document is made to explain what the different options for tenants are.
 
-## Organization overview
-The organization overview gives access to these things:
+## Tenant overview
+The tenant overview gives access to these things:
 * Name Change
 * Description Change
 * Image change
 * Cloud synchronization
-* App runs management for suborg
+* App runs management for sub-tenants
 * Hybrid Feature overview
 * Single Signon options
 * Notification Workflows
@@ -46,27 +46,25 @@ The organization overview gives access to these things:
 * Statistics
 * Branding (Beta)
 
-This view outlines the basic details of your organizations, which any Admin can change at any time. It can tell you about new updates, features and more that we have in store. The view is slightly different from the cloud version to the on-premises version. Here's how:
+This view outlines the basic details of your tenants, which any Admin can change at any time. It can tell you about new updates, features and more that we have in store. The view is slightly different from the cloud version to the on-premises version. Here's how:
 * The **cloud** version shows you an API-key. This can be used in the open source version.
 * The **open source** version gives you an API-key field. This can be used in the cloud version.
 ![Organization view](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-1.png?raw=true)
 
-### App Runs Management for Suborg (Enterprise)
-Starting from version 2.0.2, enterprise users can manage suborg app run limits from the parent organization. The maximum limit that can be assigned to a suborg is equal to the app run limit of the parent organization. For example, if the parent org has an app run limit of 300k, the maximum limit that can be assigned to each suborg is also 300k.
+### App Runs Management for Sub-tenants (Enterprise)
+Starting from version 2.0.2, enterprise users can manage sub-tenant app run limits from the parent tenant. The maximum limit that can be assigned to a sub-tenant is equal to the app run limit of the parent tenant. For example, if the parent tenant has an app run limit of 300k, the maximum limit that can be assigned to each sub-tenant is also 300k.
 
 This feature is currently available to [Enterprise users](https://shuffler.io/pricing) only. If you have any questions or need assistance, please reach out to us at support@shuffler.io.
 
-**Steps to assign app run limits to a suborg from the parent org:**
+**Steps to assign app run limits to a sub-tenant from the parent tenant:**
 1. Log in to your Shuffle account and visit the [Billing tab](https://shuffler.io/admin?admin_tab=billingstats) on the admin page.
-2. Scroll down to the *Utilization and Stats* section. There, you’ll find the *Child Organization* tab, where you can manage suborg app run limits.
+2. Scroll down to the *Utilization and Stats* section. There, you’ll find the *Child Tenant* tab, where you can manage sub-tenant app run limits.
 ![image](https://github.com/user-attachments/assets/a54a6b03-f787-4c3d-bd8c-eab4bef9496a)
-3. Click the edit icon next to the *App Execution Limit*. A pop-up will appear where you can assign the app execution run limit for each suborg. You can follow the same process to assign workflow run execution limits.  
+3. Click the edit icon next to the *App Execution Limit*. A pop-up will appear where you can assign the app execution run limit for each sub-tenant. You can follow the same process to assign workflow run execution limits.  
 ![image](https://github.com/user-attachments/assets/d9faf8dd-5663-4381-9e4a-71d244b2d9df)
 
 
 ## Hybrid Features 
-Updated November 14th, 2022
-
 Want to try it out? Hybrid Access is Free. 
 
 There are many features that make Shuffle more usable. These are mainly related to accessibility, scalability and collaboration - in that order. For the initial release (v0.8) of Shuffle, we've decided to focus entirely on accessibility. Every feature comes with some of the same basic features, so that you know what you're getting into.
@@ -101,7 +99,7 @@ The description exists to specify what exactly an action does. This will become 
 There are three types of data sharing, where the initial launch of Shuffle uses none. You can see the usage as per the image in [limits](#limits)
 
 The three levels we'll keep to are:
-* None 	- Shuffle doesn't collect any information about your on-premises organization. This is most features.
+* None 	- Shuffle doesn't collect any information about your on-premises tenant. This is most features.
 * Minimal - Shuffle collects a minimal amount of information necessary to execute the action. An example is a Workflow execution, where we'll need to gather information about the next steps in a workflow to properly execute it.
 * High 	- Shuffle collects the necessary information to handle information. This is used for when full synchronization, meaning information used on-premises will also be used in the cloud. An example is having access to edit workflows in the cloud, that will execute on-premises. This requires access to all the same apps, workflows, credentials, triggers, organizational users and more. **PS: This will not happen for a while, and will be 100% OPTIONAL**
 
@@ -128,9 +126,9 @@ Get in touch at [support@shuffler.io](mailto:support@shuffler.io) if you want so
 User management is all about adding, listing, deleting and controlling users in general. Users are a part of a specific organization, and are created by organization admins. To add users you need the "admin" role.
 
 **Existing roles**:
-* Org-Admin - Gives access to control an organization, and see what everyone in the organization are doing.
-* Org-User - Gives access to use the organizations resources, but NOT see everyone elses Workflows. This role is meant for engineers who are to build their own workflows, without potentially breaking others'
-* Org-Reader - Gives access to READ all data for an organization (like an admin), but not make any changes.
+* Admin - Gives access to control an tenant, and see what everyone in the tenant are doing.
+* User - Gives access to use the tenants resources, but NOT see everyone elses Workflows. This role is meant for engineers who are to build their own workflows, without potentially breaking others'
+* Reader - Gives access to READ all data for an tenant (like an admin), but not make any changes.
 
 **To come:**
 * Creating API-only users (no login)
@@ -143,8 +141,8 @@ Click the "ADD USER" button, and you'll get a popup. Type in their username (ope
 
 ### Change a users' role
 Click the "Role" dropdown and choose one. Defaults are Admin and User, but we'll add granular access for this now. To repeat, here's the current roles:
-* Admin - Gives you access to control an organization, and see what everyone in the organization are doing.
-* User  - Gives you access to YOUR resources within an organization. This is to prevent you from seeing what everyone else are doing.
+* Admin - Gives you access to control a tenant, and see what everyone in the tenant are doing.
+* User  - Gives you access to YOUR resources within an tenant. This is to prevent you from seeing what everyone else are doing.
 
 ### Deleting a user
 A user in Shuffle can't be deleted, but deactivated. This is to keep all references available for when audits eventually require them. Click "Edit user", then "Deactivate". This prevents the user from being used. **A deactivated user can be reactivated.**
@@ -168,17 +166,17 @@ App Authentication groups are a way for you to group authentications together, e
 
 **Requirements to use**
 - Create at least two App Auth groups
-- Have at least two different available authentications for an app in the same organization
+- Have at least two different available authentications for an app in the same tenant
 - Choose the App Auth group you want to use in the app
 
 If these requirements are fulfilled, the workflow will run as many times as there are App Auth groups selected in that workflow. If one app (e.g. Outlook) has selected to use App Auth groups in a workflow, we will distribute this to every node in the same workflow
 
-**App Auth Groups vs. Suborg Workflow distribution**
+**App Auth Groups vs. Sub-tenant Workflow distribution**
 A similar topic for running workflows is the Suborg Workflow distribution system, available in the Edit Workflow menu. 
 
 The difference:
-- App Auth Groups run in a single Organization, and may as of Q2 2024 not be distributed to suborgs. Will run multiple workflow executions in one organization.
-- Suborg Workflow distribution is used when you want to segregate where and how the data is stored per organization, or where your customer may want access to the workflow. This uses a background distribution system when the parent workflow is saved.
+- App Auth Groups run in a single tenant, and may as of Q2 2024 not be distributed to sub-tenants. Will run multiple workflow executions in one tenant.
+- Sub-tenant Workflow distribution is used when you want to segregate where and how the data is stored per tenant, or where your customer may want access to the workflow. This uses a background distribution system when the parent workflow is saved.
 
 <img width="520" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/7d02f2e2-fce5-445c-94e4-1cea239b1a7f">
 
