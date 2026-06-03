@@ -43,10 +43,6 @@
     "file_id": "file-A7hfwXyE2N6VozYuyqa68G",
     "hash": "b5868f083235727c34cf25d15395f8522d7129b3ea4ac1fbaa94028e1f92f6b9"
   },
-  "docs/organizations.md": {
-    "file_id": "file-7NoFUTXiEyeU8ChzvNyQHz",
-    "hash": "8058796c0d7d191077d514a9de0b1b38ac9b3318ed3054b4d2bf250f7661411c"
-  },
   "docs/triggers.md": {
     "file_id": "file-Q1JYeWM3R8dgjjRBNQXBKv",
     "hash": "447346bba4519fa44443cd14ad46be7743c45eb582cc9eb17ffc98c91c9e85be"
@@ -58,5 +54,9 @@
   "docs/workflows.md": {
     "file_id": "file-DEMDjPmjySNSdA3BrkrWu5",
     "hash": "9f0738760df3317ca5e1c41e063cdb9b7e51c7d605af4ac35f4534753046342b"
+  },
+  "docs/tenants.md": {
+    "file_id": "file-4tFXeLW4ckrH7cJcGgNyFc",
+    "hash": "8058796c0d7d191077d514a9de0b1b38ac9b3318ed3054b4d2bf250f7661411c"
   }
 }
