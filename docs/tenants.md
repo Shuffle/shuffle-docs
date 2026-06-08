@@ -59,9 +59,10 @@ This feature is currently available to [Enterprise users](https://shuffler.io/pr
 **Steps to assign app run limits to a sub-tenant from the parent tenant:**
 1. Log in to your Shuffle account and visit the [Billing tab](https://shuffler.io/admin?admin_tab=billingstats) on the admin page.
 2. Scroll down to the *Utilization and Stats* section. There, you’ll find the *Child Tenant* tab, where you can manage sub-tenant app run limits.
-![image](https://github.com/user-attachments/assets/a54a6b03-f787-4c3d-bd8c-eab4bef9496a)
-3. Click the edit icon next to the *App Execution Limit*. A pop-up will appear where you can assign the app execution run limit for each sub-tenant. You can follow the same process to assign workflow run execution limits.  
-![image](https://github.com/user-attachments/assets/d9faf8dd-5663-4381-9e4a-71d244b2d9df)
+![image](https://github.com/user-attachments/assets/11355085-daf1-4918-bd76-d8266d28dced)
+
+4. Click the edit icon next to the *App Execution Limit*. A pop-up will appear where you can assign the app execution run limit for each sub-tenant. You can follow the same process to assign workflow run execution limits.  
+![image](https://github.com/user-attachments/assets/90657b84-cc40-4049-8631-de193583df4f)
 
 
 ## Hybrid Features 
