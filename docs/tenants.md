@@ -29,7 +29,7 @@ Documentation for the Admin view of Shuffle. Best used by administrators. Previo
   * [Upgrading or Increasing Limits](#upgrading_limits)
 
 ## Introduction
-Tenants are Shuffle's way of organizing data, and can be thought of as tenants. Data from Apps, Workflows, Notifications, Files etc. are all related to an organization from which users gain access based on their access rights. This document is made to explain what the different options for tenants are.
+Tenants are Shuffle's way of organizing data, and can be thought of as tenants. Data from Apps, Workflows, Notifications, Files etc. are all related to an tenant from which users gain access based on their access rights. This document is made to explain what the different options for tenants are.
 
 ## Tenant overview
 The tenant overview gives access to these things:
@@ -49,7 +49,7 @@ The tenant overview gives access to these things:
 This view outlines the basic details of your tenants, which any Admin can change at any time. It can tell you about new updates, features and more that we have in store. The view is slightly different from the cloud version to the on-premises version. Here's how:
 * The **cloud** version shows you an API-key. This can be used in the open source version.
 * The **open source** version gives you an API-key field. This can be used in the cloud version.
-![Organization view](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-1.png?raw=true)
+![Organization view](https://github.com/user-attachments/assets/733e02ed-1f06-4064-b645-de37eb27478a)
 
 ### App Runs Management for Sub-tenants (Enterprise)
 Starting from version 2.0.2, enterprise users can manage sub-tenant app run limits from the parent tenant. The maximum limit that can be assigned to a sub-tenant is equal to the app run limit of the parent tenant. For example, if the parent tenant has an app run limit of 300k, the maximum limit that can be assigned to each sub-tenant is also 300k.
