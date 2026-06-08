@@ -91,7 +91,7 @@ Activation tells you whether the feature is active. It's indicated by the red or
 #### Limits
 Some features have limits. These are features such as SMS and email sending, schedule creation, cloud executions and more. Click each item to learn more.
 
-![Cloud sync features limits](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-7.png?raw=true)
+![Cloud sync features limits](https://github.com/user-attachments/assets/e699575e-375e-425b-a0be-ae013866be08)
 
 #### Description
 The description exists to specify what exactly an action does. This will become more granular over time. Access it by clicking each feature.
@@ -122,7 +122,8 @@ Pro is the full package. It is meant for those of you who want everything from s
 Get in touch at [support@shuffler.io](mailto:support@shuffler.io) if you want something more specific.
 
 ## User management
-![User management Shuffle](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-9.png?raw=true)
+![User management Shuffle](https://github.com/user-attachments/assets/261ac8cf-279a-41be-b3d0-31285216b41f)
+
 
 User management is all about adding, listing, deleting and controlling users in general. Users are a part of a specific organization, and are created by organization admins. To add users you need the "admin" role.
 
