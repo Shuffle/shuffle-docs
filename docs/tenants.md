@@ -125,7 +125,7 @@ Get in touch at [support@shuffler.io](mailto:support@shuffler.io) if you want so
 ![User management Shuffle](https://github.com/user-attachments/assets/261ac8cf-279a-41be-b3d0-31285216b41f)
 
 
-User management is all about adding, listing, deleting and controlling users in general. Users are a part of a specific organization, and are created by organization admins. To add users you need the "admin" role.
+User management is all about adding, listing, deleting and controlling users in general. Users are a part of a specific tenant, and are created by tenant admins. To add users you need the "admin" role.
 
 **Existing roles**:
 * Admin - Gives access to control an tenant, and see what everyone in the tenant are doing.
