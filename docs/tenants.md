@@ -86,7 +86,7 @@ You can see most of our currently planned features on [https://shuffler.io/prici
 
 #### Activation
 Activation tells you whether the feature is active. It's indicated by the red or green mark next to the feature on the admin page.
-![Cloud sync features indicator](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-8.png?raw=true)
+![Cloud sync features indicator](https://github.com/user-attachments/assets/940b12b2-11dd-4e94-9ddb-a6ea84a9d969)
 
 #### Limits
 Some features have limits. These are features such as SMS and email sending, schedule creation, cloud executions and more. Click each item to learn more.
