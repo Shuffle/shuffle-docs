@@ -124,7 +124,6 @@ Get in touch at [support@shuffler.io](mailto:support@shuffler.io) if you want so
 ## User management
 ![User management Shuffle](https://github.com/user-attachments/assets/261ac8cf-279a-41be-b3d0-31285216b41f)
 
-
 User management is all about adding, listing, deleting and controlling users in general. Users are a part of a specific tenant, and are created by tenant admins. To add users you need the "admin" role.
 
 **Existing roles**:
@@ -139,7 +138,7 @@ User management is all about adding, listing, deleting and controlling users in 
 ### Adding a user
 Click the "ADD USER" button, and you'll get a popup. Type in their username (open source) or email (cloud), and you'll create an invite for them. Cloud will not allow an admin to set a password to share, but rather send them an email. This will also be a part of the hybrid offering later.
 
-![Adding a user to shuffle](https://github.com/user-attachments/assets/fcb4494b-1970-4c8a-b8eb-a7d9dc66189)
+![Adding a user to shuffle](https://github.com/user-attachments/assets/b12873a1-78a9-4422-842e-29f52904fa41)
 
 ### Change a users' role
 Click the "Role" dropdown and choose one. Defaults are Admin and User, but we'll add granular access for this now. To repeat, here's the current roles:
