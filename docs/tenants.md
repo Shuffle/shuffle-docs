@@ -139,7 +139,7 @@ User management is all about adding, listing, deleting and controlling users in 
 ### Adding a user
 Click the "ADD USER" button, and you'll get a popup. Type in their username (open source) or email (cloud), and you'll create an invite for them. Cloud will not allow an admin to set a password to share, but rather send them an email. This will also be a part of the hybrid offering later.
 
-![Adding a user to shuffle](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-10.png?raw=true)
+![Adding a user to shuffle](https://github.com/user-attachments/assets/fcb4494b-1970-4c8a-b8eb-a7d9dc66189)
 
 ### Change a users' role
 Click the "Role" dropdown and choose one. Defaults are Admin and User, but we'll add granular access for this now. To repeat, here's the current roles:
@@ -150,9 +150,9 @@ Click the "Role" dropdown and choose one. Defaults are Admin and User, but we'll
 A user in Shuffle can't be deleted, but deactivated. This is to keep all references available for when audits eventually require them. Click "Edit user", then "Deactivate". This prevents the user from being used. **A deactivated user can be reactivated.**
 
 ## App Authentication
-App authentication is a way for Shuffle to keep track of what credentials you have for an app in a specific organization. It shows you information the most important information, and gives you access to modify or easily delete them. Authentication is specified at the app level, and applies to ALL functions of the the app, unless specified otherwise. Authentication is created during workflow editing.
+App authentication is a way for Shuffle to keep track of what credentials you have for an app in a specific tenant. It shows you information the most important information, and gives you access to modify or easily delete them. Authentication is specified at the app level, and applies to ALL functions of the app, unless specified otherwise. Authentication is created during workflow editing.
 
-![Basic app authentication](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-11.png?raw=true)
+![Basic app authentication](https://github.com/user-attachments/assets/4079b10e-84c3-443a-862e-097bc710fff1)
 
 These are **NOT** editable outside of deletion as of november 2020, but we may add the possibility of changing without showing the previous value. 
 
@@ -197,16 +197,17 @@ The fields of authentication
 Authentication is and should be defined the first time you use an app. We'll use the example of TheHive, which takes the fields "apikey" and "url". Start by [creating a workflow](/docs/workflows#create), before dragging in the app "TheHive". 
 
 Once it's in, click the node, and you'll see a view like this. We've outlined three places that indicate this app requires authentication. All of these are also clickable.
-![Authentication in workflow](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-14.png?raw=true)
+![Authentication in workflow](https://github.com/user-attachments/assets/d3741b75-8cfa-41dd-9a7b-a5c3df19e839)
 
 By clicking either of these, a popup window will show. In this one, type in a DESCRIPTIVE name (to remember), before passing credentials. **PS: Never use localhost in an URL. Everything runs in a container, which has its own IP. Always use the system's IP/domain within the URL.**
-![Authentication workflow popup](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-15.png?raw=true)
+![Authentication workflow popup](https://github.com/user-attachments/assets/df60210a-21d9-4a1a-a3cf-410f4f12b6ae)
 
 By clicking "submit", the authentication is now saved for your organization. This removes clutter in the UI, by having less required fields, and is also reusable. You can now make multiple nodes that use the same authentication.
-![Authentication view after submit](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-16.png?raw=true)
+![Authentication view after submit](https://github.com/user-attachments/assets/8865be9d-27d8-4b83-8841-d7ca412536b0)
 
 Last, but not least, this can now be controlled on an organizational level. 
-![The same authentication on](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-17.png?raw=true)
+![The same authentication on](https://github.com/user-attachments/assets/dbcf3e5d-65b5-469c-9622-cc6ff453d9d6<img width="952" height="382" alt="Screenshot 2026-06-09 at 12 22 03 PM" src="https://github.com/user-attachments/assets/556ad2f5-4d0b-4e3a-9d72-567ffd89b268" />
+)
 
 ### App creation with authentication
 The fields are specified by the app creator. This short section outlines how to create authentication as a creator. [More on this in the apps section](/docs/apps). An example is TheHive, which takes a URL and an API-key. These fields have to be specified as seen below. 
@@ -221,7 +222,7 @@ These parameters are specified exactly as a parameter within an action. The func
 ## Locations
 Locations, previously Environments, are a core part of Shuffle's open source build. **Cloud does not require any configuration for this**, unless you are connecting to your on-premises datacenter/cloud VPC. Think of it as physical location where you want an agent of Shuffle running (Orborus) with access to the right locations.
 
-<img width="832" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/48acd5c4-0a86-4379-8f76-8d3b877ae5a4">
+<img width="832" alt="image" src="https://github.com/user-attachments/assets/9ceaa766-9f1e-4c1d-b388-29fcb1f07ee5">
 
 The default location is called "Shuffle" in your on-premises installation, and "Cloud" in the Shuffle SaaS. You can add as many as you want, and will get access to the additional "cloud" location through cloud synchronization onprem.  
 
