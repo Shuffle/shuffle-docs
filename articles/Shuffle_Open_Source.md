@@ -42,16 +42,16 @@ A couple of notes to keep in mind:
 - Shuffle Open Source is made for experts to try out the platform (projects and testing purposes).
 - If you are unsure about setting-up Shuffle yourself, we recommend [registering to use Shuffle Cloud](https://shuffler.io/register) or [contacting us](https://shuffler.io/contact) for help.
 
-## Difference between Open Source and Enteprise
+## Difference between Open Source and License Tiers
 
 ![Shuffle Open Source and License Tiers](https://raw.githubusercontent.com/Shuffle/shuffle-docs/refs/heads/master/assets/Shuffle%20Open%20Source%20and%20License%20Tiers.png)
 
 
 ## Shuffle's Open Source Business Model
 
-Our business model is open and transparentm and works on two fronts:
+Our business model is open and transparent. It works on two fronts:
 
-- **Scale License:** As you grow beyond a point (refer to image above), you get an Enterprise license so that your Shuffle instance scales smoothly without any hiccups.
+- **Business and Enterprise License:** As you grow beyond a point (refer to image above), you get a license so that your Shuffle instance scales smoothly without any hiccups.
   - This is done so we set the right expectations for scaling, as our inbox is full of people wanting to scale.
   - Scaling with high availability is hard, especially if you are onprem.
   - Hence, we have put a lot of money and resources on R&D for a scalable distributed [runtime architecture](https://shuffler.io/docs/architecture), which is what you get with an Enterprise License.
@@ -63,7 +63,7 @@ Our business model is open and transparentm and works on two fronts:
   - App Development
   - And much more. Think of us as an addition to your team for using Shuffle to it's limits.
 
-## Why enforce Open Source and License on Scale?
+## Why enforce Open Source and License at Scale?
 
 Shuffle is built on trust. People have **severly** abused it.
 
