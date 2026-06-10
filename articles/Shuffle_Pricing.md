@@ -2,27 +2,26 @@
 
 # Overview
 
-Shuffle's pricing is primarily based on two things:
-1. License - Based on App-Runs.
-2. Support - Based on Post-Onboarding Needs.
+### Shuffle's pricing is based on one metric: App Runs.
 
-We also have [training](https://shuffler.io/training), but it is optional and available if you need it.
+### That's it. Everything else is unlimited and free: users, apps, workflows, AI agents, and [80+ features](https://shuffler.io/pricing).
 
 ## What are App-Runs?
 
 App-runs are the actual actions that run inside your workflow. They are a simple and transparent way to track the platform's usage.
 
-For example, the workflow below has many nodes or 'actions'. Whenever it runs, these actions are counted as app-runs.
-
-IMP: Only the actions that run are counted; the rest are ignored and not counted. In the workflow below, even though it has many actions, if it stops at the (red) filter action, only 4 app-runs are counted.
+NOTE:
+- Only the actions that run are counted; the rest are ignored and not counted.
+- Triggers are also not counted.
+- Example: If the workflow below stops at the (red) filter action, only 3 app-runs are counted.
 
 ![Shuffle Pricing](https://github.com/shuffle/shuffle-docs/blob/master/assets/Shuffle_Pricing_Workflow.png?raw=true)
 
 ## Why Shuffle Pricing Works
 
-Shuffle's pricing is market-leading. Why? Read single sentence explanations below:
+Shuffle's pricing is market-leading:
 
-1. **App-Runs Based**: Shuffle's licensing cost is only based on app-runs. Everything else is unlimited
+1. **App-Runs Based**: Shuffle's licensing cost is only based on app-runs. Everything else is unlimited.
 
 2. **Cost Effective**: Shuffle's app-run pricing is the most inexpensive on the market, period.
 
