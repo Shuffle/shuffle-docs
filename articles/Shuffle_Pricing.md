@@ -2,9 +2,9 @@
 
 # Overview
 
-### Shuffle's pricing is based on one metric: App Runs.
+Shuffle's pricing is based on one metric: App Runs.
 
-### That's it. Everything else is unlimited and free: users, apps, workflows, AI agents, and [80+ features](https://shuffler.io/pricing).
+That's it. Everything else is unlimited and free: users, apps, workflows, AI agents, and [80+ features](https://shuffler.io/pricing).
 
 ## What are App-Runs?
 
