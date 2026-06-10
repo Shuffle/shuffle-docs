@@ -13,11 +13,11 @@ All the [features and functionality](https://shuffler.io/docs/features) are avai
 - New features come through 'nightly' branch releases almost nightly, with 'latest' branch being well tested releases.
 
 What you get:
-- You simply get all the features and use Shuffle as truly Open Source.
+- All the features; use Shuffle as truly Open Source.
 - When you scale, is when you pay.
-- Even when you scale and pay, Shuffle will still be cheaper than any other solution on the market.
+- Even when you scale and pay, Shuffle will be cheaper than any other solution on the market.
   - This is possible due to being available in a wider market, and focus on self-service.
-- You get a win on both sides:
+- You get a 'win' on both sides:
   - At small to medium-sized operations, you pay nothing and get the best platform on the market.
   - When you do pay, you get the best deal / rate on the market.
 - This simplifies your decision making. You win and make the best decision either the way.
