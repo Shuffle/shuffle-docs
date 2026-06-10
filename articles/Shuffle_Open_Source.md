@@ -44,7 +44,7 @@ A couple of notes to keep in mind:
 
 ## Difference between Open Source and Enteprise
 
-![Shuffle OSS vs Enterprise](https://raw.githubusercontent.com/Shuffle/shuffle-docs/refs/heads/master/assets/Shuffle%20Open%20Source%20and%20License%20Tiers.png)
+![Shuffle Open Source and License Tiers](https://raw.githubusercontent.com/Shuffle/shuffle-docs/refs/heads/master/assets/Shuffle%20Open%20Source%20and%20License%20Tiers.png)
 
 
 ## Shuffle's Open Source Business Model
