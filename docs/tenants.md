@@ -205,8 +205,7 @@ By clicking "submit", the authentication is now saved for your organization. Thi
 ![Authentication view after submit](https://github.com/user-attachments/assets/8865be9d-27d8-4b83-8841-d7ca412536b0)
 
 Last, but not least, this can now be controlled on an organizational level. 
-![The same authentication on](https://github.com/user-attachments/assets/dbcf3e5d-65b5-469c-9622-cc6ff453d9d6<img width="952" height="382" alt="Screenshot 2026-06-09 at 12 22 03 PM" src="https://github.com/user-attachments/assets/556ad2f5-4d0b-4e3a-9d72-567ffd89b268" />
-)
+![The same authentication on](https://github.com/user-attachments/assets/dbcf3e5d-65b5-469c-9622-cc6ff453d9d6)
 
 ### App creation with authentication
 The fields are specified by the app creator. This short section outlines how to create authentication as a creator. [More on this in the apps section](/docs/apps). An example is TheHive, which takes a URL and an API-key. These fields have to be specified as seen below. 
