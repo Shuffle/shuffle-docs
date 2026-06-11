@@ -238,54 +238,60 @@ If you would like to run Orborus towards a different location, you will have to 
 
 Below is an example, where the locations's name is "Another env" and it's using `https://shuffler.io` as it's backend. This works on-premises as well if you change out the BASE_URL.
 ```
-docker run \
-	--volume /var/run/docker.sock:/var/run/docker.sock \
-	-e ENVIRONMENT_NAME="Another env" \
-	-e AUTH="Auth from the location" \
-	-e ORG="Your org ID from the /admin UI top right" \
-        -e DOCKER_API_VERSION=1.40 \
-	-e BASE_URL=https://shuffler.io \
-	ghcr.io/frikky/shuffle-orborus:nightly
-
+docker run -d \
+        --restart=always \
+        --name="shuffle-orborus" \
+        --pull=always \
+        --volume "/var/run/docker.sock:/var/run/docker.sock" \
+        -e AUTH="AUTH_KEY" \
+        -e ENVIRONMENT_NAME="swarm testing" \
+        -e ORG="YOUR_ORG_ID" \
+        -e SHUFFLE_SWARM_CONFIG=run \
+        -e BASE_URL="https://uk.shuffler.io" \
+        -v /tmp:/tmp \
+        ghcr.io/shuffle/shuffle-orborus:latest
 ```
 
 ### Scaling Orborus
 By clicking the "Scale" or "K8s" tab, you will get relevant info related to scaling Shuffle the way you want. This IS available from cloud to onprem (hybrid).
 
-<img width="837" alt="image" src="https://github.com/user-attachments/assets/84eed978-e857-4965-87e3-813b0d5e964f" />
-
+<img width="837" alt="image" src="https://github.com/user-attachments/assets/53837631-35db-4b85-b05f-16d15214164d" />
 
 ### Using Multiple Environments
 It's possible to create and use multiple environments for your Workflows. 
 
 - First, let's create a new Environment, by clicking on the "**Add Environment**" button. 
-![SCR-20240430-evx](https://github.com/Shuffle/Shuffle-docs/assets/100738099/bbcdb5e3-d953-4e82-b87c-515644a84eae)
+![SCR-20240430-evx](https://github.com/user-attachments/assets/086482a2-badd-4871-ba47-83e3767fe274)
 
 Once you add an environment, it will be displayed on the list. 
 
 - If you create an Environment it will be set up as the Default for all workflows, but if you want to set a specific environment as the default click the "**Default**" button. 
-![SCR-20240430-exd](https://github.com/Shuffle/Shuffle-docs/assets/100738099/d549f76c-9fe2-40ce-aa74-103d3dc964fd)
+![SCR-20240430-exd](https://github.com/user-attachments/assets/f13d991e-92da-481b-ac81-21f3af191eb7)
 
-- Alternatively, you can select a different environment for a particular workflow in the workflow settings by selecting it from the displayed list after clicking on "**Environments**". 
-![SCR-20240430-ey9](https://github.com/Shuffle/Shuffle-docs/assets/100738099/b754ad50-6cf6-4f97-82f6-b4f838e04e7e)
+- Alternatively, you can select a different environment for a particular workflow in the workflow settings by selecting it from the displayed list after clicking on "**Environments**".
+
+![SCR-20240430-ey9](https://github.com/user-attachments/assets/f5d17720-f886-4d07-98a0-b7597c286e8a)
 
 - To run the respective environment, you need to copy the Onborus command and modify the necessary fields such as "ENVIRONMENT_NAME", "AUTH" and "ORG", and ensure they are correctly filled in.
-![SCR-20240430-ftw](https://github.com/Shuffle/Shuffle-docs/assets/100738099/67be6b9c-4533-4500-964c-b3cdb8cb0ecc)
+![SCR-20240430-ftw](https://github.com/user-attachments/assets/64152fa0-cd55-4b92-88c9-db980dfd877a)
 
 To check if the Onborus command is set up correctly, look for a change in status from "**not running**" to "**running**". 
 
 
 - If you want to change the Onborus from "**nightly**" to a different worker, in this example "test", go to BASE_URL and after "**/shuffle-orborus:**" change "nightly" to "test".
 ```
-docker run \
-	--volume /var/run/docker.sock:/var/run/docker.sock \
-	-e ENVIRONMENT_NAME="Another env" \
-	-e AUTH="Auth from the environment" \
-	-e ORG="Your org ID from the /admin UI top right" \
-        -e DOCKER_API_VERSION=1.40 \
-	-e BASE_URL=https://shuffler.io \
-	ghcr.io/frikky/shuffle-orborus:test
-
+docker run -d \
+        --restart=always \
+        --name="shuffle-orborus" \
+        --pull=always \
+        --volume "/var/run/docker.sock:/var/run/docker.sock" \
+        -e AUTH="AUTH_KEY" \
+        -e ENVIRONMENT_NAME="swarm testing" \
+        -e ORG="YOUR_ORG_ID" \
+        -e SHUFFLE_SWARM_CONFIG=run \
+        -e BASE_URL="https://uk.shuffler.io" \
+        -v /tmp:/tmp \
+        ghcr.io/shuffle/shuffle-orborus:test
 ```
 
 - Further documentation on running Orborus in production at scale, whether onprem or with hybrid environments: https://shuffler.io/docs/configuration#scaling-shuffle
@@ -315,7 +321,7 @@ They are organization-wide, meaning if you dismiss them, they get dismissed for 
 - When a returned app parameter starts with "shuffle" and contains "error". Example: "shuffle variable error" for when a variable is not found.
 - **We may add more without warning in the future. They are only added for things that represent typical things you want to see**
 
-<img width="384" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/ff16e86b-5db4-4300-97b4-4071a96b4aed">
+<img width="384" alt="image" src="https://github.com/user-attachments/assets/9be7e05f-3975-4a5f-9f49-4d7967b9bb8d">
 
 **Accessing Notifications:**
 - **Through the UI**: You can see a bell icon with a number next to it in the top right bar, when you are logged in. This indicates the amount of notifications you have. Clicking it will show you the notifications. If you see a number next to the notification, this is the amount of it that has occurred.
