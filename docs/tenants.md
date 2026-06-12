@@ -161,27 +161,6 @@ Shuffle supports the use of a KMS. [Please see the extension documentation for m
 ### App Authentication Groups
 **Groups was taken out of beta and was removed for the 2.0.0 release**
 
-<!-- App Authentication groups are a way for you to group authentications together, enabling a single workflow to run with multiple different authentication options and runtime locations. When a workflow runs with authentication groups selected, the workflow execution will replicate and run multiple versions of the same workflow at the same time, where the relevant authentication is filled in in real-time. 
-
-<img width="830" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/44e1d2f6-6e1c-4736-834a-a98e6419814e">
-
-**Requirements to use**
-- Create at least two App Auth groups
-- Have at least two different available authentications for an app in the same tenant
-- Choose the App Auth group you want to use in the app
-
-If these requirements are fulfilled, the workflow will run as many times as there are App Auth groups selected in that workflow. If one app (e.g. Outlook) has selected to use App Auth groups in a workflow, we will distribute this to every node in the same workflow
-
-**App Auth Groups vs. Sub-tenant Workflow distribution**
-A similar topic for running workflows is the Suborg Workflow distribution system, available in the Edit Workflow menu. 
-
-The difference:
-- App Auth Groups run in a single tenant, and may as of Q2 2024 not be distributed to sub-tenants. Will run multiple workflow executions in one tenant.
-- Sub-tenant Workflow distribution is used when you want to segregate where and how the data is stored per tenant, or where your customer may want access to the workflow. This uses a background distribution system when the parent workflow is saved.
-
-<img width="520" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/7d02f2e2-fce5-445c-94e4-1cea239b1a7f">
--->
-
 ### Authentication Field overview 
 The fields of authentication
 * Icon 					- The App's icon. This is 
