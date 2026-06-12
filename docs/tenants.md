@@ -44,7 +44,7 @@ The tenant overview gives access to these things:
 * Priorities & Notifications
 * Licensing 
 * Statistics
-* Branding (Beta)
+* Branding
 
 This view outlines the basic details of your tenants, which any Admin can change at any time. It can tell you about new updates, features and more that we have in store. The view is slightly different from the cloud version to the on-premises version. Here's how:
 * The **cloud** version shows you an API-key. This can be used in the open source version.
@@ -205,6 +205,7 @@ By clicking "submit", the authentication is now saved for your organization. Thi
 ![Authentication view after submit](https://github.com/user-attachments/assets/8865be9d-27d8-4b83-8841-d7ca412536b0)
 
 Last, but not least, this can now be controlled on an organizational level. 
+
 ![The same authentication on](https://github.com/user-attachments/assets/dbcf3e5d-65b5-469c-9622-cc6ff453d9d6)
 
 ### App creation with authentication
