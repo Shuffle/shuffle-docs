@@ -11,6 +11,8 @@ The following capitalized terms shall have the following meanings whenever used 
 * “AUP” means Shuffle’s acceptable use policy accessible farther down in this Terms of Service agreement.
 * “Cloud Services” means such software and software as a service (SAAS) integration services as Shuffle may provide from time to time via the System, including point-to-point data migration services and integration services for Shuffle platforms, to customers on a subscription basis.
 * “Confidential Information” has the meaning ascribed to it in Section 7.
+* "Customer" refers to the legal entity executing and entering into the Agreement with Shuffle, abd shall have the same meaning as "Company" or "Partner" as those terms are used throughout the Agreement.
+* “Customer' means the same as 'Company' or 'Partner' on the Agreement, and refers to the entity that signing and getting into contract with Shuffle. 
 * “Customer Data” means data in electronic form input or collected through the System by or from Customer, including without limitation by Customer’s Users.
 * “Customer Order” means an order or invoice or payment for access to the System entered by Customer through Shuffle’s online registration process on the Website or executed by Customer, and acknowledged by such Customer (including through a click-to-agree online process or electronically-signed document exchange).
 * “Customization Services” means services, other than Cloud Services, provided by Shuffle to Customer pursuant to the Customization Services Addendum.
@@ -195,7 +197,7 @@ All monthly limits are per organization, including its sub-organizations.
 
 4. Taxes. All Fees are exclusive of, and Customer is responsible for, applicable federal or national, state or provincial, or local sales, use, excise, export or other applicable taxes, except for taxes on the net income of Shuffle. Shuffle may add any such taxes to the applicable Fees.
 
-5. Overages. If the Customer is on a Business License or Enterprise License, the Customer has a soft limit on their app runs limit. This means the Customer can exceed their license's usage limit and the Shuffle platform will continue to function normally. The Customer will be invoiced the excess app-runs fee at the same rate as per their existing Agreement. If the overage continues for more than 30 days, the Customer is required to update their license tier to the exceeded usage, or start to incur excess overage fees as outlined in the Agreement after 60 days. This is to be fair and give enough time to the Customer to make a sound decision.
+5. Overages. If the Customer is on a Business License or Enterprise License, the Customer has a soft limit on their app runs limit. This means the Customer can exceed their license's usage limit and the Shuffle platform will continue to function normally. The Customer will be invoiced the excess app-runs fee at the same rate as per their existing Agreement. If the overage continues for more than 30 days, the Customer is required to update their license tier to the exceeded usage, or start to incur excess overage fees as outlined in the Agreement's 'Service Details' section after 60 days. This is to be fair and give enough time to the Customer to make a sound decision.
 
 
 ## Customer Responsibilities 
