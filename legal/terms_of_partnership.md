@@ -135,7 +135,7 @@ Shuffle provides the Partner, as a part of this partnership agreement, an offici
 ## Technology Partner
 
 ### About Technology Partner
-The Shuffle technology Partner program is meant for software and security product companies that would benefit from co-developing, co-marketing, and/or co-servicing their own product to integrate and work seamlessly with the Shuffle Platform or Shuffle Enterprise Software. This means the Partner and Shuffle work together to ensure both Partner’s Product and Shuffle provide a seamless experience to Shuffle’s and Partner’s customers.
+The Shuffle technology Partner program is meant for software and security product companies that would benefit from co-developing, co-marketing, and/or co-servicing their own product to integrate and work seamlessly with the Shuffle Platform or Shuffle Business/Enterprise Software. This means the Partner and Shuffle work together to ensure both Partner’s Product and Shuffle provide a seamless experience to Shuffle’s and Partner’s customers.
 
 ### About Technology Partner Arrangement
 The goal of the Shuffle Technology Partner program is to help Partners get the best help from Shuffle’s team in co-developing Partner’s own Product offering(s). This is done so with the following:

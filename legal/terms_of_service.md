@@ -1,5 +1,5 @@
 # Terms of Service
-Welcome to our terms and conditions. Just like with our [privacy policy](https://shuffler.io/docs/privacy_policy), it's really important that you take your time to read this. You need to be sure you agree with it before you start using the Shuffle Cloud Platform, become an Enterprise Customer, or enter into a Partnership or Proof of Concept.
+Welcome to our terms and conditions. Just like with our [privacy policy](https://shuffler.io/docs/privacy_policy), it's really important that you take your time to read this. You need to be sure you agree with it before you start using the Shuffle Cloud Platform, become a Customer (Business License or Enterprise License), or enter into a Partnership or Proof of Concept.
 
 If you have any questions about any of this then please get in touch with us at [support@shuffler.io](mailto:support@shuffler.io).
 
@@ -9,7 +9,7 @@ The following capitalized terms shall have the following meanings whenever used 
   * Shuffle LLC, a limited liability company incorporated under the laws of the United States, for users whose principal place of business or residence is in the United States or outside of the United States with the exception of Europe.
   * Shuffle AS, a company incorporated under the laws of Norway, for users whose principal place of business or residence is in Norway or Europe.
 * “AUP” means Shuffle’s acceptable use policy accessible farther down in this Terms of Service agreement.
-* “Cloud Services” means such software and software as a service (SAAS) integration services as Shuffle may provide from time to time via the System, including point-to-point data migration services and integration services for enterprise platforms, to customers on a subscription basis.
+* “Cloud Services” means such software and software as a service (SAAS) integration services as Shuffle may provide from time to time via the System, including point-to-point data migration services and integration services for Shuffle platforms, to customers on a subscription basis.
 * “Confidential Information” has the meaning ascribed to it in Section 7.
 * “Customer Data” means data in electronic form input or collected through the System by or from Customer, including without limitation by Customer’s Users.
 * “Customer Order” means an order or invoice or payment for access to the System entered by Customer through Shuffle’s online registration process on the Website or executed by Customer, and acknowledged by such Customer (including through a click-to-agree online process or electronically-signed document exchange).
@@ -48,12 +48,12 @@ An App Run is based on how many Apps are executed within a Workflow. Actions wit
 
 If User's usage exceeds the initial (as set forth above) or subsequently increased Included App Run limit ("Excess Usage"), Shuffle will automatically enable and invoice fees for Excess Usage at the rate specified in Service Details per App Run for the month of Excess Usage provided that User will have fourteen (14) days after first exceeding its Included Usage limit to contact Shuffle and request to increase its Included Usage limit to cover its Excess Usage to such date and any future usage.
 
-## Hybrid Cloud Access
+## Hybrid Cloud Access 
 
 ### About Hybrid Cloud Access
 Shuffle Cloud access is a part of Shuffle On-Prem, and gives the User access to features which aren’t feasible without the cloud integrations. This includes such features as Cloud Triggers, Configuration backups, workflow recommendations, a search engine. It will further be extended by new features as they become available, such as notifications and platform recommendations, New Triggers, App, playbook downloads, a cloud search engine and more. Hybrid Cloud can be enabled by following the Organization management documentation found here: https://shuffler.io/docs/organizations.
 
-All future features that are made for our Software-As-A-Service offering will be made accessible from the day they are implemented. All limits are soft limits which can be seen for each individual Organization in their Admin dashboard. Default limits include 2000 app executions, 1000 emails and 300 SMS for free each month, with the addition of multi-tenant cloud environments to enable hybrid for each on-premises organization. If the limits are exceeded over multiple periods (>=2 months), Shuffle may stop access to either of these features after notifying the User.
+All future features that are made for our Software-As-A-Service offering will be made accessible from the day they are implemented. All limits are soft limits which can be seen for each individual Organization in their Admin dashboard. Default limits include 2000 app runs, 1000 emails and 300 SMS for free each month, with the addition of multi-tenant cloud environments to enable hybrid for each on-premises organization. If the limits are exceeded over multiple periods (>=2 months), Shuffle may stop access to either of these features after notifying the User.
 
 ## Training
 
@@ -68,18 +68,18 @@ Private Training is not included by default. Private Training for Shuffle happen
 ### About Support
 Support will be provided by our experienced team of security engineers. Support is purchased separate from the license, but can be bundled together for a lower cost agreed upon by Shuffle and the User.
 
-Shuffle’s support team will provide support via remote assistance. All requests will be performed via email or our support portal (as it becomes available). Critical events can be logged via alert email under the Enterprise Support Plan and can be performed by online meetings (onCall).
+Shuffle’s support team will provide support via remote assistance. All requests will be performed via email or our support portal (as it becomes available). Critical events can be logged via alert email under the Enterprise License Support Plan and can be performed by online meetings (onCall).
 
 Our initial response (or acknowledgement) time for critical issues like service downtime is as follows:
 
 | Sr. No. | Event    | Description | Support Level | Time  |
 |---------|----------|------------|--------|---------|
-| 1       | Normal   | Trouble or any conditions where Shuffle is not fully functional, but is not causing business impact to the User. | Standard Support | 24 Hours |
-| 2       | Critical |  Trouble conditions where Shuffle is completely out of service or not fully functional, and is causing business impact to the User. | Enterprise Support | 15 Minutes |
+| 1       | Normal   | Trouble or any conditions where Shuffle is not fully functional, but is not causing business impact to the User. | Business License Support | 24 Hours |
+| 2       | Critical |  Trouble conditions where Shuffle is completely out of service or not fully functional, and is causing business impact to the User. | Enterprise License Support | 15 Minutes |
 
 Any normal support requests should be sent to the Shuffle support email which is support@shuffler.io, while critical support requests should be directed to the alert email provided to the User during the onboarding process. Further details on Support are as follows:
 
-| Name | Standard Support | Enterprise Support |
+| Name | Business License Support | Enterprise License Support |
 |------|------------------|--------------------|
 | Email Support | Yes | Yes |
 | onCall Support | No | Yes |
@@ -91,16 +91,16 @@ Any normal support requests should be sent to the Shuffle support email which is
 Abuse of the critical event email will force blocking of further use in the future.
 
 
-### About Standard Support
+### About Business License Support
 
-Standard Support is email-based, and includes expert guidance and / or support with upgrades, solution configuration, deployment and bug fixes. It further includes help with deployment during onboarding and maintenance.
+Business License Support is email-based, and includes expert guidance and / or support with upgrades, solution configuration, deployment and bug fixes. It further includes help with deployment during onboarding and maintenance.
 
-### About Enterprise Support
+### About Enterprise License Support
 
-Enterprise support covers everything under Standard Support, and
+Enterprise License support covers everything under Business License Support, and
 - On top of email-based support, it includes online meetings (onCall).
 - It include "alert" mechanism. Shuffle will provide an alert email to the User for critical issues that require urgent attention and cannot wait for the standard 24 hours response window.
-- Beyond the topics covered by Standard Support, Enterprise Support includes Professional Services that cover custom features, integrations or apps, or work specific to the User, as agreed upon by Shuffle and the User.
+- Beyond the topics covered by Business License Support, Enterprise License Support includes Professional Services that cover custom features, integrations or apps, or work specific to the User, as agreed upon by Shuffle and the User.
 
 ### About Alert Mechanism
 
@@ -108,7 +108,7 @@ Shuffle's alert mechanism is essentially for an expedited response from the Shuf
 
 ### About Professional Services
 
-Professional Service gives User access to Non-recurring engineering (NRE), advice and process improvement by the experienced Shuffle team. NRE is any special development required by the User that is not covered by Standard Support and includes, but not limited to, new Integrations or Apps, Workflow development and special development of the Shuffle platform itself. Advice and process improvements are part of our professional services goal to help operations teams work more effectively, and in a more standardized manner.
+Professional Service gives User access to Non-recurring engineering (NRE), advice and process improvement by the experienced Shuffle team. NRE is any special development required by the User that is not covered by Business License Support and includes, but not limited to, new Integrations or Apps, Workflow development and special development of the Shuffle platform itself. Advice and process improvements are part of our professional services goal to help operations teams work more effectively, and in a more standardized manner.
 
 #### Custom Shuffle App Development
 Custom App Development in Shuffle incurs when the User requires an integration or extension which Shuffle doesn’t already have a developed version of. Shuffle will develop the necessary functions of the App, as well as any Action the User sees necessary for future use-cases. This process is typically started based on a use-case, where Shuffle will help identify the needs of the User. If this is not proprietary software, Shuffle will share the use-cases with the community to further support the community, and if agreed upon, Shuffle will add information about the User as the sponsor and/or co-creator of the App, without the entitlement of any compensation.
@@ -135,7 +135,7 @@ Once GCP and Shuffle come back online, Shuffle will work with the User to ensure
 In the case of circumstances outside of Shuffle’s control such as sickness or deaths, preventing business continuity for the contract to be fulfilled by Shuffle directly, Shuffle’s partner, Infopercept will take over all operations for the Partner. Infopercept has certain access rights, allowing them to take over and host the Shuffle cloud platform by themselves under these circumstances, and have certain extra access due to support fulfillment.
 
 ## Availability
-The System, Cloud Services, and related services shall be available at least 99.9% of the time, excluding scheduled downtime for routine maintenance (not to exceed 4 hours a month) and downtime attributable to Force Majeure (the “Availability SLA”). Compliance with the Availability SLA will be measured on a calendar month basis. For clarity, the system and cloud services here include workflow executions (backend) and shuffler.io site (frontend), which will be covered by the Availability SLA.
+The System, Cloud Services, and related services shall be available at least 99.9% of the time, excluding scheduled downtime for routine maintenance (not to exceed 4 hours a month) and downtime attributable to Force Majeure (the “Availability SLA”). Compliance with the Availability SLA will be measured on a calendar month basis. For clarity, the system and cloud services here include workflow runs (backend) and shuffler.io site (frontend), which will be covered by the Availability SLA.
 
 The Availability will be calculated by: (a) dividing: (i) the total number of minutes of up time (i.e., in which there were no Outages) during an applicable calendar month (excluding only downtime occurring during the scheduled maintenance period of 4 hours or less or attributable to elements of Force Majeure) by (ii) the total number of actual minutes in such month minus minutes of downtime occurring during the scheduled maintenance period or attributable to elements of Force Majeure, and then (b) multiplying that amount by 100.
 
@@ -158,12 +158,12 @@ Our acceptable use policy sets per-organization usage limits and was designed to
 ### Monthly limits for Cloud Services
 All monthly limits are per organization, including its sub-organizations. 
 
-### Starter Plan
-- **App Executions** - 2000
+### Scale License Plan
+- **App Runs** - 2000
 - **Bandwidth** - 10GB in and 10GB out of Shuffle 
 
-### Scale and Enterprise Plan
-- **App Executions** - Minimum 300.000
+### Business License and Enterprise License Plan
+- **App Runs** - Minimum 300.000
 - **Bandwidth** - 1000 GB in and 1000 GB out of Shuffle 
 
 ## The system
@@ -187,13 +187,15 @@ All monthly limits are per organization, including its sub-organizations.
 6. Excluded Data. Customer represents and warrants that Customer Data does not and will not include, and Customer has not and shall not upload or transmit to Shuffle's computers, servers, network or other media, any data that is subject to heightened security requirements as a result of Customer’s internal policies or practices or by law or regulation (examples include but are not limited to the Health Insurance Portability and Accountability Act (HIPAA), the Gramm–Leach–Bliley Act (GLBA), Family Educational Rights and Privacy Act (FERPA), General Data Protection Regulation (GDPR), etc. (the "Excluded Data Laws"))(such Customer Data collectively, “Excluded Data”). CUSTOMER RECOGNIZES AND AGREES THAT: (a) SHUFFLE HAS NO LIABILITY FOR ANY FAILURE TO PROVIDE PROTECTIONS SET FORTH IN THE EXCLUDED DATA LAWS OR OTHERWISE TO PROTECT EXCLUDED DATA; AND (b) SHUFFLE’S SYSTEMS, INCLUDING THE SYSTEM, ARE NOT INTENDED FOR MANAGEMENT OR PROTECTION OF EXCLUDED DATA AND MAY NOT PROVIDE ADEQUATE OR LEGALLY REQUIRED SECURITY FOR EXCLUDED DATA.
 
 ## Fees
-1. Fees. Customer shall pay Shuffle the System fees for the access to and use of the System (“System Fees”) in accordance with the schedule of System Fees which are posted on the Website for the relevant System Service from time to time, unless otherwise agreed by means of an executed Customer Order, and the fees for optional Customization Services (“Customization Fees”), if applicable, as specified in the Service Agreement executed by Customer and Shuffle under the optional Customization Services Addendum (System Fees and Customization Fees together, the “Fees”) during each Term. System Fees are dependent on the number of app executions “invocations”, bandwidth used, and are further based on the length of the Term, data volume and such other capacity limitations as may be stated in the schedule of System Fees on the Website or in the Customer Form, if applicable.
+1. Fees. Customer shall pay Shuffle the System fees for the access to and use of the System (“System Fees”) in accordance with the schedule of System Fees which are posted on the Website for the relevant System Service from time to time, unless otherwise agreed by means of an executed Customer Order, and the fees for optional Customization Services (“Customization Fees”), if applicable, as specified in the Service Agreement executed by Customer and Shuffle under the optional Customization Services Addendum (System Fees and Customization Fees together, the “Fees”) during each Term. System Fees are dependent on the number of app runs “invocations”, bandwidth used, and are further based on the length of the Term, data volume and such other capacity limitations as may be stated in the schedule of System Fees on the Website or in the Customer Form, if applicable.
 
 2. Payment of Fees. Customer authorizes Shuffle to charge an amount equal to the amount of the System Fees as provided in Section 3.1 hereof on a monthly or yearly basis (unless the relevant Customer Order provides otherwise) and, if stated by the Services Agreement, the amount of the Customization Fees (on such dates as the Service Agreement provides), and any additional amounts as permitted by this Agreement, to the credit card and/or bank account specified in the Customer Order in advance of provision of services to Customer by means of automatic debit or credit card charge for the duration of each Term. Customer hereby agrees to keep such valid credit card and/or bank account in effect with sufficient credit limit to enable Shuffle to charge the Fees every month, quarter or other period of each Term, as applicable, and not to challenge such charges or to request reversal of such charges. Shuffle will not be required to refund the Fees under any circumstances, except if a significant breach of contract has occured. In this case, see the next point (3).
 
 3. Breach of service. In the case of a contractual breach by Shuffle, Shuffle may provide the customer with the remaining payments provided by the customer for the period (month or year), and also stop all services for the customer, if the contractual breach can be verified. The outstanding cost will count from the day of initial contact by the customer to Shuffle about the potential breach.
 
 4. Taxes. All Fees are exclusive of, and Customer is responsible for, applicable federal or national, state or provincial, or local sales, use, excise, export or other applicable taxes, except for taxes on the net income of Shuffle. Shuffle may add any such taxes to the applicable Fees.
+
+5. Overages. If the Customer is on a Business License or Enterprise License, the Customer has a soft limit on their app runs limit. This means the Customer can exceed their license's usage limit and the Shuffle platform will continue to function normally. The Customer will be invoiced the excess app-runs fee at the same rate as per their existing Agreement. If the overage continues for more than 30 days, the Customer is required to update their license tier to the exceeded usage, or start to incur excess overage fees as outlined in the Agreement after 60 days. This is to be fair and give enough time to the Customer to make a sound decision.
 
 
 ## Customer Responsibilities 
