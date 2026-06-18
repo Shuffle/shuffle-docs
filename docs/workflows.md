@@ -706,6 +706,13 @@ Workflows have additional features that may be helpful when you start scaling, o
 - New branches (child-workflow branches)
 - Authentication
 
+**What syncs vs. what stays local:**
+- **Authentication** is not overwritten. The child keeps its own auth, and a parent auth is only attached if it already exists in the sub-tenant. See [Distributing auth to sub-tenants](/docs/organizations#distributing_auth_to_sub-tenants) for sharing auth with sub-tenants.
+- **Datastore/Cache keys** are not distributed with the workflow. Share these separately, per key.
+- **Parameter values** you've edited in the child are kept. Values you haven't touched track the parent.
+
+Distribution works within a single region. On Cloud, the Edit panel won't let you select a sub-tenant in a different region (e.g. EU-2 to UK).
+
 ### Workflow Revisions & Versioning
 Every workflow has backups by default. These are stored in a separated database index, and can be reverted to at any time. It will save a maximum of once per 60 seconds.
 

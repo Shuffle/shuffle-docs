@@ -155,6 +155,9 @@ App authentication is a way for Shuffle to keep track of what credentials you ha
 
 These are **NOT** editable outside of deletion as of november 2020, but we may add the possibility of changing without showing the previous value. 
 
+### Distributing auth to sub-tenants
+From a parent tenant, you can share an app authentication with your sub-tenants. In the App Authentication tab, tick the distribution checkbox on an auth and pick the sub-tenants to share it with, or share it with all of them at once. Sub-tenants see it marked as "Parent" and can use it in their workflows, but can't modify it. To stop sharing, clear the selection.
+
 ### KMS
 Shuffle supports the use of a KMS. [Please see the extension documentation for more](/docs/extensions#kms).
 
