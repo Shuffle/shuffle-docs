@@ -198,24 +198,50 @@ These parameters are specified exactly as a parameter within an action. The func
 ![App creation python code](https://github.com/frikky/shuffle-docs/blob/master/assets/admin_example-13.png?raw=true)
 
 ## Locations
-Locations, previously Environments, are a core part of Shuffle's open source build. **Cloud does not require any configuration for this**, unless you are connecting to your on-premises datacenter/cloud VPC. Think of it as physical location where you want an agent of Shuffle running (Orborus) with access to the right locations.
+Locations, previously Environments, are a core part of Shuffle's open source build. **Cloud does not require any configuration for this**, unless you are connecting to your on-premises datacenter/cloud VPC. Think of a location as the place where Shuffle is allowed to run work: a server, Docker host, Docker Swarm cluster, Kubernetes cluster, datacenter, cloud VPC, or sensor group.
+
+Each location is matched by name. The name you configure in Shuffle must be the same value Orborus starts with in `ENVIRONMENT_NAME`. When an action or workflow is configured for that location, the backend queues the execution for that exact location name. Orborus polls that queue and starts workers only for matching executions.
 
 <img width="832" alt="image" src="https://github.com/user-attachments/assets/9ceaa766-9f1e-4c1d-b388-29fcb1f07ee5">
 
-The default location is called "Shuffle" in your on-premises installation, and "Cloud" in the Shuffle SaaS. You can add as many as you want, and will get access to the additional "cloud" location through cloud synchronization onprem.  
+The default location is called "Shuffle" in your on-premises installation, and "Cloud" in the Shuffle SaaS. You can add as many as you want, and will get access to the additional "cloud" location through cloud synchronization onprem.
 
 ### Location fields
-* Name 						- The name to use. This is the identifier used by orborus. 
+* Name 						- The name to use. This is the identifier used by Orborus through `ENVIRONMENT_NAME`.
 * Orborus running	- Shows whether Orborus is running or not.
 * Type 						- Whether it's a cloud location or not. Orborus can't attach to "cloud" locations.
 * Default					- Whether it's the default location to use for new actions. You should set this to the location you use the most.
 * Actions 				- Possible changes to a location. You can't re-open an archived location, and can't archive the default location.
 * Archived				- Tells you whether it's archived. There's a toggle at the top to edit it.
 
-### Orborus configuration
-If you would like to run Orborus towards a different location, you will have to specify the environment variables "ENVIRONMENT_NAME", "ORG", "AUTH" and "BASE_URL". AUTH and ORG may not be required. You can click the location to get a finished command.
+### Runtime location flow
+A workflow execution moves through these components:
 
-Below is an example, where the locations's name is "Another env" and it's using `https://shuffler.io` as it's backend. This works on-premises as well if you change out the BASE_URL.
+1. The frontend starts a workflow execution.
+2. The backend validates the workflow and stores the execution.
+3. For every non-cloud location used by the workflow, the backend writes an execution request to that location's queue.
+4. Orborus polls `BASE_URL/api/v1/workflows/queue` with `Org-Id: <location name>`. If `ORG` is set, it is sent as the tenant ID. If `AUTH` is set, it is sent as the location authorization value.
+5. The backend returns queued executions for that location.
+6. Orborus starts a worker for each accepted execution. The worker receives `EXECUTIONID`, `AUTHORIZATION`, `ENVIRONMENT_NAME`, `BASE_URL`, and the relevant Docker/Kubernetes/scaling environment variables.
+7. The worker reads the workflow execution from the backend, starts app containers or app deployments, streams results back to the backend, and exits when the execution is done.
+8. After Orborus has successfully started or dispatched the worker, it calls `BASE_URL/api/v1/workflows/queue/confirm` to remove that execution request from the location queue.
+
+This means the location name is not only a UI label. It is the queue key used by the backend and Orborus. If an action says it should run in `Production VPC`, the Orborus instance for that runtime must use `ENVIRONMENT_NAME="Production VPC"` or a normalized equivalent of the same name.
+
+### Orborus configuration
+If you would like to run Orborus towards a different location, you will have to specify the environment variables `ENVIRONMENT_NAME`, `ORG`, `AUTH` and `BASE_URL`. `AUTH` and `ORG` may not be required for every on-premises setup. You can click the location to get a finished command.
+
+The important variables are:
+
+* `ENVIRONMENT_NAME` - The runtime location name. This must match the location selected in Shuffle.
+* `BASE_URL` - The Shuffle backend URL Orborus and workers can reach. In Docker Compose this is often `http://shuffle-backend:5001`; for hybrid/cloud setups it is usually your Shuffle URL.
+* `ORG` - The tenant ID. This is sent to the backend as the `Org` header.
+* `AUTH` - Runtime location authorization. This is sent as the `Authorization` header when Orborus polls the queue.
+* `SHUFFLE_SWARM_CONFIG` - Set to `run` when Orborus should run workers in Swarm/service mode.
+* `SHUFFLE_WORKER_IMAGE` or `SHUFFLE_WORKER_VERSION` - Optional worker image/version override.
+* `SHUFFLE_MEMCACHED` - Optional shared cache endpoint. See [Adding Memcached to runtime locations](#adding_memcached_to_runtime_locations).
+
+Below is an example, where the location's name is "Another env" and it is using `https://shuffler.io` as its backend. This works on-premises as well if you change out the BASE_URL.
 ```
 docker run -d \
         --restart=always \
@@ -230,6 +256,87 @@ docker run -d \
         -v /tmp:/tmp \
         ghcr.io/shuffle/shuffle-orborus:latest
 ```
+
+### Adding Memcached to runtime locations
+Shuffle can run without Memcached. When `SHUFFLE_MEMCACHED` is not set, each backend, Orborus, and worker process uses its own local in-memory cache. That is fine for small single-node deployments, but it becomes limiting when you scale backend replicas, run workers as services, or run workflows across multiple runtime hosts.
+
+Memcached adds a shared cache that the backend, Orborus, and workers can all read and write. In the current implementation this is enabled only by setting `SHUFFLE_MEMCACHED`; Orborus passes that same value into workers it starts. Orborus does not automatically create a Memcached service, so you should deploy Memcached yourself and make sure every relevant Shuffle container can reach it.
+
+Common uses include short-lived workflow execution data, action result cache entries, validation data, health/stat counters, and worker coordination data. The database is still the source of truth. Memcached is an acceleration and coordination layer, not durable storage.
+
+Start a single Memcached instance:
+```
+docker run --name shuffle-cache -p 11211:11211 -d memcached:1.6-alpine -m 1024
+```
+
+For Docker Compose on one host, put backend, Orborus, and Memcached on the same Docker network and use the service name:
+```
+services:
+  shuffle-cache:
+    image: memcached:1.6-alpine
+    command: ["-m", "1024", "-c", "2048"]
+    restart: unless-stopped
+
+  shuffle-backend:
+    environment:
+      - SHUFFLE_MEMCACHED=shuffle-cache:11211
+
+  shuffle-orborus:
+    environment:
+      - SHUFFLE_MEMCACHED=shuffle-cache:11211
+```
+
+For Docker Swarm, use a service DNS name reachable from backend, Orborus, and workers:
+```
+- SHUFFLE_MEMCACHED=tasks.shuffle-cache:11211
+```
+
+In Swarm mode, the network is the important part. Workers run on the execution overlay network configured with `SHUFFLE_SWARM_NETWORK_NAME` (commonly `shuffle_swarm_executions` or `swarm_executions`). Memcached must be attached to that same overlay network, otherwise workers cannot resolve or connect to it.
+
+If you do not want to expose Memcached on the host machine, do not publish port `11211` with `-p`, `--publish`, or a Compose `ports:` entry. In Swarm, backend, Orborus, and workers can use the internal service DNS name over the overlay network, so Memcached can stay private to Docker.
+
+If the backend reaches Memcached through a different application network, attach the Memcached service to both networks:
+```
+docker network create --driver=overlay --attachable shuffle
+docker network create --driver=overlay --attachable shuffle_swarm_executions
+
+docker service create \
+  --name shuffle-cache \
+  --network shuffle \
+  --network shuffle_swarm_executions \
+  --replicas 1 \
+  --endpoint-mode dnsrr \
+  memcached:1.6-alpine \
+  -m 1024 -c 2048
+```
+
+Then configure backend and Orborus with:
+```
+- SHUFFLE_MEMCACHED=tasks.shuffle-cache:11211
+```
+
+Orborus will pass this value to the Swarm worker service. The worker service must also be on `shuffle_swarm_executions` so it can reach `tasks.shuffle-cache`.
+
+For Kubernetes, create a Memcached Service and set the service DNS name in the backend and Orborus environment:
+```
+- SHUFFLE_MEMCACHED=shuffle-memcached:11211
+```
+
+When Orborus has `SHUFFLE_MEMCACHED` set, it forwards the variable to:
+
+* single execution workers it creates,
+* the `shuffle-workers` service in Swarm mode,
+* Kubernetes worker deployments.
+
+Workers then use the same shared cache while they deploy app containers and report execution progress. If workers cannot reach Memcached, cache reads and writes will fail in worker logs and execution state may fall back to slower backend/database paths or fail for cache-dependent coordination.
+
+Operational guidance:
+
+* Use one Memcached endpoint first. Multiple endpoints can be provided as a comma-separated list, but inconsistent routing can make cache keys appear missing.
+* Do not expose port `11211` publicly. Keep it on an internal Docker, Swarm, Kubernetes, or private network.
+* In Docker Swarm, attach Memcached to the same overlay network as workers. If backend is on a separate network, attach Memcached to both.
+* Restart backend and Orborus after changing `SHUFFLE_MEMCACHED`. Newly started workers inherit the value from Orborus.
+* If you are debugging cache-related execution issues, temporarily remove `SHUFFLE_MEMCACHED` from backend and Orborus and redeploy to confirm whether routing to Memcached is the cause.
 
 ### Scaling Orborus
 By clicking the "Scale" or "K8s" tab, you will get relevant info related to scaling Shuffle the way you want. This IS available from cloud to onprem (hybrid).
@@ -251,13 +358,13 @@ Once you add an environment, it will be displayed on the list.
 
 ![SCR-20240430-ey9](https://github.com/user-attachments/assets/f5d17720-f886-4d07-98a0-b7597c286e8a)
 
-- To run the respective environment, you need to copy the Onborus command and modify the necessary fields such as "ENVIRONMENT_NAME", "AUTH" and "ORG", and ensure they are correctly filled in.
+- To run the respective environment, you need to copy the Orborus command and modify the necessary fields such as `ENVIRONMENT_NAME`, `AUTH` and `ORG`, and ensure they are correctly filled in.
 ![SCR-20240430-ftw](https://github.com/user-attachments/assets/64152fa0-cd55-4b92-88c9-db980dfd877a)
 
-To check if the Onborus command is set up correctly, look for a change in status from "**not running**" to "**running**". 
+To check if the Orborus command is set up correctly, look for a change in status from "**not running**" to "**running**".
 
 
-- If you want to change the Onborus from "**nightly**" to a different worker, in this example "test", go to BASE_URL and after "**/shuffle-orborus:**" change "nightly" to "test".
+- If you want to change Orborus from "**nightly**" to a different image tag, in this example "test", change the image tag after `shuffle-orborus:` from `nightly` to `test`.
 ```
 docker run -d \
         --restart=always \
@@ -449,5 +556,3 @@ If you need to:
 - Upgrade to a higher-tier or **Enterprise license**
 
 Please contact **[support@shuffler.io](mailto:support@shuffler.io)** for more information and assistance.
-
-

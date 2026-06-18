@@ -135,7 +135,7 @@ When running Shuffle on multiple servers, you need to take multiple things into 
 Here is a breakdown of the previous High Availability image of Shuffle, and how it works:
 1. All the **Green** colored services are our providers, meaning they are built by someone else than Shuffle, but used in the Shuffle stack. Here is our recommendation on scaling these services:
    * [Opensearch (Database)](https://opensearch.org/docs/latest/tuning-your-cluster/). Elasticsearch also works. If you are using more than one entrypoint to Opensearch/Elasticsearch, [add the URL's comma separated in the .env file](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L104).
-   * [Memcached (Shared Memory)](#distributed_caching): We recommend starting with memcached on a single server, and only scaling up as need be. When scaling, this memcached is only required for the Workers to communicate, and is not required for Shuffle itself to work. Add multiple [comma separated URL's here](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L84) to configure multiple instances.
+   * [Memcached (Shared Memory)](#distributed_caching): We recommend starting with Memcached on a single server, and only scaling up as needed. Shuffle can run without it, but when scaling runtime locations it gives the Backend, Orborus and Workers a shared cache instead of separate process-local caches. Add multiple [comma separated URL's here](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L84) to configure multiple instances.
 
 2. **NFS** is Network File Storage. This is for you to be able to store files across multiple servers. This is required if you are running multiple instances of the Shuffle backend, and for them to have consistent access to the Files that you store. Only configure this if you are storing files in Shuffle. When NFS is set up, [mount your NFS storage to ./shuffle-files](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/docker-compose.yml#L28).
 
@@ -337,31 +337,43 @@ SHUFFLE_MEMCACHED=<IP>:PORT
 ```
 
 ### Distributed Caching
-Once you have a Scalable version of Shuffle, using Docker swarm, it becomes important for data to flow correctly throughout the platform. In version 1.1 of Shuffle, we introduce distributed caching [in the form of Memcached](https://hub.docker.com/_/memcached). Memcached helps reduce the load on the database, as well as to ensure all executions are handled adequately. These services are supported:
+Once you have a scalable version of Shuffle, using Docker Swarm or Kubernetes, it becomes important for short-lived execution data to be visible across services. Shuffle supports distributed caching [in the form of Memcached](https://hub.docker.com/_/memcached). Memcached helps reduce database load and gives runtime-location components a shared cache while workers are deployed and executions are updated.
 
 - Backend
 - Orborus
 - Worker
 
-To make use of Memcached, you have to start a memcached service locally on a host Shuffle can access, before configuring each service to use it with a single environment variable. The default port is 11211. Here is a quickstart that reserves 1024 Mb of memory:
+The database remains the source of truth. Memcached is used for cache keys such as execution data, action results, validation data, health/stat counters and worker coordination. If `SHUFFLE_MEMCACHED` is empty, each service falls back to its own local in-memory cache.
+
+To make use of Memcached, start a Memcached service on a host or service network Shuffle can access, then configure each service to use it with `SHUFFLE_MEMCACHED`. The default port is 11211. Here is a quickstart that reserves 1024 Mb of memory:
 ```
 docker run --name shuffle-cache -p 11211:11211 -d memcached -m 1024
 ```
 
 **PS: This requires swap limit capabilities on the Docker host. [More about running it in Docker here](https://hub.docker.com/_/memcached)**
 
-Once this is up, it will be listening on port 11211. From here, you may set up the `SHUFFLE_MEMCACHED` environment variable on the previously mentioned services. We recommend starting with the backend. Here's an example that fits into your docker-compose file:
+Once this is up, it will be listening on port 11211. From here, set `SHUFFLE_MEMCACHED` on the Backend and Orborus. Orborus forwards the same value into workers it starts, including single Docker workers, the `shuffle-workers` Swarm service and Kubernetes worker deployments. Here's an example that fits into your docker-compose file:
 ```
 services:
-  image: ghcr.io/shuffle/shuffle-backend:latest
-  environment:
-    - SHUFFLE_MEMCACHED=10.0.0.1:11211
-    ...
-  ...
+  shuffle-backend:
+    image: ghcr.io/shuffle/shuffle-backend:latest
+    environment:
+      - SHUFFLE_MEMCACHED=10.0.0.1:11211
+      ...
 
 ```
 
-You can additionally add this do your docker compose with the following setting:
+Set the same value on Orborus:
+```
+services:
+  orborus:
+    image: ghcr.io/shuffle/shuffle-orborus:latest
+    environment:
+      - SHUFFLE_MEMCACHED=10.0.0.1:11211
+      ...
+```
+
+You can additionally add this to your docker compose with the following setting:
 ```
   memcached:
     image: memcached:latest
@@ -376,8 +388,91 @@ You can additionally add this do your docker compose with the following setting:
       - 11211:11211
 ```
 
+### Memcached on a Docker Swarm network
+When running with `SHUFFLE_SWARM_CONFIG=run`, Memcached must be reachable from the worker network. Orborus creates or uses the overlay network from `SHUFFLE_SWARM_NETWORK_NAME`, and workers use that network when they execute workflows. If Memcached only exists on the main Shuffle network, workers may fail to resolve or connect to it.
+
+You do not need to expose Memcached on the host machine for this setup. Do not add `-p 11211:11211`, `--publish`, or a Compose `ports:` entry unless something outside Docker must connect to Memcached. For Shuffle Swarm, keep Memcached internal and use `tasks.shuffle-cache:11211` from services attached to the overlay network.
+
+The common pattern is:
+
+* Backend reaches Memcached on the main Shuffle network.
+* Orborus reaches Memcached and forwards `SHUFFLE_MEMCACHED` to workers.
+* Workers reach Memcached on the execution overlay network.
+
+Attach Memcached to both networks if backend and workers are not on the same overlay:
+```
+docker network create --driver=overlay --attachable shuffle
+docker network create --driver=overlay --attachable shuffle_swarm_executions
+
+docker service create \
+  --name shuffle-cache \
+  --network shuffle \
+  --network shuffle_swarm_executions \
+  --replicas 1 \
+  --endpoint-mode dnsrr \
+  memcached:1.6-alpine \
+  -m 1024 -c 2048
+```
+
+Then set the same endpoint on backend and Orborus:
+```
+- SHUFFLE_MEMCACHED=tasks.shuffle-cache:11211
+```
+
+If you manage the worker service manually, attach it to the same execution network:
+```
+docker service create \
+  --name shuffle-workers \
+  --network shuffle_swarm_executions \
+  --env SHUFFLE_SWARM_CONFIG=run \
+  --env SHUFFLE_MEMCACHED=tasks.shuffle-cache:11211 \
+  ghcr.io/shuffle/shuffle-worker:latest
+```
+
+For a Swarm stack file, the important parts look like this:
+```
+services:
+  shuffle-cache:
+    image: memcached:1.6-alpine
+    command: ["-m", "1024", "-c", "2048"]
+    networks:
+      - shuffle
+      - shuffle_swarm_executions
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr
+
+  shuffle-backend:
+    environment:
+      - SHUFFLE_MEMCACHED=tasks.shuffle-cache:11211
+    networks:
+      - shuffle
+
+  orborus:
+    environment:
+      - SHUFFLE_SWARM_CONFIG=run
+      - SHUFFLE_SWARM_NETWORK_NAME=shuffle_swarm_executions
+      - SHUFFLE_MEMCACHED=tasks.shuffle-cache:11211
+    networks:
+      - shuffle
+      - shuffle_swarm_executions
+
+networks:
+  shuffle:
+    driver: overlay
+    attachable: true
+  shuffle_swarm_executions:
+    driver: overlay
+    attachable: true
+```
+
+Verify connectivity from a temporary container on the execution network:
+```
+docker run --rm --network shuffle_swarm_executions alpine sh -c "apk add --no-cache busybox-extras >/dev/null && nc -vz tasks.shuffle-cache 11211"
+```
+
 ### Multi-server memcached
-You can run Memcached on multiple servers as well, but may run into key inconsistency. This should however not affect how things run in Shuffle, as we verify and fix request data. To do this, simply add multiple memcached instances to the environment variable, comma separated.
+You can run Memcached on multiple servers as well, but may run into key inconsistency if clients do not route the same key to the same server. This should however not affect how things run in Shuffle, as we verify and fix request data. To do this, add multiple Memcached instances to the environment variable, comma separated.
 
 Example:
 ```
