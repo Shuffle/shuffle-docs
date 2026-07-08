@@ -253,29 +253,70 @@ If you run multiple Shuffle backend replicas, configure `SHUFFLE_MEMCACHED` so t
 
 ### Assigning a Role from Keycloak to Shuffle for a New User
 
-If you want to assign a Shuffle organization role (`admin`, `user`, `org-reader`) from your Keycloak client, you can achieve this using the following method:
+If you want to assign a Shuffle organization role (`admin`, `user`, `org-reader`) from your Keycloak client, you can achieve this using **client roles** and a **dedicated protocol mapper** that includes the roles in the ID token.
 
-Steps to Assign Roles
+> **Important:** Shuffle reads roles exclusively from the **ID token**, not the access token. Without a mapper configured to add roles to the ID token, Shuffle will not see any role assignments.
 
-1. In your Keycloak client, create three new roles with the names `shuffle-admin`, `shuffle-user`, and `shuffle-org-reader`, as shown in the image below:
+#### Step 1: Create Client Roles
 
-   ![image](https://github.com/user-attachments/assets/e8a1f344-73c9-453d-b119-aef4643610b4)
+In Keycloak, navigate to your Shuffle client and create three roles:
 
-2. After creating the roles, assign them to the users you want. The `shuffle-admin`, `shuffle-user`, and `shuffle-org-reader` roles in Keycloak correspond to the `admin`, `user`, and `org-reader` roles in Shuffle.
+**Clients** → *your-shuffle-client* → **Roles** → **Create role**
 
-3. Once the roles are assigned to users, navigate to:
+Create the following roles (names must match exactly):
 
-   **Client Scopes** → **Roles** → **Mapper** → **Client Roles**
+| Keycloak Client Role | Shuffle Role |
+|---------------------|--------------|
+| `shuffle-admin` | admin |
+| `shuffle-user` | user |
+| `shuffle-org-reader` | org-reader |
 
-   On the **Client Roles** page:
-   - Update the `Token Claim Name` to `roles`
-   - Enable the option **"Add to ID Token"** so that the roles are included in the response.
+![image](https://github.com/user-attachments/assets/e8a1f344-73c9-453d-b119-aef4643610b4)
 
-   ![image](https://github.com/user-attachments/assets/09582542-efa1-429b-9d45-e0a3796c6fbd)
+#### Step 2: Assign Roles to Users
 
-Important Notes:
+Assign one of the client roles to each user who should access Shuffle:
 
+**Users** → *select user* → **Role mapping** → **Assign role** → Filter by *clients* → select the appropriate `shuffle-*` role
+
+#### Step 3: Add a Protocol Mapper to the Dedicated Client Scope
+
+Each Keycloak client has a dedicated scope (named `<client-id>-dedicated`) that is automatically assigned to the client. Add a mapper here to include client roles in the ID token:
+
+1. Navigate to: **Client Scopes** → **`<your-client-id>-dedicated`** → **Mappers** → **Configure a new mapper** (or **Add mapper** → **By configuration**)
+2. Select mapper type: **User Client Role**
+3. Configure the mapper:
+   - **Name**: `shuffle-roles` (or any descriptive name)
+   - **Client ID**: Select your Shuffle client
+   - **Token Claim Name**: `roles`
+   - **Claim JSON Type**: `String`
+   - **Add to ID token**: ✅ **ON** (required)
+   - **Add to access token**: Optional (not used by Shuffle)
+   - **Add to userinfo**: Optional (not used by Shuffle)
+   - **Multivalued**: ✅ **ON**
+4. Click **Save**
+
+![image](https://github.com/user-attachments/assets/09582542-efa1-429b-9d45-e0a3796c6fbd)
+
+#### Verifying the Configuration
+
+You can verify that roles appear in the ID token by using Keycloak's built-in token evaluation:
+
+**Clients** → *your-shuffle-client* → **Client Scopes** → **Evaluate** → select a user → **Generated ID token**
+
+The token should contain a `roles` claim with the assigned client role, for example:
+
+```json
+{
+  "roles": ["shuffle-admin"]
+}
+```
+
+#### Important Notes
+
+- Shuffle reads roles from three possible claims in the ID token: `roles`, `groups`, and `realm_access.roles`. The recommended approach above uses the `roles` claim via client roles.
 - Shuffle updates the user's organization role on every OpenID login based on the verified ID token. If a user previously had `shuffle-admin` but the provider later sends `shuffle-user`, `shuffle-org-reader`, or no Shuffle role, Shuffle revokes the old admin role and applies the current provider role. If no Shuffle role is assigned and role-required mode is off, the default role is `user`.
+- If **"Restrict login to users with a valid SSO role"** is enabled in Shuffle's SSO settings, users without one of the three `shuffle-*` roles in their ID token will be denied login entirely.
 - You can achieve this behavior starting from Shuffle version 2.0.1 or later. Make sure you are using this version or a newer one
 
 ### Azure AD
