@@ -436,8 +436,8 @@ Licensing ensures access to premium features such as high-performance scaling, m
 ### Default Limits
 By default, Shuffle onprem instance includes the following limits:
 
-- **Workflow Executions:** 10,000 per month  
-- **Sub-Organizations:** Up to 3  
+- **App Runs:** 25,000 per month  
+- **Sub-Tenants:** Up to 3  
 - **Environments:** 1
 - **Branding** not Enabled
 
@@ -476,7 +476,7 @@ Setting up cloud synchronization requires two things:
 
 A valid **Shuffle license** is required to unlock advanced enterprise capabilities on your on-premise instance.  
 
-With a valid license, connecting your instance to the cloud allows you to access features such as **multi-tenant management**, **multi-environment setups**, **workflow executions**, and **branding customization**.
+With a valid license, connecting your instance to the cloud allows you to access features such as **multi-tenant management**, **multi-environment setups**, **App Runs**, and **branding customization**.
 
 > **Note:**
 > - A single cloud tenant can sync with only **one** on-prem tenant at a time.
@@ -504,7 +504,7 @@ The availability of these features depends on the **type and level of your licen
 
 | Feature | Description |
 |----------|-------------|
-| **Workflow Scaling** | Increase monthly workflow execution limits to support larger workloads. |
+| **App Runs** | Increase monthly App runs limits to support larger workloads. |
 | **Multi-Tenant Management** | Add and manage more sub-organizations within a single deployment. |
 | **Multi-Environment Support** | Create and operate multiple isolated environments. |
 | **Branding Customization** | Enable full white-label branding, including logo, colors, and support links. |
