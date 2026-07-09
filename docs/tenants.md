@@ -478,6 +478,10 @@ A valid **Shuffle license** is required to unlock advanced enterprise capabiliti
 
 With a valid license, connecting your instance to the cloud allows you to access features such as **multi-tenant management**, **multi-environment setups**, **workflow executions**, and **branding customization**.
 
+> **Note:**
+> - A single cloud tenant can sync with only **one** on-prem tenant at a time.
+> - Cloud Sync is disabled for child tenants on both the cloud and on-prem sides. As a result, only the **parent cloud tenant** can sync with the **parent on-prem tenant**.
+
 ### License Key
 
 For air-gapped or offline environments where **Cloud Synchronization** cannot be used, Shuffle supports activating enterprise features through an **on-premise license key**.
