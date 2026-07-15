@@ -1,6 +1,6 @@
-# Shuffle Onboarding Draft
+# Shuffle Onboarding
 
-For reference, use:
+For reference or more details, use:
 
 - [Architecture](/docs/architecture)
 - [Configuration](/docs/configuration)
