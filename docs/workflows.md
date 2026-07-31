@@ -115,7 +115,7 @@ The checklist:
 2. JSON autocompletion
 3. Loops
 4. Nested loops
-5. [Start nodes](https://shuffler.io/workflows/0285a05e-8dc0-4614-840b-88606d6a1e59) [video](https://www.youtube.com/watch?v=hQcpuoCkXtw)
+5. [Start nodes](https://shuffler.io/workflows/0285a05e-8dc0-4614-840b-88606d6a1e59) https://www.youtube.com/watch?v=hQcpuoCkXtw
 6. Triggers: Webhooks & Schedules
 7. Subflows & User Input
 8. [App Authentication](https://shuffler.io/workflows/d65d228a-f406-4227-9fa7-f7d9303f8411)
@@ -581,7 +581,7 @@ Once you add authentication for an app, it becomes available across your tenant.
 
 Below is a screenshot showing the authentication prompt on a Wazuh node. The orange warning indicates that credentials are required before the node can execute.
 
-![Wazuh authentication setup](../shuffle-docs-resources/wazuh-authentication-setup.jpg)
+<img width="343" height="564" alt="Wazuh authentication setup" src="https://github.com/user-attachments/assets/90637508-e3c2-4d84-b340-4d5258ff2680" />
 
 ### Workflow Authentication
 
