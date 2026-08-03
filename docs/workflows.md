@@ -561,10 +561,6 @@ Steps:
 
 `valid` contains items that met the criteria. `invalid` contains everything else. Reference them as `$filter_node_name.valid` or `$filter_node_name.invalid` in subsequent nodes.
 
-Below is a GIF showing the Filter List action in action — configuring the node, setting the field and value, and viewing the valid/invalid output.
-
-[Download the condition loops demo video](../shuffle-docs-resources/condition-loops-demo.mp4)
-
 ## Authentication
 
 ### App Authentication
