@@ -2007,6 +2007,8 @@ These are skipped when `OPENSEARCH_INDEX_CONFIG` is set.
 
 > Note: Mappings are immutable in OpenSearch. Re-indexing is the only way to change a field type on existing data. The automatic migration above handles this for single/keyed stores; for very large append stores, you may still need a manual re-index (see below).
 
+> Exception: `created`/`edited`/`started_at` on `workflowexecution` are mapped `long` rather than `date`, since these fields are sorted across `workflowexecution_live` and the archive (and across archive generations) - `date` fields store doc values internally as epoch milliseconds regardless of the `epoch_second` format annotation, which would silently corrupt sort order against older generations that still have these fields inferred as `long`.
+
 ### Re-indexing & Index Management
 
 #### When to Re-index
