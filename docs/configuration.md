@@ -1908,15 +1908,74 @@ Example: If `SHUFFLE_OPENSEARCH_INDEX_PREFIX=prod`, the `workflow` index becomes
 | `synckey` | Cloud sync key data |
 | `shuffle_logs` | Shuffle system logs |
 
-#### Indexes with Aliasing & Rollover
+#### Indexes with Rollover (Append-Only Stores)
 
-The following 11 indexes are configured with **aliasing and automatic rollover** for better scaling. These indexes are created with the pattern `{index}-000001` and have an alias pointing to the write index. This is handled by `InitOpensearchIndexes()` on startup.
+Only genuinely **append-only** data gets aliasing and automatic rollover for scaling. These are created with the pattern `{index}-000001`, use an alias pointing to the write index, and may roll into new generations (with optional ISM retention). This is handled by `InitOpensearchIndexes()` on startup.
 
 ```
-workflowexecution, datastore_ngram, org_cache, org_cache_revisions,
-notifications, shuffle_logs, environments, org_statistics,
-workflowapp, workflow, workflow_revisions
+shuffle_logs, workflow_revisions, org_cache_revisions, workflowexecution (archive - see below)
 ```
+
+**Stateful keyed stores stay on a single backing index** (no rollover). Each document has a stable `_id` that is updated in place — e.g. executions move `RUNNING -> FINISHED/ABORTED`, notifications toggle `read`/`ignored` — so rolling them would split an `_id` across generations and silently produce duplicate documents (OpenSearch routes alias writes to the current write-index generation with no cross-generation `_id` awareness). On startup, Shuffle collapses any legacy multi-generation state back into one backing index, keeping the newest copy of each `_id`:
+
+```
+datastore_ngram, org_cache, environments, org_statistics,
+workflowapp, workflow, datastore_category, notifications, workflowexecution_live
+```
+
+#### workflowexecution: Hot/Cold Lifecycle
+
+`workflowexecution` is neither a pure append-only store nor a simple keyed
+store: the same `execution_id` is rewritten in place while a run is
+in-flight (`EXECUTING` → `FINISHED`/`ABORTED`), which makes plain rollover
+unsafe, but its overall volume needs rollover-style scaling once history
+accumulates. Shuffle handles this with a two-index split:
+
+- **`workflowexecution_live`** - a small, single, keyed index holding every
+  execution that is not yet in a terminal state, plus terminal executions
+  still inside a short grace period. All execution writes land here first.
+- **`workflowexecution`** - the existing index/alias, which now serves as an
+  append-only, rollover-managed **archive**. A background sweep moves
+  confirmed-terminal executions here once they're past the grace period.
+
+Reads check the live index first and fall back to the archive; list/history
+queries search both in a single request. Existing deployments upgrade with
+zero downtime: the current `workflowexecution` index becomes the archive
+as-is (no reindex of history), and only currently in-flight executions are
+copied into the new live index on first startup after upgrading.
+
+If a rerun/continue is attempted on an execution that has already been
+archived, the API returns a clean `{"success": false, "reason": "..."}`
+response instead of an error, since archived executions are immutable.
+
+Configuration:
+- `OPENSEARCH_EXECUTION_GRACE_PERIOD` (default `1h`) - how long a terminal
+  execution stays in the live index before becoming archivable.
+- `OPENSEARCH_EXECUTION_ARCHIVE_SWEEP_INTERVAL` (default `30m`) - how often
+  the archival sweep runs.
+- Archive retention defaults to `365` days and is configured the same way
+  as every other rollover index's retention - via the existing
+  `OPENSEARCH_INDEX_RETENTION_DAYS` JSON env var (e.g.
+  `{"workflowexecution": 180}`). No dedicated env var was added for this.
+- `SHUFFLE_SKIP_EXECUTION_LIVE_MIGRATION` (default unset/runs) - skips only
+  the one-time startup migration of pre-upgrade in-flight executions into
+  `workflowexecution_live`. Safe to disable: any execution left behind
+  self-heals the first time it's written to with a non-terminal status.
+  Useful for very large deployments that want to run this migration
+  manually during a maintenance window instead of automatically on every
+  restart.
+- `SHUFFLE_SKIP_EXECUTION_ARCHIVAL_SWEEP` (default unset/runs) - skips only
+  the recurring sweep that moves terminal executions from live to archive.
+  Disabling this defeats the point of the hot/cold split (the live index
+  will grow unbounded), so a warning is logged on every startup while set.
+
+**Note:** these two flags are independent of the existing
+`SHUFFLE_SKIP_OPENSEARCH_INDEX_INIT`, which only controls whether Shuffle
+creates/manages OpenSearch indexes, mapping templates, and ISM policies -
+for operators who provision their OpenSearch schema externally. Setting
+that flag does not disable the execution lifecycle jobs above; they are
+started independently so self-hosted operators who manage their own index
+infrastructure still get the scaling benefit of this feature.
 
 **Default rollover conditions:**
 - Max age: 90 days
@@ -1929,16 +1988,35 @@ workflowapp, workflow, workflow_revisions
 - Refresh interval: 30s
 
 You can customize these with environment variables:
-- `OPENSEARCH_INDEX_CONFIG` - Custom JSON for index settings/mappings
+- `OPENSEARCH_INDEX_CONFIG` - Custom JSON for index settings/mappings. When set, Shuffle does not manage mappings or rollover for you (you own the schema).
 - `OPENSEARCH_INDEX_ROLLOVER` - Custom JSON for rollover conditions
+- `OPENSEARCH_USE_ISM_ROLLOVER` - Set to `false` to use direct shard rollover instead of the ISM (Index State Management) plugin
+- `OPENSEARCH_ISM_POLICY_NAME` - Name for the ISM rollover/retention policy (default `shuffle-rollover`)
+- `OPENSEARCH_INDEX_RETENTION_DAYS` - Optional JSON map of index to retention period (e.g. `{"shuffle_logs":"90d"}`), used to delete old rolled generations via ISM
+- `OPENSEARCH_NOTIFICATION_RETENTION_DAYS` (default `0`, disabled/opt-in) - `notifications` has no permanent terminal state (read/ignored can toggle back and forth), so instead of rollover it uses a daily cleanup sweep that deletes notifications which are read-or-ignored and older than this many days.
 - `SHUFFLE_SKIP_OPENSEARCH_INDEX_INIT=true` - Skip automatic index initialization
+
+#### Automatic Mapping & Field Changes
+
+Shuffle applies curated field mappings (typed `keyword` ids, `date`/`epoch_second` timestamps, `long` counters, `boolean` flags, and `index:false` for binary blobs like images) when an index is created fresh. Because the behavior of these fields is set at index creation, Shuffle keeps them current automatically:
+
+- **Single/keyed indexes** are re-indexed into a fresh generation on startup if their live mapping no longer matches (idempotent, no-op when up to date).
+- **Append/rollover indexes** have an index mapping template registered so every **future** rolled generation is created with the current mappings. Existing backing indexes are left as-is (they are not re-indexed automatically).
+
+These are skipped when `OPENSEARCH_INDEX_CONFIG` is set.
+
+> Note: Mappings are immutable in OpenSearch. Re-indexing is the only way to change a field type on existing data. The automatic migration above handles this for single/keyed stores; for very large append stores, you may still need a manual re-index (see below).
 
 ### Re-indexing & Index Management
 
 #### When to Re-index
 Re-indexing is rarely needed since Shuffle uses automatic rollover for high-volume indexes. However, you may need to re-index when:
 
-- **`workflowexecution` is slow** - The most common issue. If this index grew large before rollover was configured, queries become slow. Re-index into a fresh index with proper aliasing.
+- **`workflowexecution` is slow** - Handled automatically by the hot/cold
+  lifecycle split above (see workflowexecution_live/archive). Manual
+  re-indexing of `workflowexecution` should no longer be necessary; if it
+  still occurs, check that `OPENSEARCH_EXECUTION_ARCHIVE_SWEEP_INTERVAL` is
+  running (look for "Archived N terminal executions" log lines).
 - **Changing shard count** - OpenSearch locks primary shard count at creation. If you need more shards for a large dataset, you must re-index.
 - **Field mapping changes** - OpenSearch doesn't allow changing field types (e.g., `text` to `keyword`). Schema changes require re-indexing.
 - **Index corruption** - Rare, but if an index gets corrupted, re-index from backups.
