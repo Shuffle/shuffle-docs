@@ -24,6 +24,7 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 * [Network Configuration](#network-configuration)
 * [Docker Version error](#docker-version-error)
 * [Database indexes](#database-indexes-opensearch)
+* [OpenSearch Permissions (Security Plugin / RBAC)](#opensearch-permissions-security-plugin--rbac)
 * [Re-indexing & Index Management](#re-indexing--index-management)
 * [Uptime monitoring](#uptime-monitoring)
 * [Debugging](#debugging)
@@ -2008,6 +2009,60 @@ These are skipped when `OPENSEARCH_INDEX_CONFIG` is set.
 > Note: Mappings are immutable in OpenSearch. Re-indexing is the only way to change a field type on existing data. The automatic migration above handles this for single/keyed stores; for very large append stores, you may still need a manual re-index (see below).
 
 > Exception: `created`/`edited`/`started_at` on `workflowexecution` are mapped `long` rather than `date`, since these fields are sorted across `workflowexecution_live` and the archive (and across archive generations) - `date` fields store doc values internally as epoch milliseconds regardless of the `epoch_second` format annotation, which would silently corrupt sort order against older generations that still have these fields inferred as `long`.
+
+### OpenSearch Permissions (Security Plugin / RBAC)
+
+If your OpenSearch cluster has the security plugin enabled - especially if it's a **shared cluster** also holding other tenants' data (SIEM logs, SRE data, other applications) - the credential Shuffle uses should be scoped down to the minimum required, not given the `all_access` role.
+
+#### Recommended index permissions
+
+Grant `indices_all` (or a narrower CRUD set, if you prefer) only on Shuffle's own index patterns:
+
+```
+<prefix>_*
+```
+
+(or `*` if you don't set `SHUFFLE_OPENSEARCH_INDEX_PREFIX`). This is enough for all of Shuffle's normal document read/write/search operations, and for listing/inspecting its own indexes and aliases (Shuffle uses the per-index `_settings` and `_alias` endpoints - not the cluster-level `_cat/indices`/`_cat/aliases` - specifically so index enumeration works with index-scoped permissions only).
+
+#### Cluster permissions
+
+Shuffle does need the following cluster-level admin permissions to manage its own rollover/retention and index mapping lifecycle:
+
+| Permission | Used for |
+|---|---|
+| `cluster:admin/opendistro/ism/policy/*` | Creating/updating the ISM rollover + retention policy (`shuffle-rollover-*`) |
+| `cluster:admin/opendistro/ism/managedindex/*` | Attaching/managing the ISM policy on Shuffle's rollover-managed indexes |
+| `indices:admin/index_template/put`, `indices:admin/index_template/get` | Registering the index mapping template so new rollover generations get correct field types |
+
+**Known residual risk:** OpenSearch's security plugin has no per-resource-pattern scoping for ISM policies or index templates - these are all-or-nothing cluster-wide grants. A credential with these permissions can, in principle, create/overwrite an ISM policy or index template belonging to a *different* tenant on the same cluster, even if its index permissions are correctly scoped to `<prefix>_*`. This is a structural limitation of OpenSearch's permission model, not something Shuffle can restrict further from the application side. If you run a genuinely shared, multi-tenant cluster, mitigate this by:
+
+- Alerting on ISM policy or index template writes whose ID/pattern doesn't match Shuffle's own naming, sourced from audit logs of the Shuffle credential.
+- Using a dedicated OpenSearch cluster (or dedicated node role/tenant) for Shuffle if this residual risk isn't acceptable for your compliance requirements.
+
+#### Example role (matches what Shuffle actually needs)
+
+```json
+{
+  "cluster_permissions": [
+    "cluster:admin/opendistro/ism/policy/*",
+    "cluster:admin/opendistro/ism/managedindex/*",
+    "indices:admin/index_template/put",
+    "indices:admin/index_template/get"
+  ],
+  "index_permissions": [
+    {
+      "index_patterns": ["<prefix>_*"],
+      "allowed_actions": ["indices_all"]
+    }
+  ]
+}
+```
+
+Bind this role to the OpenSearch user configured via `SHUFFLE_OPENSEARCH_USERNAME` / `SHUFFLE_OPENSEARCH_PASSWORD`.
+
+#### Startup warnings for missing permissions
+
+On startup Shuffle attempts to configure ISM policies, mapping templates, and index prefix repair/verification. If the credential is missing one of the permissions above, this fails with a `403` and Shuffle logs a `[WARNING]` but continues starting up - basic indexing/search still works, but rollover/retention and mapping-template maintenance for **new** index generations will not. Check the backend logs for `Failed ensuring ISM rollover policy` or similar `403`/`security_exception` messages after any OpenSearch role change.
 
 ### Re-indexing & Index Management
 
