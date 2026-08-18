@@ -1988,7 +1988,7 @@ Example: If `SHUFFLE_OPENSEARCH_INDEX_PREFIX=prod`, the `workflow` index becomes
 
 #### Indexes with Rollover (Append-Only Stores)
 
-Only genuinely **append-only** data gets aliasing and automatic rollover for scaling. These are created with the pattern `{index}-000001`, use an alias pointing to the write index, and may roll into new generations (with optional ISM retention). This is handled by `InitOpensearchIndexes()` on startup.
+Only genuinely **append-only** data gets aliasing and automatic rollover for scaling. These are created with the pattern `{index}-000001`, use an alias pointing to the write index, and may roll into new generations (with optional ISM retention). This is handled by `InitOpensearchIndices()` on startup.
 
 ```
 shuffle_logs, workflow_revisions, org_cache_revisions, workflowexecution (archive - see below)
@@ -2028,9 +2028,9 @@ response instead of an error, since archived executions are immutable.
 
 Configuration:
 
-- `OPENSEARCH_EXECUTION_GRACE_PERIOD` (default `1h`) - how long a terminal
+- `OPENSEARCH_EXECUTION_GRACE_PERIOD` (default `1h`, Go duration string, e.g. `90m`) - how long a terminal
   execution stays in the live index before becoming archivable.
-- `OPENSEARCH_EXECUTION_ARCHIVE_SWEEP_INTERVAL` (default `30m`) - how often
+- `OPENSEARCH_EXECUTION_ARCHIVE_SWEEP_INTERVAL` (default `30m`, Go duration string, e.g. `15m`) - how often
   the archival sweep runs.
 - Archive retention defaults to `365` days and is configured the same way
   as every other rollover index's retention - via the existing
@@ -2070,13 +2070,16 @@ infrastructure still get the scaling benefit of this feature.
 
 You can customize these with environment variables:
 
-- `OPENSEARCH_INDEX_CONFIG` - Custom JSON for index settings/mappings. When set, Shuffle does not manage mappings or rollover for you (you own the schema).
-- `OPENSEARCH_INDEX_ROLLOVER` - Custom JSON for rollover conditions
-- `OPENSEARCH_USE_ISM_ROLLOVER` - Set to `false` to use direct shard rollover instead of the ISM (Index State Management) plugin
-- `OPENSEARCH_ISM_POLICY_NAME` - Name for the ISM rollover/retention policy (default `shuffle-rollover`)
-- `OPENSEARCH_INDEX_RETENTION_DAYS` - Optional JSON map of index to retention period (e.g. `{"shuffle_logs":"90d"}`), used to delete old rolled generations via ISM
-- `OPENSEARCH_NOTIFICATION_RETENTION_DAYS` (default `0`, disabled/opt-in) - `notifications` has no permanent terminal state (read/ignored can toggle back and forth), so instead of rollover it uses a daily cleanup sweep that deletes notifications which are read-or-ignored and older than this many days.
-- `SHUFFLE_SKIP_OPENSEARCH_INDEX_INIT=true` - Skip automatic index initialization
+- `OPENSEARCH_INDEX_CONFIG` - Custom JSON for index settings/mappings. When set, Shuffle does not manage mappings or rollover for you (you own the schema). No default (unset = Shuffle-managed schema).
+- `OPENSEARCH_INDEX_ROLLOVER` - Custom JSON for rollover conditions. Default (equivalent to leaving unset):
+  ```json
+  {"max_age": "90d", "max_size": "40gb", "max_docs": 1000000}
+  ```
+- `OPENSEARCH_USE_ISM_ROLLOVER` - Set to `false` to use direct shard rollover instead of the ISM (Index State Management) plugin. Default: `true` (ISM-managed).
+- `OPENSEARCH_ISM_POLICY_NAME` - Name for the ISM rollover/retention policy. Default: `shuffle-rollover`.
+- `OPENSEARCH_INDEX_RETENTION_DAYS` - Optional JSON map of index to retention period (e.g. `{"shuffle_logs":"90d"}`), used to delete old rolled generations via ISM. No default (unset = indexes never expire on their own).
+- `OPENSEARCH_NOTIFICATION_RETENTION_DAYS` - `notifications` has no permanent terminal state (read/ignored can toggle back and forth), so instead of rollover it uses a daily cleanup sweep that deletes notifications which are read-or-ignored and older than this many days. Default: `0` (disabled/opt-in). Example: `30`.
+- `SHUFFLE_SKIP_OPENSEARCH_INDEX_INIT=true` - Skip automatic index initialization. Default: unset (index management runs).
 
 #### Automatic Mapping & Field Changes
 
@@ -2115,6 +2118,8 @@ Shuffle does need the following cluster-level admin permissions to manage its ow
 | `cluster:admin/opendistro/ism/policy/*`                                | Creating/updating the ISM rollover + retention policy (`shuffle-rollover-*`)               |
 | `cluster:admin/opendistro/ism/managedindex/*`                          | Attaching/managing the ISM policy on Shuffle's rollover-managed indexes                    |
 | `indices:admin/index_template/put`, `indices:admin/index_template/get` | Registering the index mapping template so new rollover generations get correct field types |
+| `cluster:monitor/task/get`                                             | Polling the reindex task started for one-time legacy index/alias collision migrations to completion, and detecting per-document failures instead of silently losing data |
+| `cluster:monitor/tasks/lists`                                          | Checking whether a matching reindex is already running (e.g. started by another backend replica) before starting a duplicate one - best-effort only, gracefully skipped if not granted |
 
 **Known residual risk:** OpenSearch's security plugin has no per-resource-pattern scoping for ISM policies or index templates - these are all-or-nothing cluster-wide grants. A credential with these permissions can, in principle, create/overwrite an ISM policy or index template belonging to a _different_ tenant on the same cluster, even if its index permissions are correctly scoped to `<prefix>_*`. This is a structural limitation of OpenSearch's permission model, not something Shuffle can restrict further from the application side. If you run a genuinely shared, multi-tenant cluster, mitigate this by:
 
@@ -2130,7 +2135,9 @@ Shuffle does need the following cluster-level admin permissions to manage its ow
     "cluster:admin/opendistro/ism/policy/*",
     "cluster:admin/opendistro/ism/managedindex/*",
     "indices:admin/index_template/put",
-    "indices:admin/index_template/get"
+    "indices:admin/index_template/get",
+    "cluster:monitor/task/get",
+    "cluster:monitor/tasks/lists"
   ],
   "index_permissions": [
     {
@@ -2140,6 +2147,8 @@ Shuffle does need the following cluster-level admin permissions to manage its ow
   ]
 }
 ```
+
+**Note:** without `cluster:monitor/task/get`, Shuffle can still start a legacy index/alias collision migration, but cannot poll it to completion or detect document-level failures - it will log a permission-denied error and safely retry on the next restart rather than silently assuming success. `cluster:monitor/tasks/lists` is used only to avoid starting a duplicate reindex when another replica already started one; if missing, Shuffle simply skips that check and may occasionally start redundant (harmless, idempotent) duplicate work instead. Neither permission affects normal indexing/search/rollover.
 
 Bind this role to the OpenSearch user configured via `SHUFFLE_OPENSEARCH_USERNAME` / `SHUFFLE_OPENSEARCH_PASSWORD`.
 
