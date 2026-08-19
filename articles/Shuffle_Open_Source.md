@@ -13,18 +13,18 @@ All the [features and functionality](https://shuffler.io/docs/features) are avai
 - New features come through 'nightly' branch releases almost nightly, with 'latest' branch being well tested releases.
 
 What you get:
-- All the features; use Shuffle as truly Open Source.
-- When you scale, is when you pay.
+- All the features. Use Shuffle as truly Open Source.
+- When you scale, is when you can pay for support and scaling.
 - Even when you scale and pay, Shuffle will be cheaper than any other solution on the market.
   - This is possible due to being available in a wider market, and focus on self-service.
 - You get a 'win' on both sides:
   - At small to medium-sized operations, you pay nothing and get the best platform on the market.
-  - When you do pay, you get the best deal / rate on the market.
+  - When you do pay, you get the best financial deal or rate on the market.
 - This simplifies your decision making. You win and make the best decision either the way.
 
 ## Open Source Resources
 
-Shuffle is an open source automation platform, built for and by security professionals. Security operations is complex, but it doesn't have to be.
+Shuffle is an open source automation platform, built for and by security professionals. Security operations are complex, but they don't have to be.
 
 1. **Getting Started**. To get started with Shuffle in own infrastructure: [Go to Shuffle - Getting Started](https://shuffler.io/docs/getting_started).
 
@@ -40,9 +40,11 @@ Shuffle is an open source automation platform, built for and by security profess
 A couple of notes to keep in mind:
 - Shuffle is a powerful technical platform that requires technical knowledge of servers, containers, deployment, and dev-ops.
 - Shuffle Open Source is made for experts to try out the platform (projects and testing purposes).
-- If you are unsure about setting-up Shuffle yourself, we recommend [registering to use Shuffle Cloud](https://shuffler.io/register) or [contacting us](https://shuffler.io/contact) for help.
+- If you are unsure about setting-up Shuffle yourself, we recommend [registering to use Shuffle Cloud](https://shuffler.io/register) or [contacting us](https://shuffler.io/contact) for assistance.
 
 ## Difference between Open Source and License Tiers
+
+All features are included in all tiers. The only differences are feature limits, scaling, and support.
 
 ![Shuffle Open Source and License Tiers](https://raw.githubusercontent.com/Shuffle/shuffle-docs/refs/heads/master/assets/Shuffle%20Open%20Source%20and%20License%20Tiers.png)
 
@@ -51,12 +53,12 @@ A couple of notes to keep in mind:
 
 Our business model is open and transparent. It works on two fronts:
 
-- **Business and Enterprise License:** As you grow beyond a point (refer to image above), you get a license so that your Shuffle instance scales smoothly without any hiccups.
+- **License:** As you grow beyond a point (refer to the image above), you get a Business or Enterprise license so that your Shuffle instance scales smoothly without any hiccups.
   - This is done so we set the right expectations for scaling, as our inbox is full of people wanting to scale.
-  - Scaling with high availability is hard, especially if you are onprem.
-  - Hence, we have put a lot of money and resources on R&D for a scalable distributed [runtime architecture](https://shuffler.io/docs/architecture), which is what you get with an Enterprise License.
-- **Support:** Shuffle is a powerful and versatile platform, and it comes with the challenge of too many options and possibilities. When you want our help or want to make the most of Shuffle, you get a support package from Shuffle that covers:
-  - Setup (Architecture + Configuration + Onboarding)
+  - Scaling with high availability is hard, especially if you use onPrem.
+  - Hence, we have put a lot of money and resources on R&D for a scalable and distributed [runtime architecture](https://shuffler.io/docs/architecture), which is what you get with an Enterprise License.
+- **Support:** Shuffle is a powerful and versatile platform. It comes with the challenge of too many options and possibilities. When you want to make the most of Shuffle and want our help, you get a Shuffle Support package that covers:
+  - Setup (Architecture + Configuration + Onboarding + Scaling)
   - Error handling
   - Feature Requests
   - Workflow Development
@@ -65,7 +67,7 @@ Our business model is open and transparent. It works on two fronts:
 
 ## Why enforce Open Source and License at Scale?
 
-Shuffle is built on trust. People have **severly** abused it.
+Shuffle is built on trust. People have **severely** abused it.
 
 The simple and fair solution is to enforce the trust:
 - We stay true to Open Source.
@@ -88,9 +90,9 @@ Let's be frank:
 - Majority of companies who call themselves Open Source, are not truly Open Source, but Open Core.
   - Many have hidden blockers, evil business practices, or create their own licenses.
 - We don't do that. We are truly Open Source.
-  - We do not hide any feature whatsoever, are built on the AGPLv3 license, and are completely transparent about our business model.
+  - We do not hide any features whatsoever, are built on the AGPLv3 license, and are completely transparent about our business model.
 
-By being lean and open source first, it has even made us able to make interesting models for top contributors to get licenses and support cheaper. 
+By being lean and open source first, it has even made us able to make interesting models for top contributors to get licenses and support cheaper.
 
 This means comparison of Shuffle-to-Others is an Apple-to-Oranges comparison at best.
 
