@@ -6,7 +6,6 @@ Documentation for the Admin view of Shuffle. Best used by administrators. Previo
 * [Tenant Overview](#organization_overview)
 * [App runs management for Sub-tenants (Enterprise)](#app_runs_management_sub-tenants)
 * [Data collection](#data_collection)
-* [Pricing](#pricing)
 * [Licensing](#licensing)
 * [User Management](#user_management)
 * [App Authentication](#app_authentication)
@@ -54,8 +53,6 @@ This view outlines the basic details of your tenants, which any Admin can change
 ### App Runs Management for Sub-tenants (Enterprise)
 Starting from version 2.0.2, enterprise users can manage sub-tenant app run limits from the parent tenant. The maximum limit that can be assigned to a sub-tenant is equal to the app run limit of the parent tenant. For example, if the parent tenant has an app run limit of 300k, the maximum limit that can be assigned to each sub-tenant is also 300k.
 
-This feature is currently available to [Enterprise users](https://shuffler.io/pricing) only. If you have any questions or need assistance, please reach out to us at support@shuffler.io.
-
 **Steps to assign app run limits to a sub-tenant from the parent tenant:**
 1. Log in to your Shuffle account and visit the [Billing tab](https://shuffler.io/admin?admin_tab=billingstats) on the admin page.
 2. Scroll down to the *Utilization and Stats* section. There, you’ll find the *Child Tenant* tab, where you can manage sub-tenant app run limits.
@@ -66,7 +63,6 @@ This feature is currently available to [Enterprise users](https://shuffler.io/pr
 
 
 ## Hybrid Features 
-Want to try it out? Hybrid Access is Free. 
 
 There are many features that make Shuffle more usable. These are mainly related to accessibility, scalability and collaboration - in that order. For the initial release (v0.8) of Shuffle, we've decided to focus entirely on accessibility. Every feature comes with some of the same basic features, so that you know what you're getting into.
 
@@ -103,23 +99,6 @@ The three levels we'll keep to are:
 * None 	- Shuffle doesn't collect any information about your on-premises tenant. This is most features.
 * Minimal - Shuffle collects a minimal amount of information necessary to execute the action. An example is a Workflow execution, where we'll need to gather information about the next steps in a workflow to properly execute it.
 * High 	- Shuffle collects the necessary information to handle information. This is used for when full synchronization, meaning information used on-premises will also be used in the cloud. An example is having access to edit workflows in the cloud, that will execute on-premises. This requires access to all the same apps, workflows, credentials, triggers, organizational users and more. **PS: This will not happen for a while, and will be 100% OPTIONAL**
-
-### Pricing 
-[Our pricing tiers for Shuffle](https://shuffler.io/pricing) are currently split into three: Basic, Community and Pro. Basic is a support tier, and exists to make it possible for you to support us without having to use alternative means such as [github sponsors](https://github.com/sponsors/frikky). Everything we build out that can be priced is for us to further create a better offering for the open source community. 
-
-Whenever we add new features that can help Shuffle work better by leveraging cloud resources, you'll automatically get access to it if you're on that tier.
-
-These are our tiers:
-* Free 
-* Enterprise / Scale 
-
-#### Free 
-The basic tier is meant as a way for people to support Shuffle. It will give more perks over time, but to start of, it gives you and your team an onboarding meeting with Shuffle to get you kickstarted as well as some community support features.
-
-#### Enterprise/Scale 
-Pro is the full package. It is meant for those of you who want everything from support to auditlogging, datacenter choices, compliance overviews, data retention control, reporting, and more. This package is currently not available as 
-
-Get in touch at [support@shuffler.io](mailto:support@shuffler.io) if you want something more specific.
 
 ## User management
 ![User management Shuffle](https://github.com/user-attachments/assets/261ac8cf-279a-41be-b3d0-31285216b41f)
@@ -436,13 +415,12 @@ Licensing ensures access to premium features such as high-performance scaling, m
 ### Default Limits
 By default, Shuffle onprem instance includes the following limits:
 
-- **Workflow Executions:** 10,000 per month  
+- **App Runs Executions:** 25,000 per month
 - **Sub-Organizations:** Up to 3  
 - **Environments:** 1
 - **Branding** not Enabled
 
-To run Shuffle **in production** or to **scale beyond default limits**, a valid **on-premise Shuffle license** is required.  
-Licensing ensures access to advanced scaling, customization, and management features designed for enterprise and high-availability deployments.
+To run Shuffle **in production** or to **scale beyond default limits**, a valid **onPrem Shuffle license** is required. Licensing ensures access to advanced scaling, customization, and management features designed for enterprise and high-availability deployments.
 
 For more information or to obtain an on-premise license, please contact **[support@shuffler.io](mailto:support@shuffler.io)**
 
