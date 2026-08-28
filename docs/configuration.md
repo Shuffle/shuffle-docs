@@ -4,34 +4,35 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 
 ## Table of contents
 
-* [Introduction](#introduction)
-* [Updating Shuffle](#updating-shuffle)
-* [Production readiness](#production-readiness)
-* [Shuffle Scaling](#scaling-shuffle)
-* [Distributed Caching](#distributed-caching)
-* [Kubernetes](#kubernetes)
-* [Shuffle Apps on Kubernetes](#shuffle-apps-on-kubernetes)
-* [Swarm HAProxy for worker load balancing](#swarm-haproxy-for-worker-load-balancing)
-* [Swarm overlay network encryption](#swarm-overlay-network-encryption)
-* [No Internet Install](#no-internet-install)
-* [Proxy Configuration](#proxy-configuration)
-* [App Certificates](#app-certificates)
-* [HTTPS](#https)
-* [OpenSearch TLS certificate setup](#opensearch-tls-certificate-setup)
-* [IPv6](#ipv6)
-* [Database](#database)
-* [Database Change](#change-the-database-from-opensearch-to-elasticsearch)
-* [Network Configuration](#network-configuration)
-* [Docker Version error](#docker-version-error)
-* [Database indexes](#database-indexes-opensearch)
-* [Re-indexing & Index Management](#re-indexing--index-management)
-* [Uptime monitoring](#uptime-monitoring)
-* [Debugging](#debugging)
-* [Execution Debugging](#execution-debugging)
-* [Known Bugs](#known-bugs)
-* [Shuffle Server Healthcheck](#shuffle-server-healthcheck)
-* [Using podman](#using-podman)
-* [Marketplace setup](#marketplace-setup)
+- [Introduction](#introduction)
+- [Updating Shuffle](#updating-shuffle)
+- [Production readiness](#production-readiness)
+- [Shuffle Scaling](#scaling-shuffle)
+- [Distributed Caching](#distributed-caching)
+- [Kubernetes](#kubernetes)
+- [Shuffle Apps on Kubernetes](#shuffle-apps-on-kubernetes)
+- [Swarm HAProxy for worker load balancing](#swarm-haproxy-for-worker-load-balancing)
+- [Swarm overlay network encryption](#swarm-overlay-network-encryption)
+- [No Internet Install](#no-internet-install)
+- [Proxy Configuration](#proxy-configuration)
+- [App Certificates](#app-certificates)
+- [HTTPS](#https)
+- [OpenSearch TLS certificate setup](#opensearch-tls-certificate-setup)
+- [IPv6](#ipv6)
+- [Database](#database)
+- [Database Change](#change-the-database-from-opensearch-to-elasticsearch)
+- [Network Configuration](#network-configuration)
+- [Docker Version error](#docker-version-error)
+- [Database indexes](#database-indexes-opensearch)
+- [OpenSearch Permissions (Security Plugin / RBAC)](#opensearch-permissions-security-plugin--rbac)
+- [Re-indexing & Index Management](#re-indexing--index-management)
+- [Uptime monitoring](#uptime-monitoring)
+- [Debugging](#debugging)
+- [Execution Debugging](#execution-debugging)
+- [Known Bugs](#known-bugs)
+- [Shuffle Server Healthcheck](#shuffle-server-healthcheck)
+- [Using podman](#using-podman)
+- [Marketplace setup](#marketplace-setup)
 
 ## Introduction
 
@@ -67,6 +68,7 @@ git pull
 docker-compose pull
 docker-compose up -d
 ```
+
 **Please note:**
 We will no longer provide support for older versions after **January 31, 2026**. To ensure uninterrupted access and the best possible experience, please upgrade to **Shuffle v2.1.1**.
 
@@ -89,10 +91,12 @@ Shuffle is by default configured to be easy to start using. This means we have h
 ![image](https://github.com/user-attachments/assets/1bf288e0-fbd7-47c1-aba2-5269acaa4f8d)
 
 **Here are the things we'll dive into**
+
 - [Environment Variables](#environment_variables)
 - [High Availability](#high-availability)
 
 ### Environment Variables
+
 With Shuffle being a very technical system, it is important to understand that you have a lot of control mechanisms available to you in your local installation.
 
 [Check the .env file on your server](https://github.com/Shuffle/Shuffle/blob/main/.env) to see what the default values are. They are broadly split into the following:
@@ -106,6 +110,7 @@ With Shuffle being a very technical system, it is important to understand that y
 **PS:** Most of our environment variables start with `SHUFFLE_`
 
 ### Servers
+
 When setting up Shuffle for production, we always recommend two or more servers (VMs), but it works fine with one to start. These are MINIMUM requirements, and we recommend adding more to avoid congestion.
 
 The webserver is where your users and Shuffle's API is. Opensearch is a RAM heavy database, and we are doing A LOT of caching with to ensure scalable stability.
@@ -119,11 +124,13 @@ The [default docker-compose file](https://github.com/shuffle/Shuffle/blob/main/d
 
 ### Hybrid Cloud Configuration
 
-* Onprem: If you want to try using Hybrid Shuffle, see [Cloud sync documentation](/docs/organizations#cloud_synchronization)
-* Cloud: If you want access to on-premises resources and API's, [set up extra Environments](/docs/organizations#environments)
+- Onprem: If you want to try using Hybrid Shuffle, see [Cloud sync documentation](/docs/organizations#cloud_synchronization)
+- Cloud: If you want access to on-premises resources and API's, [set up extra Environments](/docs/organizations#environments)
 
 ### High Availability
+
 When running Shuffle on multiple servers, you need to take multiple things into account. Among them are:
+
 - Can the servers talk to each other?
 - Do you want all Shuffle services on all servers?
 - Do you want distributed storage?
@@ -133,20 +140,23 @@ When running Shuffle on multiple servers, you need to take multiple things into 
 ![image](https://github.com/user-attachments/assets/5248417c-c47b-4397-95c5-b01e1f5b4082)
 
 Here is a breakdown of the previous High Availability image of Shuffle, and how it works:
+
 1. All the **Green** colored services are our providers, meaning they are built by someone else than Shuffle, but used in the Shuffle stack. Here is our recommendation on scaling these services:
-   * [Opensearch (Database)](https://opensearch.org/docs/latest/tuning-your-cluster/). Elasticsearch also works. If you are using more than one entrypoint to Opensearch/Elasticsearch, [add the URL's comma separated in the .env file](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L104).
-   * [Memcached (Shared Memory)](#distributed_caching): We recommend starting with Memcached on a single server, and only scaling up as needed. Shuffle can run without it, but when scaling runtime locations it gives the Backend, Orborus and Workers a shared cache instead of separate process-local caches. Add multiple [comma separated URL's here](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L84) to configure multiple instances.
+   - [Opensearch (Database)](https://opensearch.org/docs/latest/tuning-your-cluster/). Elasticsearch also works. If you are using more than one entrypoint to Opensearch/Elasticsearch, [add the URL's comma separated in the .env file](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L104).
+   - [Memcached (Shared Memory)](#distributed_caching): We recommend starting with Memcached on a single server, and only scaling up as needed. Shuffle can run without it, but when scaling runtime locations it gives the Backend, Orborus and Workers a shared cache instead of separate process-local caches. Add multiple [comma separated URL's here](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L84) to configure multiple instances.
 
 2. **NFS** is Network File Storage. This is for you to be able to store files across multiple servers. This is required if you are running multiple instances of the Shuffle backend, and for them to have consistent access to the Files that you store. Only configure this if you are storing files in Shuffle. When NFS is set up, [mount your NFS storage to ./shuffle-files](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/docker-compose.yml#L28).
 
 3. The **Blue** services are YOUR services. These can be in your Cloud, Onprem etc. The service in Shuffle that needs access to this are the `Apps`, which have their network configuration copied from the `Orborus` container. If you have on-premises services that Shuffle needs access to, set up an Orborus instance in the same network, which has access to your Shuffle instance + the service in question.
 
 4. The **orange** services are Shuffle's containers. Below is a breakdown of what and how to use them.
-* **Backend:** Handles all of Shuffle's API requests, and are typically routed through the Frontend service. This means that it usually does NOT expose a port. **Scale across ALL available servers.** Available on shuffle-http://backend:5001 in the container network.
-* **Frontend:** Handles frontend & backend routing, as well as the default certificates. **Scale across ALL available servers.** Available on http://shuffle-frontend:3001 or https://shuffle-frontend:3443 in the container network.
-* **Orborus / Worker / Apps:** Orborus is in charge of this stack, and is how you control all three services. Orborus receives jobs from the Backend, and does NOT expose any port. Read more about configuring, scaling and managing them in your instance on the [/admin?tab=locations](/admin?tab=locations) page, or in the next section.
+
+- **Backend:** Handles all of Shuffle's API requests, and are typically routed through the Frontend service. This means that it usually does NOT expose a port. **Scale across ALL available servers.** Available on shuffle-http://backend:5001 in the container network.
+- **Frontend:** Handles frontend & backend routing, as well as the default certificates. **Scale across ALL available servers.** Available on http://shuffle-frontend:3001 or https://shuffle-frontend:3443 in the container network.
+- **Orborus / Worker / Apps:** Orborus is in charge of this stack, and is how you control all three services. Orborus receives jobs from the Backend, and does NOT expose any port. Read more about configuring, scaling and managing them in your instance on the [/admin?tab=locations](/admin?tab=locations) page, or in the next section.
 
 ### Scaling Runtime Locations
+
 Orborus can run in Docker-swarm mode, and in early 2023, with Kubernetes. This makes the workflow executions **A LOT** faster, use less resources, making it more scalable both on a single, as well as across multiple servers. Since September 2024, scale has been partially open source, and can be achieved with changing environment variables in the "Orborus" container for Shuffle. [Click here for Kubernetes details](https://github.com/Shuffle/Shuffle/tree/2.0.0/functions/kubernetes#instructions). If you have received a licensed version, don't forget step 3 to load in the correct worker.
 
 Let's begin with setting up Docker, Docker Compose, and creating a Docker Swarm network with two manager nodes involves several steps. Below is a step-by-step guide to achieve this:
@@ -164,6 +174,7 @@ Docker Compose Installation Guide: https://docs.docker.com/compose/install/
 Step 3: Load the license **(skip if not a customer)**
 
 You should have received a license from the Shuffle team, which comes in form of a URL. This URL can be used to download the licensed version of the Worker as many times as you want. After downloading it, you need to docker load the file.
+
 ```
 wget <url>
 docker load -i shuffle-worker.zip
@@ -172,7 +183,9 @@ docker load -i shuffle-worker.zip
 After these have been ran, it should be clear what the docker image is. This docker image needs to be used in the `SHUFFLE_WORKER_IMAGE` environment variable in step 4.
 
 **Step 4: Configure Orborus Environment Variables:**
+
 1. Add and change the following environment variables for Orborus in the docker-compose.yml file. `BASE_URL` is the external URL of the server you're running Shuffle on (the one you visit Shuffle with in your browser):
+
 ```
 # Required:
 - SHUFFLE_SWARM_CONFIG=run      # Enables SWARM scaling
@@ -202,6 +215,7 @@ To make swarm work, Please make sure that [these ports are open](https://docs.do
 **It is recommended to make sure that these ports are ONLY open internally to be sure that everything is secure.**
 
 2. When step 1 is configured, take down the stack and pull it back up AFTER initializing swarm:
+
 ```
 docker swarm init
 docker-compose down
@@ -242,14 +256,17 @@ If you get EOFs or timeouts for workers in machine B, look [here](https://shuffl
 ![](Aspose.Words.81096d25-bbff-47b2-a5ee-1ac38ad8ca4e.001.jpeg)
 
 ### Swarm: Manual worker service (Orborus scheduler-only)
+
 If you want Orborus to only schedule jobs while you manage workers as a Swarm service yourself, you can pre-create the `shuffle-workers` service and point Orborus at it. Orborus will still poll the backend queue and send execution requests to `/api/v1/execute`.
 
 1. Create the overlay network (if not already created):
+
 ```
 docker network create --driver=overlay --attachable shuffle_swarm_executions
 ```
 
 2. Create the worker service manually:
+
 ```
 docker service create \
   --name shuffle-workers \
@@ -264,6 +281,7 @@ docker service create \
 3. Deploy `shuffle-orborus` after the worker service exists so the first execution can dispatch immediately.
 
 4. Configure Orborus to use the manual worker service:
+
 ```
 - SHUFFLE_SWARM_CONFIG=run
 - SHUFFLE_WORKER_SERVER_URL=http://shuffle-workers:33333
@@ -275,6 +293,7 @@ docker service create \
 5. Ensure Orborus is attached to the same overlay network as `shuffle-workers`.
 
 **Limitations and gotchas**
+
 - Orborus still calls the Docker Swarm API (service list/create, network attach). It must run with manager-level Docker API access (direct socket or a socket proxy that exposes swarm/service/network endpoints).
 - Workers also need manager-level Docker API access to deploy app services during executions; without it, app execution fails.
 - If `shuffle-workers` is deleted or scaled to 0, Orborus will try to recreate it and may fail if it lacks permissions.
@@ -337,6 +356,7 @@ SHUFFLE_MEMCACHED=<IP>:PORT
 ```
 
 ### Distributed Caching
+
 Once you have a scalable version of Shuffle, using Docker Swarm or Kubernetes, it becomes important for short-lived execution data to be visible across services. Shuffle supports distributed caching [in the form of Memcached](https://hub.docker.com/_/memcached). Memcached helps reduce database load and gives runtime-location components a shared cache while workers are deployed and executions are updated.
 
 - Backend
@@ -346,6 +366,7 @@ Once you have a scalable version of Shuffle, using Docker Swarm or Kubernetes, i
 The database remains the source of truth. Memcached is used for cache keys such as execution data, action results, validation data, health/stat counters and worker coordination. If `SHUFFLE_MEMCACHED` is empty, each service falls back to its own local in-memory cache.
 
 To make use of Memcached, start a Memcached service on a host or service network Shuffle can access, then configure each service to use it with `SHUFFLE_MEMCACHED`. The default port is 11211. Here is a quickstart that reserves 1024 Mb of memory:
+
 ```
 docker run --name shuffle-cache -p 11211:11211 -d memcached -m 1024
 ```
@@ -353,6 +374,7 @@ docker run --name shuffle-cache -p 11211:11211 -d memcached -m 1024
 **PS: This requires swap limit capabilities on the Docker host. [More about running it in Docker here](https://hub.docker.com/_/memcached)**
 
 Once this is up, it will be listening on port 11211. From here, set `SHUFFLE_MEMCACHED` on the Backend and Orborus. Orborus forwards the same value into workers it starts, including single Docker workers, the `shuffle-workers` Swarm service and Kubernetes worker deployments. Here's an example that fits into your docker-compose file:
+
 ```
 services:
   shuffle-backend:
@@ -364,6 +386,7 @@ services:
 ```
 
 Set the same value on Orborus:
+
 ```
 services:
   orborus:
@@ -374,6 +397,7 @@ services:
 ```
 
 You can additionally add this to your docker compose with the following setting:
+
 ```
   memcached:
     image: memcached:latest
@@ -389,17 +413,19 @@ You can additionally add this to your docker compose with the following setting:
 ```
 
 ### Memcached on a Docker Swarm network
+
 When running with `SHUFFLE_SWARM_CONFIG=run`, Memcached must be reachable from the worker network. Orborus creates or uses the overlay network from `SHUFFLE_SWARM_NETWORK_NAME`, and workers use that network when they execute workflows. If Memcached only exists on the main Shuffle network, workers may fail to resolve or connect to it.
 
 You do not need to expose Memcached on the host machine for this setup. Do not add `-p 11211:11211`, `--publish`, or a Compose `ports:` entry unless something outside Docker must connect to Memcached. For Shuffle Swarm, keep Memcached internal and use `tasks.shuffle-cache:11211` from services attached to the overlay network.
 
 The common pattern is:
 
-* Backend reaches Memcached on the main Shuffle network.
-* Orborus reaches Memcached and forwards `SHUFFLE_MEMCACHED` to workers.
-* Workers reach Memcached on the execution overlay network.
+- Backend reaches Memcached on the main Shuffle network.
+- Orborus reaches Memcached and forwards `SHUFFLE_MEMCACHED` to workers.
+- Workers reach Memcached on the execution overlay network.
 
 Attach Memcached to both networks if backend and workers are not on the same overlay:
+
 ```
 docker network create --driver=overlay --attachable shuffle
 docker network create --driver=overlay --attachable shuffle_swarm_executions
@@ -415,11 +441,13 @@ docker service create \
 ```
 
 Then set the same endpoint on backend and Orborus:
+
 ```
 - SHUFFLE_MEMCACHED=tasks.shuffle-cache:11211
 ```
 
 If you manage the worker service manually, attach it to the same execution network:
+
 ```
 docker service create \
   --name shuffle-workers \
@@ -430,6 +458,7 @@ docker service create \
 ```
 
 For a Swarm stack file, the important parts look like this:
+
 ```
 services:
   shuffle-cache:
@@ -467,14 +496,17 @@ networks:
 ```
 
 Verify connectivity from a temporary container on the execution network:
+
 ```
 docker run --rm --network shuffle_swarm_executions alpine sh -c "apk add --no-cache busybox-extras >/dev/null && nc -vz tasks.shuffle-cache 11211"
 ```
 
 ### Multi-server memcached
+
 You can run Memcached on multiple servers as well, but may run into key inconsistency if clients do not route the same key to the same server. This should however not affect how things run in Shuffle, as we verify and fix request data. To do this, add multiple Memcached instances to the environment variable, comma separated.
 
 Example:
+
 ```
 - SHUFFLE_MEMCACHED=10.0.0.1:11211,10.0.0.2:11211,10.0.0.3:11211
 ```
@@ -502,6 +534,7 @@ To implement this, follow these steps:
 - Define in all your nodes the list of hostnames in /etc/hosts so all the machines can do the necessary IP resolutions when they have a hostname.
 
 - Configure an OpenSearch database cluster. For this step, it is recommended to follow the official documentation [https://opensearch.org/docs/latest/tuning-your-cluster/index/](https://opensearch.org/docs/latest/tuning-your-cluster/index/). Anyways to achieve this in a easy way you just need to change this settings in each opensearch node and reload the service:
+
 ```
 cluster.name -> Set its new value to "shuffle-cluster".
 node.name -> Set its new value to the hostname of the current node.
@@ -552,6 +585,7 @@ networks:
   shuffle:
     driver: bridge
 ```
+
 Also for this step you need to change the value of a variable inside the .env so it looks like this:`SHUFFLE_OPENSEARCH_URL=SHUFFLE_OPENSEARCH_URL=https://192.168.0.30:9200,https://192.168.0.31:9200,https://192.168.0.32:9200`. Each one of that IPs is the corresponding one to each opensearch node.
 
 - Deploy as many Orborus nodes as desired. At a minimum, it is recommended to deploy 2 nodes. If scaling is required regarding the maximum number of concurrently executing Workflows, the number of these nodes can be increased. The dockerfile of each one of the orborus nodes should look like this:
@@ -594,6 +628,7 @@ Shuffle use with Kubernetes is now possible due to help from our contributors. Y
 Due to Kubernetes not being capable of building Shuffle Apps directly, an additional container for building them is available.
 
 ### Shuffle Apps on Kubernetes
+
 By default, Shuffle Worker creates a Kubernetes Deployment and Service for each app. Each app and version has its own Deployment and Service. Shuffle automatically deploys a set of apps, and other apps are deployed on demand when they are first used.
 
 You can use `app.*` Helm values to control parts of the app deployment (resources, security context, etc.). These values are converted to environment variables on Orborus, and Orborus passes them to Worker when creating app Deployments. When `worker.enableHelmDeployment` is set, the app configuration is set on the worker directly. This configuration applies to all apps (you cannot scale or resource-tune individual apps in this mode).
@@ -601,6 +636,7 @@ You can use `app.*` Helm values to control parts of the app deployment (resource
 If you want to set CPU and memory for apps that are created dynamically by Worker, use `app.resources` (or `app.resourcesPreset`) in the chart. These values are applied to all dynamically created app Deployments.
 
 If you want full control, you can deploy apps using Helm instead. This gives you:
+
 - full control over app deployments via Helm values
 - granular control per app and version (replicas, resources, etc.)
 - fewer issues with on-demand started apps (see https://github.com/Shuffle/Shuffle/issues/1739)
@@ -633,6 +669,7 @@ apps:
 ```
 
 Notes:
+
 - The key under `apps` is only used to identify the app in values. It can be any unique name.
 - You can override any `app.*` value for a specific app via `apps.<appKey>.*` (for example, `apps.shuffleTools.replicaCount`).
 - Hybrid mode is supported: deploy some apps with Helm while still letting Worker create others on demand.
@@ -640,6 +677,7 @@ Notes:
 If you do not want Worker to manage app deployments, set `worker.manageAppDeployments=true`. This removes the required permissions from the Shuffle Worker Kubernetes Service Account and requires you to deploy all apps manually using Helm.
 
 #### Shuffle App Service Accounts
+
 By default, apps use a shared `shuffle-app` service account. If you deploy apps with Helm, you can use a dedicated service account per app.
 
 ```yaml
@@ -664,10 +702,13 @@ apps:
 All app service accounts use the `shuffle-app` role by default.
 
 ### Orborus with Kubernetes
+
 To configure Kubernetes, you need to specify a single environment variable for Orborus: RUNNING_MODE. By setting the environment variable RUNNING_MODE=kubernetes, execution should work as expected!
 
 ### Scaling Kubernetes
+
 To scale Shuffle in Kubernetes, use the following environment variables in the Orborus container:
+
 ```bash
 SHUFFLE_SCALE_REPLICAS=3 # HPA coming soon. This is for static scaling.
 SHUFFLE_WORKER_IMAGE=ghcr.io/shuffle/shuffle-worker-scale:nightly
@@ -677,9 +718,11 @@ SHUFFLE_MEMCACHED=shuffle-memcached:11211 # this depends on your setup.
 ```
 
 ### Private apps on Kubernetes
+
 To run private apps on Kubernetes, you need a private container registry to pull images from. Once you configure `REGISTRY_URL` to point to your private registry, Shuffle will automatically pull app images from there.
 
 To install the Shuffle Helm chart pointing to your custom registry, run:
+
 ```bash
 helm install shuffle oci://ghcr.io/shuffle/charts/shuffle \
   --namespace shuffle \
@@ -690,6 +733,7 @@ helm install shuffle oci://ghcr.io/shuffle/charts/shuffle \
 
 If your registry allows unauthenticated pushes (or you're not using Docker Hub), you can skip this step.
 However, if your private registry requires authentication, create and share a Docker registry secret using:
+
 ```bash
 kubectl create secret docker-registry <your_secret_name> \
   --docker-server=<registry-url> \
@@ -704,6 +748,7 @@ kubectl set env deployment/backend SHUFFLE_REGISTRY_SECRET="<your_secret_name>" 
 After switching to your private registry, the images for already-installed apps will not be available in the new registry. To avoid image-pull failures, you can mirror all existing Shuffle app images from Docker Hub into your private registry.
 
 You can use `skopeo` to mirror the entire repository (docker.io/frikky/shuffle) or run the following script to pull and push every tag manually:
+
 ```bash
 registry="your-registry.domain:5000"
 
@@ -724,12 +769,15 @@ done
 ```
 
 ### Swarm HAProxy for worker load balancing
+
 In Docker Swarm, Orborus sends requests to `shuffle-workers:33333` through the Swarm VIP. The routing mesh is not load-aware, so requests can hit saturated workers and time out under load. You can improve distribution by placing HAProxy in front of the worker tasks and pointing Orborus to HAProxy.
 
 This can be done after the Swarm stack is up, without changing how Orborus deploys workers or apps.
 
 #### 1) Create the HAProxy config
+
 Create a file named `haproxy.cfg` on a Swarm manager:
+
 ```cfg
 global
   log stdout format raw local0
@@ -761,12 +809,15 @@ backend worker_back
 ```
 
 #### 2) Deploy HAProxy as a Swarm service
+
 Ensure the worker overlay network exists (Orborus creates `shuffle_swarm_executions` by default):
+
 ```bash
 docker network create --driver=overlay --attachable shuffle_swarm_executions
 ```
 
 Create the HAProxy config and deploy it. Do not publish port 33333 on HAProxy if the worker service already uses it (Swarm only allows one published service per port). Orborus can reach HAProxy over the overlay network:
+
 ```bash
 docker config create haproxy-cfg ./haproxy.cfg
 
@@ -778,17 +829,21 @@ docker service create \
 ```
 
 #### 3) Point Orborus to HAProxy
+
 Set the worker server URL so Orborus sends executions through HAProxy:
+
 ```bash
 SHUFFLE_WORKER_SERVER_URL=http://shuffle-haproxy:33333
 ```
 
 Restart Orborus after updating the environment:
+
 ```bash
 docker restart shuffle-orborus
 ```
 
 #### 4) Verify
+
 ```bash
 docker service logs shuffle-haproxy --tail 200
 docker service ps shuffle-haproxy
@@ -1093,14 +1148,14 @@ If tasks stay `Pending`, lower replicas or add more eligible nodes.
 
 If you want encrypted node-to-node traffic on Swarm overlays, pre-create encrypted networks and point your stack file to those external networks.
 
-1) Pre-create encrypted overlays:
+1. Pre-create encrypted overlays:
 
 ```bash
 docker network create --driver overlay --attachable --opt encrypted shuffle
 docker network create --driver overlay --attachable --opt encrypted swarm_executions
 ```
 
-2) In your stack/compose config file, use external networks:
+2. In your stack/compose config file, use external networks:
 
 ```yaml
 networks:
@@ -1112,13 +1167,13 @@ networks:
     name: swarm_executions
 ```
 
-3) Deploy as normal:
+3. Deploy as normal:
 
 ```bash
 docker stack deploy -c docker-compose.yml shuffle
 ```
 
-4) Verify encryption and service attachment:
+4. Verify encryption and service attachment:
 
 ```bash
 docker network inspect shuffle | grep -i encrypted
@@ -1369,6 +1424,7 @@ For additional OpenSearch sizing, shard allocation, and cluster tuning guidance,
 - https://opensearch.org/docs/latest/tuning-your-cluster/
 
 ## Networking
+
 Networking with Shuffle is pretty straight forward. What we check for are the following:
 
 - Can Shuffle reach your services?
@@ -1380,29 +1436,32 @@ There are however many things that can go wrong with these simple mechanisms, le
 
 Proxies are another requirement to many enterprises, hence it's an important feature to support. There are two places where proxies can be implemented:
 
-* Shuffle Backend: Connects to Github and Dockerhub.
-* Shuffle Orborus: Connects to Dockerhub and Shuffle Backend.
+- Shuffle Backend: Connects to Github and Dockerhub.
+- Shuffle Orborus: Connects to Dockerhub and Shuffle Backend.
 
 **PS: Orborus settings are also set for the Worker**
 
 To configure these, there are two options:
 
-* Internal vs External proxy (shuffle vs apps)
-* Individual containers
-* Globally for Docker
+- Internal vs External proxy (shuffle vs apps)
+- Individual containers
+- Globally for Docker
 
 To **DISABLE** proxy for **internal** Shuffle traffic (between internal containers), add the following environment variables to Orborus:
+
 ```
 SHUFFLE_INTERNAL_HTTP_PROXY=noproxy
 SHUFFLE_INTERNAL_HTTPS_PROXY=noproxy
 ```
 
 To disable proxy use for specific domains, use NO_PROXY with comma separation between domains:
+
 ```
 NO_PROXY=myinternal-domain.com,random.org
 ```
 
 If you need a separate no-proxy list for internal Shuffle traffic, set one of these on Orborus:
+
 ```
 SHUFFLE_INTERNAL_NO_PROXY=shuffle-backend,shuffle-workers
 # Legacy alias also supported by backend/shared code:
@@ -1456,6 +1515,7 @@ HTTPS_PROXY=
 ```
 
 ### Opensearch / Elasticsearch proxies
+
 Connections from Shuffle's backend to the Opensearch database **does NOT** follow normal HTTP_PROXY and NOPROXY environment variables.
 
 Opensearch and Elasticsearch proxy configuration can be set using the `SHUFFLE_OPENSEARCH_PROXY` environment variable.
@@ -1469,10 +1529,13 @@ To set up proxies in individual containers, open docker-compose.yml and add the 
 ![Proxy containers](https://github.com/shuffle/shuffle-docs/blob/master/assets/proxy-containers.png?raw=true)
 
 ### Orborus running on a different network
+
 All you'll need to do is allow orborus to have access to the backend OR frontend of Shuffle.
 
 ### Internal vs External proxy
+
 As of November 2023, we added another way to configure a difference between these two:
+
 - Internal tools like Backend -> Orborus -> Worker <-> Apps
 - Apps -> External tools
 
@@ -1515,10 +1578,10 @@ The New Routing steps are automatic as long as you update the BASE_URL to point 
 
 Necessary info for the truststore to create TLS/SSL certificates:
 
-* Certificates are located in ./frontend/certs.
-* ./frontend/README.md contains information on generating a self-signed cert
-* (default): Privatekey is named privkey.pem
-* (default): Fullchain is named fullchain.pem
+- Certificates are located in ./frontend/certs.
+- ./frontend/README.md contains information on generating a self-signed cert
+- (default): Privatekey is named privkey.pem
+- (default): Fullchain is named fullchain.pem
 
 If you want to change this, edit ./frontend/Dockerfile and ./frontend/nginx.conf.
 
@@ -1531,21 +1594,25 @@ After changing certificates, you can rebuild the entire frontend by running (./f
 Make sure that the output image is the same in your docker-compose.yml file. This should work seemlessly for you next.
 
 ### App Certificates
+
 As of November 2023, it is possible to mount folders into apps. This is in order for you to have better control of what Shuffle Apps can do, with the main reason being to manage certificates or dynamic, large files.
 
 To mount in certificates to ALL App containers, add the following environment variable to the "Orborus" container, but change the source and destination folder. The item BEFORE the colon (:) is the source folder on your machine, with the one AFTER the colon (:) being for the destination folder in the app itself.
 
 If you want more multiple folders mounted, add them with a comma. Folders MUST exist, otherwise apps may not run, and the Worker will throw an error in the logs with Workflow Runs not finishing. If you are in production, we recommend trying this feature in a separate Runtime Location.
+
 ```
 SHUFFLE_VOLUME_BINDS="/etc/ssl/certs:/usr/local/share/ca-certificates,/srcfolder:/dstfolder"
 ```
 
 ### Using the Nginx Reverse Proxy for TLS/SSL
+
 If you intend to use Nginx as a Reverse Proxy, the main steps are below. [Here is a basic single-server architecture for it](https://jamboard.google.com/d/1zJU8yMzbsu-XWeZnch_5MoDwmMNkkN8ZmoGNLCaHPlU/edit?usp=sharing). The Docker version is further down.
 
 1. [Install Nginx](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04) on your server (find the correct distro), or in a [Docker container by itself](https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Docker-Nginx-reverse-proxy-setup-example).
 2. Make sure you have a VALID certificate that matches your domain/hostname and [add this to your Nginx server](https://phoenixnap.com/kb/install-ssl-certificate-nginx)
 3. In the nginx.conf file (/etc/nginx/conf.d/default.conf or similar), under "server", add the information below. Make sure to change the "proxy_pass" part. This is how it will redirect all /api requests.
+
 ```
 location / {
     proxy_pass SHUFFLE FRONTENDIP;
@@ -1559,10 +1626,13 @@ location / {
     proxy_ssl_verify off;
 }
 ```
+
 4. Restart Nginx! `systemctl restart nginx`
 
 ### Nginx in Docker
+
 1. Add the following service to your docker-compose.yml
+
 ```
   nginx-proxy:
     image: nginx:latest
@@ -1578,6 +1648,7 @@ location / {
 ```
 
 2. Add a new nginx configuration file called `nginx-conf` with the following (you may add additional Nginx configuration to this):
+
 ```
 server {
     listen 443 ssl;
@@ -1605,10 +1676,11 @@ server {
 4. Restart everything: `docker-compose down; docker-compose up -d`
 
 ### Internal Certificate Authority
-By default, certificates are not being verified when outbound traffic goes from Shuffle. This is due to the massive use of self-signed certificates when using internal services. You may ignore certificate warnings by adding `SHUFFLE_SKIPSSL_VERIFY=true` to the environment of each relevant service - most notably used for Orborus.  If you want to accept your Certificate Authority for all requests, there are a few ways to do this:
+
+By default, certificates are not being verified when outbound traffic goes from Shuffle. This is due to the massive use of self-signed certificates when using internal services. You may ignore certificate warnings by adding `SHUFFLE_SKIPSSL_VERIFY=true` to the environment of each relevant service - most notably used for Orborus. If you want to accept your Certificate Authority for all requests, there are a few ways to do this:
 
 1. Mount your CA certificates (recommended): Add the `./certs:/certs` mount to the Orborus service in your docker-compose.yml. Ensure that the shuffle directory contains a certs subdirectory with all the necessary certificate files. This will automatically append all certificates in `./certs` to the system's root CA.
-2. Docker Daemon level  - point to your cert: `$ dockerd --tlscacert=/path/to/custom-ca-cert.pem`
+2. Docker Daemon level - point to your cert: `$ dockerd --tlscacert=/path/to/custom-ca-cert.pem`
 3. Add it to every app (per-image configuration). You can do this by modifying the Dockerfile for an app and manually building it with the certificate in the Dockerfile of each Docker image. Restart Shuffle after this is done.
 
 As this may require advanced Docker understanding, reach out to ask us about it: [support@shuffler.io](mailto:support@shuffler.io)
@@ -1619,7 +1691,6 @@ Shuffle supports IPv6 in Docker by default, but your docker engine may not. IPv6
 
 [https://docs.docker.com/config/daemon/ipv6/](https://docs.docker.com/config/daemon/ipv6/)
 
-
 ### Enterprise Environments
 
 In most enterprise environments, Shuffle will be behind firewalls, proxies and other networking equipment. If this is the case, below are the requirements to make Shuffle work anywhere. The most common issue has to do with downloads from Alpine linux's Docker images while Shuffle is running.
@@ -1628,20 +1699,17 @@ In most enterprise environments, Shuffle will be behind firewalls, proxies and o
 
 ### Change the Database from OpenSearch to Elasticsearch
 
--	Open the Docker-compose.yml file in the Shuffle directory. Find the OpenSearch container section and either comment out or remove the details. Save your modifications to the file.
+- Open the Docker-compose.yml file in the Shuffle directory. Find the OpenSearch container section and either comment out or remove the details. Save your modifications to the file.
 
- 	![image](https://github.com/yogeshgurjar127/Shuffle-docs/assets/118437260/5a9ff541-14f4-4ddc-8c04-08a874ffc3ff)
+  ![image](https://github.com/yogeshgurjar127/Shuffle-docs/assets/118437260/5a9ff541-14f4-4ddc-8c04-08a874ffc3ff)
 
-- Now open the .env file and change the below value in the .env  from false to true for Elasticsearch database enable.
+- Now open the .env file and change the below value in the .env from false to true for Elasticsearch database enable.
 
   ![image](https://github.com/yogeshgurjar127/Shuffle-docs/assets/118437260/f1116c97-daa2-48ba-80f4-f14803c1629d)
 
--	Find the part in the .env file that defines database configurations. Update the Elasticsearch host configuration using your Elasticsearch IP address.
+- Find the part in the .env file that defines database configurations. Update the Elasticsearch host configuration using your Elasticsearch IP address.
 
-  ![image](https://github.com/yogeshgurjar127/Shuffle-docs/assets/118437260/13277ad5-269d-44a7-ab3b-13916bb9ce0e)
-
-
-
+![image](https://github.com/yogeshgurjar127/Shuffle-docs/assets/118437260/13277ad5-269d-44a7-ab3b-13916bb9ce0e)
 
 ### Domain Whitelisting
 
@@ -1667,7 +1735,7 @@ production.cloudflare.docker.com     # Protects of DockerHub
 
 ### Incoming IP Whitelisting
 
-When using Shuffle in the cloud (*.shuffler.io), the incoming IP to your services by default will be be from our cloud functions, if you are not using [Runtime Locations](/admin?tab=locations). The range is **not static**, and may wary based on region. Here's a list (mostly IPv6 as of 2025):
+When using Shuffle in the cloud (\*.shuffler.io), the incoming IP to your services by default will be be from our cloud functions, if you are not using [Runtime Locations](/admin?tab=locations). The range is **not static**, and may wary based on region. Here's a list (mostly IPv6 as of 2025):
 
 ```
 Default (London): 2600:1900:2000:2a:400::0 -> 2600:1900:2000:2a:400::ffff
@@ -1688,10 +1756,12 @@ Architecture connecting from cloud to onprem (hybrid):
 ![image](https://github.com/user-attachments/assets/7f0b6146-ebae-4133-bbc7-8b158d48c3a9)
 
 ### Static inbound IPs for cloud
-As a customer of Shuffle we can provide you with a static **IP range** with secondary domains that can be used for cloud routing. May incur costs depending on needs. Contact support@shuffler.io for more info. 
+
+As a customer of Shuffle we can provide you with a static **IP range** with secondary domains that can be used for cloud routing. May incur costs depending on needs. Contact support@shuffler.io for more info.
 
 Areas of relevance:
-- Your Environment -> Shuffle Cloud (*.shuffler.io)
+
+- Your Environment -> Shuffle Cloud (\*.shuffler.io)
 - Shuffle Cloud -> Your Enviroment
 
 ### Manual Docker image transfers
@@ -1722,9 +1792,11 @@ docker load shuffle_tools.tar
 ```
 
 ### No Internet Install
+
 This procedure will help you export what you need to run Shuffle on a no internet host.
 
 **The following features will not work without internet:**
+
 - Cloud Sync
 - Automatic Health System (/health page)
 - UI app activations
@@ -1732,9 +1804,11 @@ This procedure will help you export what you need to run Shuffle on a no interne
 - Depending on your network: Search engine. This is a frontend feature, if you are in a no-internet zone, it will stop working.
 
 1. Prerequise
-* Both machines has Docker and Docker Compose installed already
 
-* Your host machine already needs the images on it to make them exportable
+- Both machines has Docker and Docker Compose installed already
+
+- Your host machine already needs the images on it to make them exportable
+
 2. Pull images on original machine
 
 Shuffle need a few base images to work:
@@ -1810,141 +1884,292 @@ To modify the database location, change "DB_LOCATION" in .env (root dir) to your
 Shuffle uses OpenSearch (or Elasticsearch) as its primary database. Below is a complete list of all indexes used by Shuffle, organized by category.
 
 #### Default Credentials
+
 The default OpenSearch credentials for Shuffle are:
+
 - **Username:** `admin`
 - **Password:** `StrongShufflePassword321!`
 
 These can be changed via environment variables in your `.env` file:
+
 - `SHUFFLE_OPENSEARCH_USERNAME`
 - `SHUFFLE_OPENSEARCH_PASSWORD`
 
 #### Index Prefix
+
 You can set a custom prefix for all indexes using the `SHUFFLE_OPENSEARCH_INDEX_PREFIX` environment variable. This is useful when running multiple Shuffle instances on a single OpenSearch cluster.
 
 Example: If `SHUFFLE_OPENSEARCH_INDEX_PREFIX=prod`, the `workflow` index becomes `prod_workflow`.
 
 #### Core Indexes
 
-| Index | Description |
-|-------|-------------|
-| `workflow` | Workflow definitions and configurations |
-| `workflowexecution` | Workflow execution records and results |
-| `workflowapp` | Workflow application definitions |
-| `workflowappauth` | App authentication configurations |
-| `workflowappauthgroup` | Authentication group configurations |
-| `workflowqueue-{env}` | Execution queue per environment (dynamic, based on Orborus environment) |
-| `workflow_revisions` | Workflow version history |
-| `app_revisions` | App version history |
+| Index                  | Description                                                             |
+| ---------------------- | ----------------------------------------------------------------------- |
+| `workflow`             | Workflow definitions and configurations                                 |
+| `workflowexecution`    | Workflow execution records and results                                  |
+| `workflowapp`          | Workflow application definitions                                        |
+| `workflowappauth`      | App authentication configurations                                       |
+| `workflowappauthgroup` | Authentication group configurations                                     |
+| `workflowqueue-{env}`  | Execution queue per environment (dynamic, based on Orborus environment) |
+| `workflow_revisions`   | Workflow version history                                                |
+| `app_revisions`        | App version history                                                     |
 
 #### Organization & User Indexes
 
-| Index | Description |
-|-------|-------------|
-| `organizations` | Organization data and settings |
-| `users` | User accounts and profiles |
-| `sessions` | User session tokens |
-| `apikey` | API key storage |
-| `partners` | Partner organization data |
-| `org_statistics` | Organization usage statistics |
-| `org_cache` | Organization cache data (KV store) |
-| `org_cache_revisions` | Cache version history |
+| Index                 | Description                        |
+| --------------------- | ---------------------------------- |
+| `organizations`       | Organization data and settings     |
+| `users`               | User accounts and profiles         |
+| `sessions`            | User session tokens                |
+| `apikey`              | API key storage                    |
+| `partners`            | Partner organization data          |
+| `org_statistics`      | Organization usage statistics      |
+| `org_cache`           | Organization cache data (KV store) |
+| `org_cache_revisions` | Cache version history              |
 
 #### Files & Storage Indexes
 
-| Index | Description |
-|-------|-------------|
-| `files` | File metadata storage |
-| `datastore_category` | Datastore category definitions |
-| `datastore_ngram` | N-gram data for search functionality |
-| `oauth2_storage` | OAuth2 token storage |
+| Index                | Description                          |
+| -------------------- | ------------------------------------ |
+| `files`              | File metadata storage                |
+| `datastore_category` | Datastore category definitions       |
+| `datastore_ngram`    | N-gram data for search functionality |
+| `oauth2_storage`     | OAuth2 token storage                 |
 
 #### Triggers & Automation Indexes
 
-| Index | Description |
-|-------|-------------|
-| `hooks` | Webhook configurations |
-| `schedules` | Scheduled task definitions |
-| `pipelines` | Pipeline definitions |
-| `trigger_auth` | Trigger authentication data |
-| `environments` | Environment configurations |
+| Index                | Description                 |
+| -------------------- | --------------------------- |
+| `hooks`              | Webhook configurations      |
+| `schedules`          | Scheduled task definitions  |
+| `pipelines`          | Pipeline definitions        |
+| `trigger_auth`       | Trigger authentication data |
+| `environments`       | Environment configurations  |
 | `gmail_subscription` | Gmail trigger subscriptions |
 
 #### Notifications & Communication Indexes
 
-| Index | Description |
-|-------|-------------|
-| `notifications` | Notification records |
-| `conversations` | AI conversation data |
+| Index                   | Description           |
+| ----------------------- | --------------------- |
+| `notifications`         | Notification records  |
+| `conversations`         | AI conversation data  |
 | `conversation_metadata` | Conversation metadata |
-| `suggestions` | System suggestions |
+| `suggestions`           | System suggestions    |
 
 #### Statistics & Monitoring Indexes
 
-| Index | Description |
-|-------|-------------|
-| `platform_health` | Platform health check data |
-| `app_execution_values` | App execution value cache |
-| `app_stats` | App usage statistics |
-| `creator_stats` | Creator statistics |
-| `environment_stats` | Environment statistics |
-| `singul_stats` | Singul integration stats |
+| Index                   | Description                |
+| ----------------------- | -------------------------- |
+| `platform_health`       | Platform health check data |
+| `app_execution_values`  | App execution value cache  |
+| `app_stats`             | App usage statistics       |
+| `creator_stats`         | Creator statistics         |
+| `environment_stats`     | Environment statistics     |
+| `singul_stats`          | Singul integration stats   |
 | `live_execution_status` | Real-time execution status |
 
 #### Detection & Rules Indexes
 
-| Index | Description |
-|-------|-------------|
-| `disabled_rules` | Disabled detection rules |
+| Index            | Description                      |
+| ---------------- | -------------------------------- |
+| `disabled_rules` | Disabled detection rules         |
 | `selected_rules` | Selected/enabled detection rules |
 
 #### Other Indexes
 
-| Index | Description |
-|-------|-------------|
-| `openapi3` | OpenAPI spec storage |
-| `usecases` | Use case definitions |
-| `reseller_deal` | Reseller deal data |
-| `training` | Training/ML data |
-| `synckey` | Cloud sync key data |
-| `shuffle_logs` | Shuffle system logs |
+| Index           | Description          |
+| --------------- | -------------------- |
+| `openapi3`      | OpenAPI spec storage |
+| `usecases`      | Use case definitions |
+| `reseller_deal` | Reseller deal data   |
+| `training`      | Training/ML data     |
+| `synckey`       | Cloud sync key data  |
+| `shuffle_logs`  | Shuffle system logs  |
 
-#### Indexes with Aliasing & Rollover
+#### Indexes with Rollover (Append-Only Stores)
 
-The following 11 indexes are configured with **aliasing and automatic rollover** for better scaling. These indexes are created with the pattern `{index}-000001` and have an alias pointing to the write index. This is handled by `InitOpensearchIndexes()` on startup.
+Only genuinely **append-only** data gets aliasing and automatic rollover for scaling. These are created with the pattern `{index}-000001`, use an alias pointing to the write index, and may roll into new generations (with optional ISM retention). This is handled by `InitOpensearchIndices()` on startup.
 
 ```
-workflowexecution, datastore_ngram, org_cache, org_cache_revisions,
-notifications, shuffle_logs, environments, org_statistics,
-workflowapp, workflow, workflow_revisions
+shuffle_logs, workflow_revisions, org_cache_revisions, workflowexecution (archive - see below)
 ```
+
+**Stateful keyed stores stay on a single backing index** (no rollover). Each document has a stable `_id` that is updated in place — e.g. executions move `RUNNING -> FINISHED/ABORTED`, notifications toggle `read`/`ignored` — so rolling them would split an `_id` across generations and silently produce duplicate documents (OpenSearch routes alias writes to the current write-index generation with no cross-generation `_id` awareness). On startup, Shuffle collapses any legacy multi-generation state back into one backing index, keeping the newest copy of each `_id`:
+
+```
+datastore_ngram, org_cache, environments, org_statistics,
+workflowapp, workflow, datastore_category, notifications, workflowexecution_live
+```
+
+#### workflowexecution: Hot/Cold Lifecycle
+
+`workflowexecution` is neither a pure append-only store nor a simple keyed
+store: the same `execution_id` is rewritten in place while a run is
+in-flight (`EXECUTING` → `FINISHED`/`ABORTED`), which makes plain rollover
+unsafe, but its overall volume needs rollover-style scaling once history
+accumulates. Shuffle handles this with a two-index split:
+
+- **`workflowexecution_live`** - a small, single, keyed index holding every
+  execution that is not yet in a terminal state, plus terminal executions
+  still inside a short grace period. All execution writes land here first.
+- **`workflowexecution`** - the existing index/alias, which now serves as an
+  append-only, rollover-managed **archive**. A background sweep moves
+  confirmed-terminal executions here once they're past the grace period.
+
+Reads check the live index first and fall back to the archive; list/history
+queries search both in a single request. Existing deployments upgrade with
+zero downtime: the current `workflowexecution` index becomes the archive
+as-is (no reindex of history), and only currently in-flight executions are
+copied into the new live index on first startup after upgrading.
+
+If a rerun/continue is attempted on an execution that has already been
+archived, the API returns a clean `{"success": false, "reason": "..."}`
+response instead of an error, since archived executions are immutable.
+
+Configuration:
+
+- `OPENSEARCH_EXECUTION_GRACE_PERIOD` (default `1h`, Go duration string, e.g. `90m`) - how long a terminal
+  execution stays in the live index before becoming archivable.
+- `OPENSEARCH_EXECUTION_ARCHIVE_SWEEP_INTERVAL` (default `30m`, Go duration string, e.g. `15m`) - how often
+  the archival sweep runs.
+- Archive retention defaults to `365` days and is configured the same way
+  as every other rollover index's retention - via the existing
+  `OPENSEARCH_INDEX_RETENTION_DAYS` JSON env var (e.g.
+  `{"workflowexecution": 180}`). No dedicated env var was added for this.
+- `SHUFFLE_SKIP_EXECUTION_LIVE_MIGRATION` (default unset/runs) - skips only
+  the one-time startup migration of pre-upgrade in-flight executions into
+  `workflowexecution_live`. Safe to disable: any execution left behind
+  self-heals the first time it's written to with a non-terminal status.
+  Useful for very large deployments that want to run this migration
+  manually during a maintenance window instead of automatically on every
+  restart.
+- `SHUFFLE_SKIP_EXECUTION_ARCHIVAL_SWEEP` (default unset/runs) - skips only
+  the recurring sweep that moves terminal executions from live to archive.
+  Disabling this defeats the point of the hot/cold split (the live index
+  will grow unbounded), so a warning is logged on every startup while set.
+
+**Note:** these two flags are independent of the existing
+`SHUFFLE_SKIP_OPENSEARCH_INDEX_INIT`, which only controls whether Shuffle
+creates/manages OpenSearch indexes, mapping templates, and ISM policies -
+for operators who provision their OpenSearch schema externally. Setting
+that flag does not disable the execution lifecycle jobs above; they are
+started independently so self-hosted operators who manage their own index
+infrastructure still get the scaling benefit of this feature.
 
 **Default rollover conditions:**
+
 - Max age: 90 days
 - Max size: 40GB
 - Max documents: 1,000,000
 
 **Default index settings:**
+
 - Shards: 3
 - Replicas: 1
 - Refresh interval: 30s
 
 You can customize these with environment variables:
-- `OPENSEARCH_INDEX_CONFIG` - Custom JSON for index settings/mappings
-- `OPENSEARCH_INDEX_ROLLOVER` - Custom JSON for rollover conditions
-- `SHUFFLE_SKIP_OPENSEARCH_INDEX_INIT=true` - Skip automatic index initialization
+
+- `OPENSEARCH_INDEX_CONFIG` - Custom JSON for index settings/mappings. When set, Shuffle does not manage mappings or rollover for you (you own the schema). No default (unset = Shuffle-managed schema).
+- `OPENSEARCH_INDEX_ROLLOVER` - Custom JSON for rollover conditions. Default (equivalent to leaving unset):
+  ```json
+  {"max_age": "90d", "max_size": "40gb", "max_docs": 1000000}
+  ```
+- `OPENSEARCH_USE_ISM_ROLLOVER` - Set to `false` to use direct shard rollover instead of the ISM (Index State Management) plugin. Default: `true` (ISM-managed).
+- `OPENSEARCH_ISM_POLICY_NAME` - Name for the ISM rollover/retention policy. Default: `shuffle-rollover`.
+- `OPENSEARCH_INDEX_RETENTION_DAYS` - Optional JSON map of index to retention period (e.g. `{"shuffle_logs":"90d"}`), used to delete old rolled generations via ISM. No default (unset = indexes never expire on their own).
+- `OPENSEARCH_NOTIFICATION_RETENTION_DAYS` - `notifications` has no permanent terminal state (read/ignored can toggle back and forth), so instead of rollover it uses a daily cleanup sweep that deletes notifications which are read-or-ignored and older than this many days. Default: `0` (disabled/opt-in). Example: `30`.
+- `SHUFFLE_SKIP_OPENSEARCH_INDEX_INIT=true` - Skip automatic index initialization. Default: unset (index management runs).
+
+#### Automatic Mapping & Field Changes
+
+Shuffle applies curated field mappings (typed `keyword` ids, `date`/`epoch_second` timestamps, `long` counters, `boolean` flags, and `index:false` for binary blobs like images) when an index is created fresh. Because the behavior of these fields is set at index creation, Shuffle keeps them current automatically:
+
+- **Single/keyed indexes** are re-indexed into a fresh generation on startup if their live mapping no longer matches (idempotent, no-op when up to date).
+- **Append/rollover indexes** have an index mapping template registered so every **future** rolled generation is created with the current mappings. Existing backing indexes are left as-is (they are not re-indexed automatically).
+
+These are skipped when `OPENSEARCH_INDEX_CONFIG` is set.
+
+> Note: Mappings are immutable in OpenSearch. Re-indexing is the only way to change a field type on existing data. The automatic migration above handles this for single/keyed stores; for very large append stores, you may still need a manual re-index (see below).
+
+> Exception: `created`/`edited`/`started_at` on `workflowexecution` are mapped `long` rather than `date`, since these fields are sorted across `workflowexecution_live` and the archive (and across archive generations) - `date` fields store doc values internally as epoch milliseconds regardless of the `epoch_second` format annotation, which would silently corrupt sort order against older generations that still have these fields inferred as `long`.
+
+### OpenSearch Permissions (Security Plugin / RBAC)
+
+If your OpenSearch cluster has the security plugin enabled - especially if it's a **shared cluster** also holding other tenants' data (SIEM logs, SRE data, other applications) - the credential Shuffle uses should be scoped down to the minimum required, not given the `all_access` role.
+
+#### Recommended index permissions
+
+Grant `indices_all` (or a narrower CRUD set, if you prefer) only on Shuffle's own index patterns:
+
+```
+<prefix>_*
+```
+
+(or `*` if you don't set `SHUFFLE_OPENSEARCH_INDEX_PREFIX`). This is enough for all of Shuffle's normal document read/write/search operations, and for listing/inspecting its own indexes and aliases (Shuffle uses the per-index `_settings` and `_alias` endpoints - not the cluster-level `_cat/indices`/`_cat/aliases` - specifically so index enumeration works with index-scoped permissions only).
+
+#### Cluster permissions
+
+Shuffle does need the following cluster-level admin permissions to manage its own rollover/retention and index mapping lifecycle:
+
+| Permission                                                             | Used for                                                                                   |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `cluster:monitor/main`                                                 | Basic startup connectivity check (`GET /`)                                                 |
+| `cluster:admin/opendistro/ism/policy/*`                                | Creating/updating the ISM rollover + retention policy (`shuffle-rollover-*`)               |
+| `cluster:admin/opendistro/ism/managedindex/*`                          | Attaching/managing the ISM policy on Shuffle's rollover-managed indexes                    |
+| `indices:admin/index_template/put`, `indices:admin/index_template/get` | Registering the index mapping template so new rollover generations get correct field types |
+| `cluster:monitor/task/get`                                             | Polling the reindex task started for one-time legacy index/alias collision migrations to completion, and detecting per-document failures instead of silently losing data |
+| `cluster:monitor/tasks/lists`                                          | Checking whether a matching reindex is already running (e.g. started by another backend replica) before starting a duplicate one - best-effort only, gracefully skipped if not granted |
+
+**Known residual risk:** OpenSearch's security plugin has no per-resource-pattern scoping for ISM policies or index templates - these are all-or-nothing cluster-wide grants. A credential with these permissions can, in principle, create/overwrite an ISM policy or index template belonging to a _different_ tenant on the same cluster, even if its index permissions are correctly scoped to `<prefix>_*`. This is a structural limitation of OpenSearch's permission model, not something Shuffle can restrict further from the application side. If you run a genuinely shared, multi-tenant cluster, mitigate this by:
+
+- Alerting on ISM policy or index template writes whose ID/pattern doesn't match Shuffle's own naming, sourced from audit logs of the Shuffle credential.
+- Using a dedicated OpenSearch cluster (or dedicated node role/tenant) for Shuffle if this residual risk isn't acceptable for your compliance requirements.
+
+#### Example role (matches what Shuffle actually needs)
+
+```json
+{
+  "cluster_permissions": [
+    "cluster:monitor/main",
+    "cluster:admin/opendistro/ism/policy/*",
+    "cluster:admin/opendistro/ism/managedindex/*",
+    "indices:admin/index_template/put",
+    "indices:admin/index_template/get",
+    "cluster:monitor/task/get",
+    "cluster:monitor/tasks/lists"
+  ],
+  "index_permissions": [
+    {
+      "index_patterns": ["<prefix>_*"],
+      "allowed_actions": ["indices_all"]
+    }
+  ]
+}
+```
+
+**Note:** without `cluster:monitor/task/get`, Shuffle can still start a legacy index/alias collision migration, but cannot poll it to completion or detect document-level failures - it will log a permission-denied error and safely retry on the next restart rather than silently assuming success. `cluster:monitor/tasks/lists` is used only to avoid starting a duplicate reindex when another replica already started one; if missing, Shuffle simply skips that check and may occasionally start redundant (harmless, idempotent) duplicate work instead. Neither permission affects normal indexing/search/rollover.
+
+Bind this role to the OpenSearch user configured via `SHUFFLE_OPENSEARCH_USERNAME` / `SHUFFLE_OPENSEARCH_PASSWORD`.
 
 ### Re-indexing & Index Management
 
 #### When to Re-index
+
 Re-indexing is rarely needed since Shuffle uses automatic rollover for high-volume indexes. However, you may need to re-index when:
 
-- **`workflowexecution` is slow** - The most common issue. If this index grew large before rollover was configured, queries become slow. Re-index into a fresh index with proper aliasing.
+- **`workflowexecution` is slow** - Handled automatically by the hot/cold
+  lifecycle split above (see workflowexecution_live/archive). Manual
+  re-indexing of `workflowexecution` should no longer be necessary; if it
+  still occurs, check that `OPENSEARCH_EXECUTION_ARCHIVE_SWEEP_INTERVAL` is
+  running (look for "Archived N terminal executions" log lines).
 - **Changing shard count** - OpenSearch locks primary shard count at creation. If you need more shards for a large dataset, you must re-index.
 - **Field mapping changes** - OpenSearch doesn't allow changing field types (e.g., `text` to `keyword`). Schema changes require re-indexing.
 - **Index corruption** - Rare, but if an index gets corrupted, re-index from backups.
 - **Cluster migration** - Moving from single-node to clustered OpenSearch, or migrating between clusters.
 
 #### Re-indexing a Single Index
+
 ```bash
 # Using OpenSearch API directly
 curl -X POST "https://localhost:9200/_reindex" -H 'Content-Type: application/json' -d'
@@ -1957,6 +2182,7 @@ curl -X POST "https://localhost:9200/_reindex" -H 'Content-Type: application/jso
 ```
 
 #### Checking Index Health
+
 ```bash
 # List all Shuffle indexes
 curl -X GET "https://localhost:9200/_cat/indices/*workflow*?v"
@@ -1969,7 +2195,9 @@ curl -X GET "https://localhost:9200/workflowexecution/_alias"
 ```
 
 #### Manual Rollover
+
 If an index grows too large before automatic rollover triggers:
+
 ```bash
 curl -X POST "https://localhost:9200/workflowexecution/_rollover" -H 'Content-Type: application/json' -d'
 {
@@ -1980,7 +2208,9 @@ curl -X POST "https://localhost:9200/workflowexecution/_rollover" -H 'Content-Ty
 ```
 
 #### Deleting Old Index Data
+
 For indexes with rollover, you can delete old backing indexes:
+
 ```bash
 # List backing indexes
 curl -X GET "https://localhost:9200/_cat/indices/workflowexecution-*?v"
@@ -2006,8 +2236,8 @@ As Shuffle has a lot of individual parts, debugging can be quite tricky. To get 
 | worker-8a666e4f-e544-440e-bf0f-4220e7cc9e25 |                       |                  |                                                                                                            |
 
 ### Disabling Image downloads
-There are cases where automatic image downloads may occur, such as when you restart Orborus. You can disable this with `SHUFFLE_AUTO_IMAGE_DOWNLOAD=false`
 
+There are cases where automatic image downloads may occur, such as when you restart Orborus. You can disable this with `SHUFFLE_AUTO_IMAGE_DOWNLOAD=false`
 
 ### Execution debugging
 
@@ -2023,9 +2253,9 @@ Execution debugging might be the most notable issue you might explain. This is b
 
 As previously stated, a lot can go wrong. Here's the most common issues:
 
-* Networking (firewalls / proxies)
-* Badly formed apps.
-* Bad environment
+- Networking (firewalls / proxies)
+- Badly formed apps.
+- Bad environment
 
 ### General debugging
 
@@ -2079,8 +2309,6 @@ docker logs -f CONTAINER_ID
 
 As can be seen in the image above, is shows the exact execution order it takes. It starts by finding the parents, before executing the child process after it's finished. Take note of the specific apps being executed as well. It says "Time to execute \<app_id\> with app \<app_name:app_version\>. This indicates the app THAT WILL be executed. The following lines saying "Container \<container_id\> is the container created with this app.
 
-
-
 5. App debugging in itself might be the trickiest. There are a lot of factors like branches, bad workflow building etc that might come into play. This builds on the same concept as the worker, where you pass the container ID it specified.
 
 Get the app logs
@@ -2114,20 +2342,22 @@ For now, the docker socket is required to run Shuffle. Whether you run with Kube
 
 **Usage of the socket**:
 
-* Backend (Not required, but used for app management)
-* Orborus (Required, deploying Workers)
-* Worker    (Required, deploying Apps. Apps DONT have access to the socket.)
+- Backend (Not required, but used for app management)
+- Orborus (Required, deploying Workers)
+- Worker (Required, deploying Apps. Apps DONT have access to the socket.)
 
 **API's in use**
 
-* Backend: Create, Make, Export docker images. No direct container management.
-* Orborus: Download and Remove images. Make, List and Remove containers. Make, List and Remove services.
-* Worker: Download and Remove images. Make, List and Remove containers. Make, List and Remove services.
+- Backend: Create, Make, Export docker images. No direct container management.
+- Orborus: Download and Remove images. Make, List and Remove containers. Make, List and Remove services.
+- Worker: Download and Remove images. Make, List and Remove containers. Make, List and Remove services.
 
 ### Docker Socket Proxy
+
 In certain scenarios or environments, you may find the docker socket to not have the right permissions, or running the socket directly on your software to be against internal policies. To solve this problem, we've built support for the [docker socket proxy](https://github.com/Tecnativa/docker-socket-proxy), which will give the containers the same permissions, but without the socket being directly mounted in the same container. Another good reason to use the docker socket proxy is to control the docker permissions required.
 
 To use the docker socket proxy, add the following to your docker-compose.yml as a service. This will lauch it together with the rest:
+
 ```
   docker-socket-proxy:
     image: tecnativa/docker-socket-proxy
@@ -2157,6 +2387,7 @@ To use the docker socket proxy, add the following to your docker-compose.yml as 
 ```
 
 When done, remove the "/var/run/docker.sock" volume from the backend and orborus services in the docker-compose. To enable the docker rerouting, add this environment variable to both of them
+
 ```
       - DOCKER_HOST=tcp://docker-socket-proxy:2375
 ```
@@ -2189,7 +2420,6 @@ For this, the scripts have been prepared with the alerting mechanism which will 
 
 This script will determine whether or not the disc space is more than 75% full. If so, an alert will be sent to your Webhook URL. Replace the script's <Webhook-URL> with your Webhook URL.
 
-
 ```
 #!/bin/sh
 df -H | grep -vE '^Filesystem|tmpfs|cdrom' | awk '{ print $5 " " $1 }' | grep -v overlay | while read output;
@@ -2206,7 +2436,6 @@ done
 ### Memory Check Script
 
 This script will determine whether or not the memory utilization is more than 70%. If so, an alert will be sent to your Webhook URL. Replace the script's <Webhook-URL> with your Webhook URL.
-
 
 ```
 #check server health
@@ -2253,49 +2482,39 @@ Our main goal is to provide stable support for docker. But a lot of members from
 
 You can do it like this:
 
-
-
 ```
 sed -E "s/(.*)=['\"]?([^'\"]*)['\"]?/\1=\2/" .env -i
 ```
 
-
 2. Edit the existing docker-compose.yml to support podman by:
 
 In shuffle-backend, comment back in the volume: /var/run/docker.sock:/var/run/docker.sock
-And in environments, Comment back out:  # DOCKER_HOST=tcp://docker-socket-proxy:2375
-
+And in environments, Comment back out: # DOCKER_HOST=tcp://docker-socket-proxy:2375
 
 So that the shuffle-backend service block ends up looking like this:
 
-
-
 ```yaml
-  backend:
-    image: ghcr.io/shuffle/shuffle-backend:latest
-    container_name: shuffle-backend
-    hostname: ${BACKEND_HOSTNAME}
-    # Here for debugging:
-    ports:
-      - "${BACKEND_PORT}:5001"
-    networks:
-      - shuffle
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${SHUFFLE_APP_HOTLOAD_LOCATION}:/shuffle-apps:z
-      - ${SHUFFLE_FILE_LOCATION}:/shuffle-files:z
-    env_file: .env
-    environment:
-      #- DOCKER_HOST=tcp://docker-socket-proxy:2375 # we commented this out
-      - SHUFFLE_APP_HOTLOAD_FOLDER=/shuffle-apps
-      - SHUFFLE_FILE_LOCATION=/shuffle-files
+backend:
+  image: ghcr.io/shuffle/shuffle-backend:latest
+  container_name: shuffle-backend
+  hostname: ${BACKEND_HOSTNAME}
+  # Here for debugging:
+  ports:
+    - "${BACKEND_PORT}:5001"
+  networks:
+    - shuffle
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ${SHUFFLE_APP_HOTLOAD_LOCATION}:/shuffle-apps:z
+    - ${SHUFFLE_FILE_LOCATION}:/shuffle-files:z
+  env_file: .env
+  environment:
+    #- DOCKER_HOST=tcp://docker-socket-proxy:2375 # we commented this out
+    - SHUFFLE_APP_HOTLOAD_FOLDER=/shuffle-apps
+    - SHUFFLE_FILE_LOCATION=/shuffle-files
 ```
 
-
-
 3. Run Shuffle with podman by:
-
-
 
 ```bash
 sudo podman-compose -f docker-compose.yml pull
