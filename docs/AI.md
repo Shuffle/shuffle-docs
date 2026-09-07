@@ -14,6 +14,52 @@ Agents are a way to have an AI model interact with the world. In Shuffle, this m
 - Reasoning   (E.g. for workflow building and other heavy tasks)
 - Correlation (Historical alerts and cases)
 
+### How an Agent works under the hood
+When you run an agent in Shuffle (whether from [/agents](/agents), in a workflow node, or via the API), it doesn't just send a raw prompt to an LLM and hope for the best. It runs a full execution loop built directly into Shuffle:
+
+1. **Tool discovery**: Shuffle takes the tools you've selected (or all public apps + apps configured in your org) and exposes them to the model as standardized MCP definitions.
+2. **Planning & Decisions**: The agent breaks your goal down into an array of **Decisions** (`AgentDecision`). Each decision represents a concrete step:
+   - `tool`: The app to call (e.g. `virustotal`, `jira`, `slack`).
+   - `action`: The exact action within that app (e.g. `get_ip_report`, `create_ticket`).
+   - `fields`: The key-value arguments mapped to that action's parameters.
+   - `confidence`: Confidence score (0.0 to 1.0) indicating how sure the model is about this step.
+   - `reason`: A short explanation of why the agent chose this specific step.
+   - `approval_required`: Set to `true` if this action is destructive or high-risk, pausing the run for human review.
+   - `data_filter`: Tells Shuffle what to extract from the raw response (e.g. only specific fields) so your context window doesn't get flooded with megabytes of JSON.
+3. **Execution**: Shuffle executes the decisions sequentially. Each action is dispatched either directly to the app (`execution_mode: "direct"`) or through Singul's normalized categories (`execution_mode: "singul"`).
+4. **Context update**: The output from each executed tool feeds back into the agent's memory, allowing it to decide what to do next.
+5. **Completion or Pause**:
+   - If the agent has all the information it needs, it emits a `finish` decision and returns the final response.
+   - If it needs clarification from you, it emits an `ask` decision and pauses in `WAITING` status.
+   - If a step requires approval, it pauses until you approve or deny it.
+
+<!-- VIDEO: 20-second screen recording showing an agent prompt being submitted in /agents, decisions appearing in sequence, and the final output card rendering -->
+
+#### The Agent Decision structure
+Under the hood, every step the agent takes looks like this:
+
+```json
+{
+  "i": 0,
+  "tool": "virustotal",
+  "action": "get_ip_report",
+  "fields": [
+    {"key": "ip", "value": "1.1.1.1"}
+  ],
+  "reason": "Check the reputation of the suspicious IP found in the alert",
+  "confidence": 0.95,
+  "approval_required": false,
+  "data_filter": "last_analysis_stats"
+}
+```
+
+#### Reasoning effort
+You can control how deeply the agent thinks before acting using the `reasoning` parameter:
+- `minimal`: Fast single-step tool execution. Best for simple lookups (e.g. "Get details for CVE-2024-3094").
+- `low`: Quick 2-3 step tasks with basic chaining.
+- `medium`: The default setting. Balanced between speed and multi-step investigation.
+- `high`: Deep reasoning. The agent performs cross-referencing, verifies intermediate results, and plans complex multi-app workflows.
+
 ### MCP
 MCPs (Model Context Protocol) are the concept of having an AI Agent decide what actions to perform within a specific pool of available actions. It is typically used by agents as to have them be specialised, but there is nothing stopping them from being used directly as well.
 
@@ -62,14 +108,39 @@ As with all platform-wide debugging in Shuffle, AI Agent runs are available in t
 <img width="1211" height="556" alt="image" src="https://github.com/user-attachments/assets/fd5aec29-3052-4e94-ade5-7199faa96342" />
 
 ## Using agents in Workflows
-To use agents in Workflows, make a new workflow, then pull in "AI Agent" from the left side. 
+You can use AI Agents as regular nodes inside any Shuffle workflow. This lets you combine the flexibility of an AI agent with the deterministic control of a standard playbook. For example, you can have a webhook trigger a workflow, let an AI Agent investigate the alert and gather context, and then have standard Shuffle nodes handle the final ticketing and notifications.
 
-TBD: More details coming soon.
+<!-- VIDEO: 30-second walkthrough showing dragging the AI Agent node onto the canvas, configuring the prompt with $webhook variables, selecting allowed apps, and running a test execution -->
 
 <img width="1018" height="227" alt="image" src="https://github.com/user-attachments/assets/de6fddbc-a9d1-4456-85d9-2b3ac4aee8ba" />
 
-### Workflow building
-TBA: Coming soon. The goal is to take actions from a previous AI agent run and make well-tested and well-configured workflows out of them, as to keep determinism.
+### 1. Add the AI Agent node
+1. Open or create a workflow in the workflow builder (`/workflows`).
+2. Search for **AI Agent** in the left sidebar app list.
+3. Drag the **AI Agent** node onto the canvas and connect it to your trigger or previous node.
+
+<!-- SCREENSHOT: Dragging the AI Agent node from the left app panel onto the canvas and connecting it to a Webhook node -->
+
+### 2. Configure the Node
+Click on the AI Agent node to open its configuration panel on the right sidebar:
+
+- **Input Prompt (`input`)**: Tell the agent what task to perform. You can pass variables from previous nodes using Shuffle's standard syntax (e.g. `Analyze this alert: $webhook.body.message and check any IPs in VirusTotal`).
+- **Allowed MCPs / Apps**: By default, the agent has access to all enabled tools in your organization. You can scope it down to specific apps (e.g. only allow `virustotal` and `jira`). This keeps the agent focused and prevents it from calling apps it shouldn't touch.
+- **Reasoning Effort**: Choose between `minimal`, `low`, `medium`, or `high` depending on task complexity.
+- **Environment**: Choose where the agent executes — either in Shuffle Cloud or on a specific on-premises runtime location / worker.
+
+<!-- SCREENSHOT: The right-hand configuration panel for the AI Agent node, highlighting the Input prompt with a variable ($webhook.body), the Allowed MCPs dropdown, and the Reasoning selector -->
+
+### 3. Using the Agent's output downstream
+When the AI Agent finishes running, it outputs a structured JSON object. Downstream nodes can reference its output directly:
+
+- `$ai_agent.output` or `$ai_agent.message`: The final summary or textual answer produced by the agent.
+- `$ai_agent.decisions`: The full array of decisions, tools called, and results.
+- `$ai_agent.execution_id`: The backing execution ID for auditing or streaming.
+
+Example: You can add a condition branch right after the agent node:
+- If `$ai_agent.output` contains `"MALICIOUS"`, route to a Slack alert node.
+- Otherwise, log the result and finish.
 
 ## Singul
 Singul works against vendor-locking with our translator for different providers of the same tools, such as Slack vs Teams vs Discord (communication), or Splunk vs Elastic vs QRadar (SIEM). It uses LLMs to understand the context of what you are trying to perform, and makes a determinsitic translation to use a standard such as OCSF or STIX. This is a powerful way to avoid vendor lock-in, and to make your automation more future-proof. 
@@ -177,8 +248,30 @@ The ability to process images depends entirely on your AI model. This feature is
 
 **Congratulations! You've just built an automation workflow using AI.**
 
-## Editing a Workflow
-This is a work in progress. Currently in Alpha. Contact support@shuffler.io if you would like to be a tester.
+## Editing a Workflow with AI
+Instead of building or modifying workflows node-by-node from scratch, you can use Shuffle's inline **Agent Chat Widget** directly inside the workflow builder to create and modify workflows with natural language.
+
+<!-- VIDEO: 30-second screen capture of opening an existing workflow, clicking the Agent Chat widget at the bottom, typing "Add a VirusTotal check for the IP in $webhook, and send a Slack message if malicious", and watching the nodes appear and connect on canvas -->
+
+### Using the Workflow Chat Widget
+1. Open any workflow in the editor (`/workflows/{workflow_id}`).
+2. Click the **Agent Chat** icon on the bottom toolbar to open the chat widget.
+3. Describe what you want to add, change, or remove:
+   - *"Add a VirusTotal IP check after the webhook node."*
+   - *"If the reputation score is above 5, create an issue in Jira and notify #soc-alerts in Slack."*
+   - *"Change the Slack channel parameter from #general to #security-critical."*
+4. Click **Send**. The agent inspects your canvas, determines what apps and connections are needed, updates the workflow structure, and saves it.
+
+<!-- SCREENSHOT: The workflow editor with the Agent Chat Widget open at the bottom, showing a conversation with the agent and the updated canvas nodes in the background -->
+
+### Interactive Clarifications
+If the agent needs more context to complete your request (for example, which Jira project to use, or how to handle error branches), it will pause and ask you directly inside the chat widget. You can answer the question inline, and the agent will immediately resume and finish modifying the canvas.
+
+### Iterative Building
+You don't need to describe your entire playbook in one giant prompt. You can build iteratively:
+1. Start with the core trigger and first action: *"Start with a webhook and parse the email body."*
+2. Add enrichment: *"Now add a lookup to AlienVault OTX for any domain found in the email."*
+3. Add response actions: *"If any indicators are malicious, block the sender in Microsoft Defender."*
 
 ## Using self-hosted AI models
 
@@ -245,7 +338,16 @@ Once these are set, there is no need to restart your Shuffle backend server as t
 **Note: You need to refresh the Shuffle UI page in your browser for the new AI features to appear.**
 
 ## AI for quicker Support
-TBA: Coming soon. The goal is to provide quick answers to typical questions, and otherwise forward to the Shuffle team.
+Shuffle includes built-in AI debugging and documentation assistance to help you resolve workflow errors and configuration questions without waiting for support tickets.
+
+<!-- SCREENSHOT: The AI support / error helper modal in an execution debug view, explaining an error message and highlighting the fix in the action parameter config -->
+
+### How it works
+1. **Execution Debugging**: When an action in a workflow fails (e.g. HTTP 400/401/500, invalid JSON path, or authentication mismatch), click **Ask AI** in the execution log.
+2. **Context-Aware Diagnosis**: The AI analyzes the error message, the action parameters, and Shuffle's documentation vector store (`OPENAI_DOCS_VS_ID`).
+3. **Actionable Fixes**: Instead of generic error messages, it explains what went wrong in plain English and gives you the exact parameter or authentication fix needed.
+4. **Direct Escalation**: If the issue requires assistance from the Shuffle team, the helper packages your sanitized error logs and context so you can email [support@shuffler.io](mailto:support@shuffler.io) with one click.
+
 
 ## Troubleshooting
 
