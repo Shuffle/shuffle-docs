@@ -273,21 +273,60 @@ You don't need to describe your entire playbook in one giant prompt. You can bui
 2. Add enrichment: *"Now add a lookup to AlienVault OTX for any domain found in the email."*
 3. Add response actions: *"If any indicators are malicious, block the sender in Microsoft Defender."*
 
+## AI Architecture & Deployment Models
+Shuffle's AI framework is designed to work across any infrastructure—from fully managed cloud instances to strictly isolated, air-gapped on-premises deployments.
+
+### 1. Cloud: Shuffle AI & Regional Gemini Routing
+In Shuffle Cloud, AI features and Agent runs work out of the box using built-in **Shuffle AI credits**.
+- **Region-based routing**: Agent and LLM calls are dynamically routed to Google Vertex AI / Gemini endpoints (`google/gemini-3.7-flash` or `gemini-3.8-flash`) within your deployment's geographic region based on `SHUFFLE_GCE_LOCATION`. This ensures data residency and compliance within regional borders (such as EU or US data boundaries).
+- **Using Shuffle AI Credits via API**: You can also use your Shuffle AI credits programmatically outside of workflows by sending standard OpenAI-compatible requests to the `/api/v1/chat/completions` endpoint on Shuffle Cloud with your Shuffle API key.
+- **Custom model overrides**: Even on Cloud, organizations can override the default Shuffle AI model on a per-organization basis by configuring an active model in the UI.
+
+### 2. Hybrid: Self-Controlled Models
+In Hybrid setups (where workflow execution happens on-prem or in private networks while orchestrating via Cloud), you can bring and control your own AI model.
+
+**How to enable a self-controlled model:**
+1. **Via the `/agents` UI (Recommended)**:
+   - Navigate to the Agents page ([`/agents`](/agents)).
+   - Click on the **Shuffle AI** button in the top configuration area.
+   - A sidebar will open on the right side: select your preferred model provider or self-hosted endpoint from the list.
+   - Enter your endpoint URL, model name, and API key / credentials.
+   - **Shuffle AI Limits**: This sidebar is also where your organization's Shuffle AI limits, quota usage, and remaining credits are displayed.
+   - Once saved and selected, all agent actions and workflow AI calls in your organization immediately route to your custom model with zero container restarts.
+
+<!-- SCREENSHOT: The /agents page with the "Shuffle AI" button highlighted, showing the opened right-hand sidebar with the model provider selector, custom endpoint configuration, and the Shuffle AI limits/usage display -->
+
+2. **Via Docker Compose Environment**: Alternatively, you can set `AI_API_URL`, `AI_MODEL`, and `AI_API_KEY` directly on the `shuffle-backend` container.
+
+### 3. On-Premises: Cloud Sync vs. Self-Controlled Model
+For 100% on-premises installations, you have two architectural options depending on whether you want to host local GPU infrastructure:
+
+- **Option A: Self-Controlled Local Model (100% Air-Gapped)**
+  - Connect Shuffle to a local Ollama, vLLM, or corporate LLM gateway using the `/agents` UI sidebar or the environment variables described above.
+  - No data ever leaves your internal network, making it suitable for air-gapped and strictly regulated networks.
+
+- **Option B: Cloud Sync (Shuffle AI Fallback)**
+  - If you do not have local GPU hardware, you can leverage Shuffle AI without managing models locally.
+  - **Prerequisite**: Cloud Sync must already be configured on the **`/admin`** page (navigate to `/admin` -> Cloud Sync, and enter your Shuffler.io API key).
+  - Once configured on `/admin`, on-prem Shuffle will automatically fall back to forwarding agent and AI requests over HTTPS to `https://shuffler.io/api/v1` whenever no local model is set up.
+  - This allows your on-prem workers to execute playbooks locally while utilizing Shuffle Cloud's managed Gemini regional infrastructure and AI credits.
+
+<!-- SCREENSHOT: The /admin page highlighting the Cloud Sync configuration section with the API key entered and connection status verified -->
+
 ## Using self-hosted AI models
 
-While Shuffle's Cloud platform provides AI credits to get you started, connecting your own self-hosted AI model gives you ultimate control and flexibility. This guide will walk you through the process.
+While Shuffle's Cloud platform provides AI credits to get you started, connecting your own self-hosted AI model gives you ultimate control and flexibility. This guide will walk you through setting up a local Ollama instance.
 
 **Before you configure Shuffle, please ensure you have the following ready:**
 
 1. A Server to Run the AI: You need a computer that Shuffle can reach over the network. This can be a VM, physical server or a cloud instance.
 2. We recommend Ollama as the simplest way to run local AI models. Go to [Download Ollama](https://ollama.com/download) to install it on your server. After installation, make sure the Ollama service is running.
-3. Once Ollama is installed, you need a model for it to serve. For a great starting point, we recommend the gpt-oss model. It's a powerful and versatile model perfect for general tasks. (You can read more about it in Ollama's official announcement [here](https://ollama.com/blog/gpt-oss)). Of course, you can use any model available on Ollama. Our gpt-oss suggestion is just a recommendation to make getting started easy.
+3. Once Ollama is installed, you need a model for it to serve. We recommend standard instruction-tuned models like `llama3` or `qwen2.5`.
 
-
-Open your server's terminal and run this command:
+Open your server's terminal and run:
 
 ```bash
-ollama run gpt-oss:20b
+ollama run llama3
 ```
 
 ### Setting Up Environment Variables in Shuffle
