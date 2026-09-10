@@ -27,7 +27,6 @@ Check your current location on the [/admin page](https://shuffler.io). Use the d
 * [Organizations & Tenants](#organizations)
 * [Datastore](#datastore-api)
 * [Notifications](#notifications)
-* [Priorities](#priorities)
 * [Environments](#environments)
 * [Vulnerabilities](#vulnerabilities)
 * [Detection](#detection-api)
@@ -36,7 +35,7 @@ Check your current location on the [/admin page](https://shuffler.io). Use the d
 
 
 ## Introduction
-Shuffle is a platform to build and execute automation [workflows](/docs/workflows). It's built API-first, and everything available on the frontend has an API endpoint. The listed API's are built and generated with our own [OpenAPI creator](/docs/apps#create_openapi_app). All API's listed are for both versions of Shuffle (cloud/onprem), unless otherwise specified. Our OpenAPI specification can be [downloaded here](https://shuffler.io/apps/edaa73d40238ee60874a853dc3ccaa6f). Below are the base URL's for the API.
+Shuffle is a platform to build and execute automation [workflows](/docs/workflows). It's built API-first, and everything available on the frontend has an API endpoint. The listed API's are built and generated with our own [OpenAPI creator](/docs/apps#app-creator-in-the-shuffle-ui). All API's listed are for both versions of Shuffle (cloud/onprem), unless otherwise specified. Our OpenAPI specification can be [downloaded here](https://shuffler.io/apps/edaa73d40238ee60874a853dc3ccaa6f). Below are the base URL's for the API.
 
 **Cloud:** https://shuffler.io/api/v1
 
@@ -232,7 +231,9 @@ curl https://shuffler.io/api/v1/mcp -H "Authorization: Bearer APIKEY" -d '{"json
 ```
 
 ### Chat completions
-OpenAI-compatible chat completions endpoint for querying models connected to Shuffle.
+Chat completions endpoint for querying models connected to Shuffle.
+
+On Shuffle Cloud, requests are dynamically routed to Google Cloud Platform (Google Vertex AI / Gemini) endpoints within your deployment's geographic region based on `SHUFFLE_GCE_LOCATION` (ensuring data residency and compliance within regional borders such as EU or US data boundaries). The endpoint uses built-in Shuffle AI credits and provides a standard chat completions interface compatible with existing LLM tooling, as well as supporting self-hosted model overrides.
 
 Method: POST
 
@@ -471,7 +472,7 @@ curl -XPOST https://shuffler.io/api/v1/workflows -H "Authorization: Bearer APIKE
 
 
 ### Save a workflow
-Saves a workflow with a given WORKFLOW_ID. Requires WORKFLOW_ID from [Create new workflow](/docs/API#create_new_workflow) to match in the parameter and the data sent.
+Saves a workflow with a given WORKFLOW_ID. Requires WORKFLOW_ID from [Create new workflow](#create-new-workflow) to match in the parameter and the data sent.
 
 **PS: This function is destructive and does not check everything, but will return if there are missing apps or similar**
 
@@ -575,7 +576,7 @@ Additional info:
 
 
 ### Get execution results
-Gets an execution based on results from [Execute workflow](/docs/api#execute_workflow). Requires execution_id and authorization parameters. You can only use the authorization key in the data itself to get the ID, not in the header. To track progress, call this every few seconds and look for updates to "results" (json["results"]).
+Gets an execution based on results from [Execute workflow](#execute-workflow). Requires execution_id and authorization parameters. You can only use the authorization key in the data itself to get the ID, not in the header. To track progress, call this every few seconds and look for updates to "results" (json["results"]).
 
 Methods: POST
 
@@ -628,7 +629,7 @@ curl https://shuffler.io/api/v1/orgs/{org_id}/set_cache -H "Authorization: Beare
 ```
 
 ### Set multiple keys
-Accepts a list in the same format as [Set a key](#set_a_key), and is very efficient at bulk updates. Returns which keys are new and which were updated. To add a key to a specific category, add `"category": "name"` to the JSON body. **PS:** Only keys of the first discovered category will be added.
+Accepts a list in the same format as [Set a key](#set-a-key), and is very efficient at bulk updates. Returns which keys are new and which were updated. To add a key to a specific category, add `"category": "name"` to the JSON body. **PS:** Only keys of the first discovered category will be added.
 
 Methods: POST, PUT
 
@@ -797,7 +798,7 @@ curl -XPOST https://shuffler.io/api/v2/correlations \
 
 
 ## App API
-Apps are the building blocks used in [workflows](/docs/apps#workflows), as they contain the actions to be executed. First of all, there are two types of apps:
+Apps are the building blocks used in [workflows](/docs/workflows), as they contain the actions to be executed. First of all, there are two types of apps:
 
 * Generated from OpenAPI
 * Self-made with Python
@@ -1309,7 +1310,7 @@ curl -XDELETE https://shuffler.io/api/v1/files/{id} -H "Authorization: Bearer AP
 ```
 
 ### Edit an existing file
-Edit an active file with existing content (/upload) for first uploads. The file meta is left intact, except for the hash sums, sizing and timestamps. This function is meant to be used together with [file categories](#get_file_category) to e.g. handle Detection rules.
+Edit an active file with existing content (/upload) for first uploads. The file meta is left intact, except for the hash sums, sizing and timestamps. This function is meant to be used together with [file categories](#get-file-category) to e.g. handle Detection rules.
 
 Methods: PUT
 

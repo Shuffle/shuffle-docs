@@ -22,13 +22,13 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 * [Database](#database)
 * [Database Change](#change-the-database-from-opensearch-to-elasticsearch)
 * [Network Configuration](#network-configuration)
-* [Docker Version error](#docker-version-error)
+* [Docker Version error](/docs/troubleshooting#docker-client-version-too-new)
 * [Database indexes](#database-indexes-opensearch)
 * [Re-indexing & Index Management](#re-indexing--index-management)
 * [Uptime monitoring](#uptime-monitoring)
 * [Debugging](#debugging)
 * [Execution Debugging](#execution-debugging)
-* [Known Bugs](#known-bugs)
+* [Troubleshooting & Known Issues](/docs/troubleshooting)
 * [Shuffle Server Healthcheck](#shuffle-server-healthcheck)
 * [Using podman](#using-podman)
 * [Marketplace setup](#marketplace-setup)
@@ -82,14 +82,14 @@ To use a specific version of Shuffle, you'll need to manually edit the Docker-Co
 
 Using cloud marketplaces ([AWS Marketplace](https://aws.amazon.com/marketplace/), [Google Cloud Marketplace](https://console.cloud.google.com/marketplace), [Azure Marketplace](https://azuremarketplace.microsoft.com/)), you should be able to deploy Shuffle onprem with a few clicks. This is a great way to get started with Shuffle, as it's a fully managed service and test it out in your own environment without worrying about the setup. We are working with our cloud partners to get this up and running as soon as possible.
 
-## Server configuration
+## Production readiness
 
 Shuffle is by default configured to be easy to start using. This means we have had to make some tradeoffs which can be enabled/disabled to make it easier to use, or scale better. The following section outlines a lot of what is necessary to make Shuffle's security, availability and scalability better.
 
 ![image](https://github.com/user-attachments/assets/1bf288e0-fbd7-47c1-aba2-5269acaa4f8d)
 
 **Here are the things we'll dive into**
-- [Environment Variables](#environment_variables)
+- [Environment Variables](#environment-variables)
 - [High Availability](#high-availability)
 
 ### Environment Variables
@@ -119,8 +119,8 @@ The [default docker-compose file](https://github.com/shuffle/Shuffle/blob/main/d
 
 ### Hybrid Cloud Configuration
 
-* Onprem: If you want to try using Hybrid Shuffle, see [Cloud sync documentation](/docs/organizations#cloud_synchronization)
-* Cloud: If you want access to on-premises resources and API's, [set up extra Environments](/docs/organizations#environments)
+* Onprem: If you want to try using Hybrid Shuffle, see [Cloud sync documentation](/docs/tenants#cloud-synchronization)
+* Cloud: If you want access to on-premises resources and API's, [set up extra Environments](/docs/tenants#using-multiple-environments)
 
 ### High Availability
 When running Shuffle on multiple servers, you need to take multiple things into account. Among them are:
@@ -135,7 +135,7 @@ When running Shuffle on multiple servers, you need to take multiple things into 
 Here is a breakdown of the previous High Availability image of Shuffle, and how it works:
 1. All the **Green** colored services are our providers, meaning they are built by someone else than Shuffle, but used in the Shuffle stack. Here is our recommendation on scaling these services:
    * [Opensearch (Database)](https://opensearch.org/docs/latest/tuning-your-cluster/). Elasticsearch also works. If you are using more than one entrypoint to Opensearch/Elasticsearch, [add the URL's comma separated in the .env file](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L104).
-   * [Memcached (Shared Memory)](#distributed_caching): We recommend starting with Memcached on a single server, and only scaling up as needed. Shuffle can run without it, but when scaling runtime locations it gives the Backend, Orborus and Workers a shared cache instead of separate process-local caches. Add multiple [comma separated URL's here](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L84) to configure multiple instances.
+   * [Memcached (Shared Memory)](#distributed-caching): We recommend starting with Memcached on a single server, and only scaling up as needed. Shuffle can run without it, but when scaling runtime locations it gives the Backend, Orborus and Workers a shared cache instead of separate process-local caches. Add multiple [comma separated URL's here](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/.env#L84) to configure multiple instances.
 
 2. **NFS** is Network File Storage. This is for you to be able to store files across multiple servers. This is required if you are running multiple instances of the Shuffle backend, and for them to have consistent access to the Files that you store. Only configure this if you are storing files in Shuffle. When NFS is set up, [mount your NFS storage to ./shuffle-files](https://github.com/Shuffle/Shuffle/blob/c5ef50f523c041efaf53a1e285c1b19a30201e67/docker-compose.yml#L28).
 
@@ -146,7 +146,7 @@ Here is a breakdown of the previous High Availability image of Shuffle, and how 
 * **Frontend:** Handles frontend & backend routing, as well as the default certificates. **Scale across ALL available servers.** Available on http://shuffle-frontend:3001 or https://shuffle-frontend:3443 in the container network.
 * **Orborus / Worker / Apps:** Orborus is in charge of this stack, and is how you control all three services. Orborus receives jobs from the Backend, and does NOT expose any port. Read more about configuring, scaling and managing them in your instance on the [/admin?tab=locations](/admin?tab=locations) page, or in the next section.
 
-### Scaling Runtime Locations
+### Scaling Shuffle
 Orborus can run in Docker-swarm mode, and in early 2023, with Kubernetes. This makes the workflow executions **A LOT** faster, use less resources, making it more scalable both on a single, as well as across multiple servers. Since September 2024, scale has been partially open source, and can be achieved with changing environment variables in the "Orborus" container for Shuffle. [Click here for Kubernetes details](https://github.com/Shuffle/Shuffle/tree/2.0.0/functions/kubernetes#instructions). If you have received a licensed version, don't forget step 3 to load in the correct worker.
 
 Let's begin with setting up Docker, Docker Compose, and creating a Docker Swarm network with two manager nodes involves several steps. Below is a step-by-step guide to achieve this:
@@ -209,7 +209,7 @@ docker-compose up -d
 docker swarm join-token manager # copy the command given
 ```
 
-PS: In certain scenarios you may need extra configurations, e.g. for network MTU's, docker download locations, proxies etc. See more in the [production readiness](/docs/configuration#production_readiness) section.
+PS: In certain scenarios you may need extra configurations, e.g. for network MTU's, docker download locations, proxies etc. See more in the [production readiness](#production-readiness) section.
 
 ### Adding another machine to the swarm network:
 
@@ -237,9 +237,7 @@ docker service ls
 
 If the list is empty, or you see any of the "replicas" have 0/1, then something is wrong. In case of any swarm issues, contact us at [support@shuffler.io](mailto:support@shuffler.io) or contact your account representative.
 
-If you get EOFs or timeouts for workers in machine B, look [here](https://shuffler.io/docs/troubleshooting#TLS_timeout_error/Timeout_Errors/EOF_Errors).
-
-![](Aspose.Words.81096d25-bbff-47b2-a5ee-1ac38ad8ca4e.001.jpeg)
+If you get EOFs or timeouts for workers in machine B, look [here](/docs/troubleshooting#tls-timeout-and-eof-errors).
 
 ### Swarm: Manual worker service (Orborus scheduler-only)
 If you want Orborus to only schedule jobs while you manage workers as a Swarm service yourself, you can pre-create the `shuffle-workers` service and point Orborus at it. Orborus will still poll the backend queue and send execution requests to `/api/v1/execute`.
@@ -1368,7 +1366,7 @@ For additional OpenSearch sizing, shard allocation, and cluster tuning guidance,
 
 - https://opensearch.org/docs/latest/tuning-your-cluster/
 
-## Networking
+## Network Configuration
 Networking with Shuffle is pretty straight forward. What we check for are the following:
 
 - Can Shuffle reach your services?
@@ -1503,7 +1501,7 @@ Current implementation note: when `SHUFFLE_INTERNAL_HTTPS_PROXY` is set, the SDK
 
 ### HTTPS
 
-HTTPS is enabled by default on port 3443 with a self-signed certificate for localhost. If you would like to change this, the only way (currently) is to add configure and rebuild the frontend. If you don't have HTTPS enabled, check [updating shuffle](#updating_shuffle) to get the latest configuration. Another workaround is to set up an [Nginx reverse proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) you can control yourself. See further down for more details
+HTTPS is enabled by default on port 3443 with a self-signed certificate for localhost. If you would like to change this, the only way (currently) is to add configure and rebuild the frontend. If you don't have HTTPS enabled, check [updating shuffle](#updating-shuffle) to get the latest configuration. Another workaround is to set up an [Nginx reverse proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) you can control yourself. See further down for more details
 
 ```
 After setting this up, make sure to change the BASE_URL for Orborus to talk to your new HTTPS url if you want encrypted traffic everywhere.
@@ -1624,7 +1622,7 @@ Shuffle supports IPv6 in Docker by default, but your docker engine may not. IPv6
 
 In most enterprise environments, Shuffle will be behind firewalls, proxies and other networking equipment. If this is the case, below are the requirements to make Shuffle work anywhere. The most common issue has to do with downloads from Alpine linux's Docker images while Shuffle is running.
 
-**PS:** If external connections are blocked, you may further have issues running Apps. Read more about [manual image transfers here](#manual_docker_image_transfers).
+**PS:** If external connections are blocked, you may further have issues running Apps. Read more about [manual image transfers here](#manual-docker-image-transfers).
 
 ### Change the Database from OpenSearch to Elasticsearch
 
@@ -1692,7 +1690,7 @@ As a customer of Shuffle we can provide you with a static **IP range** with seco
 
 Areas of relevance:
 - Your Environment -> Shuffle Cloud (*.shuffler.io)
-- Shuffle Cloud -> Your Enviroment
+- Shuffle Cloud -> Your Environment
 
 ### Manual Docker image transfers
 
@@ -1781,7 +1779,7 @@ cd .. & tar cvf shuffle-export.tar.gz shuffle-export
 
 4. Export data to the targeted machine
 
-Use scp, usb key, ..., to copy the previous archive to the machine. [More about manual transfers here](/docs/configuration#manual_docker_image_transfers)
+Use scp, usb key, ..., to copy the previous archive to the machine. [More about manual transfers here](#manual-docker-image-transfers)
 
 5. Import docker images to host without internet
 
@@ -2110,13 +2108,13 @@ docker load wazuh.tar
 
 ## Docker socket
 
-For now, the docker socket is required to run Shuffle. Whether you run with Kubernetes or another clustering technology, Shuffle WILL need access to ContainerD, which is what the docker socket provides. If this is against internal policies and you want a single point of contact for controlling permissions, please have a look at [docker socket proxy](#docker_socket_proxy) farther down.
+For now, the docker socket is required to run Shuffle. Whether you run with Kubernetes or another clustering technology, Shuffle WILL need access to ContainerD, which is what the docker socket provides. If this is against internal policies and you want a single point of contact for controlling permissions, please have a look at [docker socket proxy](#docker-socket-proxy) farther down.
 
 **Usage of the socket**:
 
 * Backend (Not required, but used for app management)
 * Orborus (Required, deploying Workers)
-* Worker    (Required, deploying Apps. Apps DONT have access to the socket.)
+* Worker    (Required, deploying Apps. Apps don't have access to the socket.)
 
 **API's in use**
 

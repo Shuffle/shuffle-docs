@@ -3,25 +3,25 @@ This is documentation for integrating and sending data from third-party services
 
 ## Table of contents
 * [Introduction](#introduction)
-* [Single Signon (OpenID/SAML)](#single-signon-sso)
+* [Single Signon (OpenID/SAML)](#single-signon)
   * [Okta](#okta)
   * [Google SSO - SAML](#google-saml-sso)
   * [Auth0](#auth0)
-  * [PingIdentity](#ping-id)
+  * [PingIdentity](#pingidentity)
   * [Keycloak - OpenID](#keycloak)
   * [Azure AD - OpenID](#azure-ad)
-  * [Other SSO providers](#other)
-  * [Testing SSO](#sso-testing)
+  * [Other SSO providers](#other-platforms)
+  * [Testing SSO](#testing-sso)
   * [SSO Required for Org](#sso-required-for-org)
   * [Auto Provisioning](#auto-provisioning)
-  * [Role Base Restriction](#role-base-restriction)
-  * [Skip SSO for admin in suborgs](#skip-sso-for-admin-in-suborgs)
+  * [Role Base Restriction](#role-based-restriction)
+  * [Skip SSO for admin in suborgs](#skip-sso-for-admins-in-suborganizations)
 * [Singul](#singul)
 * [AI Agents](#ai-agents)
 * [CACAO](#cacao)
 * [Detection Manager](#detection-manager)
-* [KMS](#KMS)
-* [Webhooks](#webhooks)
+* [KMS](#kms)
+* [Webhooks](#inbound-webhooks)
   * [Wazuh Webhook](#wazuh)
   * [TheHive Webhook](#thehive)
   * [Logz.io Webhook](#logzio)
@@ -29,7 +29,7 @@ This is documentation for integrating and sending data from third-party services
   * [AWS S3 forwarder](#aws-s3-forwarder)
   * [QRadar Webhook](#qradar)
   * [FortiSIEM Webhook](#fortisiem)
-  * [ELK Webhook](#elk)
+  * [ELK Webhook](#elkelastic)
   * [Cortex Webhook](#cortex)
   * [Splunk Webhook](#splunk-siem)
   * [Eventlog Analyzer - SIEM](#eventlog-analyzer)
@@ -135,7 +135,7 @@ Open the Certificate file in a text editor, and copy it's contents.
 
 After adding them, click "Save", saving the configuration. After saving, log out of your user to verify the SSO configuration. If you don't see a button for "Use SSO", you most likely configured the wrong organization.
 
-### PingIdentity 
+### PingIdentity
 To use PingID SSO with Shuffle, first make an app on [https://console.pingone.eu/](https://docs.pingidentity.com/bundle/pingoneforenterprise/page/xsh1564020480660-1.html). Documentation can be found [here](https://docs.pingidentity.com/bundle/pingoneforenterprise/page/xsh1564020480660-1.html).
 
 After the app is made, click the dropdown for it on the right side > Configuration > find these fields.
@@ -582,7 +582,7 @@ KMS is supported for any system as long as the sections above are covered. It ha
 - ... and more! Ask if you need help.
 
 ## Inbound Webhooks
-This section describes inbound webhooks to Shuffle, and how to set them up in many commonly used third-party systems. If your system support outbound Webhooks, it can also forward to Shuffle as a GET or POST request. [More about webhook triggers](/triggers/#webhooks)
+This section describes inbound webhooks to Shuffle, and how to set them up in many commonly used third-party systems. If your system support outbound Webhooks, it can also forward to Shuffle as a GET or POST request. [More about webhook triggers](/docs/workflows#webhook)
 
 ### Wazuh
 Wazuh is a SIEM platform for security operations. We've used it through their API multiple ways, but were missing an important component; alerting. That's why we've developed a simple alert forwarder from Wazuh to Shuffle. 
@@ -601,7 +601,7 @@ These are the steps to set it up:
 This one is pretty easily explained. Go to Shuffle an make a new Workflow.
 
 **2. Add a Webhook to the workflow**
-[Add a webhook](/docs/triggers#webhook) and find the Webhook URL. Remember to start the Webhook!
+[Add a webhook](/docs/workflows#webhook) and find the Webhook URL. Remember to start the Webhook!
 
 ![Extend Shuffle with Wazuh](https://github.com/user-attachments/assets/a85ec865-c991-4ffc-98f3-5009a094dc8a)
 
@@ -729,7 +729,7 @@ TheHive is a case management platform for and by security professionals. One of 
 This one is pretty easily explained. Go to Shuffle an make a new Workflow.
 
 **2. Add a Webhook to the workflow**
-[Add a webhook](/docs/triggers#webhook) and find the Webhook URL. Remember to start the Webhook!
+[Add a webhook](/docs/workflows#webhook) and find the Webhook URL. Remember to start the Webhook!
 
 ![Extend Shuffle with TheHive](https://github.com/frikky/shuffle-docs/blob/master/assets/extensions_example_1.png?raw=true)
 
@@ -789,7 +789,7 @@ In TheHive UI (NOT CLI), create a new case, or add a comment to an existing case
 This one is pretty easily explained. Go to Shuffle an make a new Workflow.
 
 **2. Add a Webhook to the workflow**
-[Add a webhook](/docs/triggers#webhook) and find the Webhook URL. Remember to start the Webhook!
+[Add a webhook](/docs/workflows#webhook) and find the Webhook URL. Remember to start the Webhook!
 
 ![Extend Shuffle with Wazuh](https://github.com/frikky/shuffle-docs/blob/master/assets/extensions_example_1.png?raw=true)
 
@@ -880,7 +880,7 @@ Steps to set it up:
 ![AWS lambda overview](https://github.com/frikky/shuffle-docs/blob/master/assets/s3_function-1.png?raw=true)
 
 **1. Create a Workflow which will receive alerts**
-This one is pretty easily explained. Go to Shuffle an make a new Workflow. [Add a webhook](/docs/triggers#webhook) and find the Webhook URL. Remember to start the Webhook!
+This one is pretty easily explained. Go to Shuffle an make a new Workflow. [Add a webhook](/docs/workflows#webhook) and find the Webhook URL. Remember to start the Webhook!
 
 ![Extend Shuffle with webhook](https://github.com/frikky/shuffle-docs/blob/master/assets/extensions_example_1.png?raw=true)
 
@@ -1024,7 +1024,7 @@ FortiSiEM is the SIEM of Fortigate. It has the possibility of notifying Shuffle 
 This one is pretty easily explained. Go to Shuffle an make a new Workflow.
 
 **2. Add a Webhook to the workflow**
-[Add a webhook](/docs/triggers#webhook) and get the Webhook URL. Remember to start the Webhook!
+[Add a webhook](/docs/workflows#webhook) and get the Webhook URL. Remember to start the Webhook!
 
 ![Extend Shuffle with Wazuh](https://github.com/frikky/shuffle-docs/blob/master/assets/extensions_example_1.png?raw=true)
 

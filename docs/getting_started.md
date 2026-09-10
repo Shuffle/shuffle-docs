@@ -3,14 +3,15 @@ Welcome to the Shuffle documentation! This guide will help you get up and runnin
 
 
 ## Table of contents
-* [Introduction](#introduction)
-* [Usage Models](#usage_models)
-* [First workflow](#first_workflow)
-* [Shuffle 101](#shuffle_101)
-* [Shuffle Videos](#shuffle_videos)
-* [Community Videos](#community_videos)
-* [Learn about Shuffle](#learn_about_shuffle)
-* [Environment Variables](#environment-variables-env)
+* [Overview](#overview)
+* [Workflow Development](#workflow-development)
+* [Finding Usecases](#finding-usecases)
+* [Finding Workflows](#finding-workflows)
+* [Finding Apps](#finding-apps)
+* [Shuffle 101](#shuffle-101)
+* [Shuffle YouTube Videos](#shuffle-youtube-videos)
+* [Community Videos](#community-videos)
+* [Environment Variables (.env)](#environment-variables-env)
 
 ## Overview
 Shuffle is an open-source automation platform designed specifically for the security industry. You can start using it for free with the following options:

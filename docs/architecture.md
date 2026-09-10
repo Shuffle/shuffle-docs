@@ -42,7 +42,7 @@ Shuffle uses and is built upon existing, well established frameworks to help the
 * [Cytoscape](https://js.cytoscape.org/) - A light-weight and scalable design system, used for node relationships in our Workflow view. Cytoscape provides us all the necessary parts to create a fully functional workflows for any use. 
 
 ## Automation Engine
-The Shuffle automation engine is entirely built from scratch, relying heavily on Docker and Micro-service, real-time executions. The code for decision making of next nodes can be found [here](https://github.com/frikky/Shuffle/blob/d77ae8260fd32691d8942dece1957915ba1ff3d5/backend/go-app/walkoff.go#L1251), while the SDK for how Apps perform can be found [here](https://github.com/frikky/Shuffle/blob/master/backend/app_sdk/app_base.py). [Read more here](#workflow_execution_model)
+The Shuffle automation engine is entirely built from scratch, relying heavily on Docker and Micro-service, real-time executions. The code for decision making of next nodes can be found [here](https://github.com/frikky/Shuffle/blob/d77ae8260fd32691d8942dece1957915ba1ff3d5/backend/go-app/walkoff.go#L1251), while the SDK for how Apps perform can be found [here](https://github.com/frikky/Shuffle/blob/master/backend/app_sdk/app_base.py). [Read more here](#workflow-execution-model)
 
 ## Technologies
 The fundamental building blocks of Shuffle are all designed to be modular Docker images, meaning they can run separately in different environments. The list below contains all the necessary parts to execute a workflow. In case you want to contribute, we've added the programming languages as well.
@@ -96,7 +96,7 @@ Hashed (bcrypt):
 - User passwords.
 
 Encrypted (AES-256):
-- [App authentication](/docs/organizations#app_authentication), [Protected Datastore Keys](/docs/organizations#datastore) and [Files](/docs/organizations#files) are being encrypted. The seed used for hashing is random for each organization, and can be set with the environment variable SHUFFLE_ENCRYPTION_MODIFIER in the local version of Shuffle. This is automatically handled in our SaaS offering. How it works: 
+- [App authentication](/docs/tenants#app-authentication), [Protected Datastore Keys](/docs/API#datastore-api) and [Files](/docs/API#file-api) are being encrypted. The seed used for hashing is random for each organization, and can be set with the environment variable SHUFFLE_ENCRYPTION_MODIFIER in the local version of Shuffle. This is automatically handled in our SaaS offering. How it works: 
 
 	1. Create md5 hash from Org ID + Workflow_id + Auth timestamp + SHUFFLE_ENCRYPTION_MODIFIER
 	2. Encrypt the authentication value with [aes.NewCipher](https://cs.opensource.google/go/go/+/go1.17.1:src/crypto/aes/cipher.go;l=32)
@@ -139,7 +139,7 @@ There are multiple [ways to access the API](/docs/API). The first is through the
 
 - Session Token: Defined in a users' browser as user logs in. 
 - Bearer Auth: This is a token provided to each user to be used with the [API](/docs/API)
-- Execution token: The execution token is a unique token (UUID) provided to each [workflow execution](#workflow_execution_model). As soon as an execution is triggered, it gives a temporary token which is valid as long as the workflow is running, but which is no longer valid after the workflow finishes. This has access to certain API's used by Apps themselves (files, cache, setting/changing the execution), with most other API's being off limit.
+- Execution token: The execution token is a unique token (UUID) provided to each [workflow execution](#workflow-execution-model). As soon as an execution is triggered, it gives a temporary token which is valid as long as the workflow is running, but which is no longer valid after the workflow finishes. This has access to certain API's used by Apps themselves (files, cache, setting/changing the execution), with most other API's being off limit.
 
 ### Session management
 Session management in Shuffle is currently quite basic, with the goal to drastically improve it in 2024. The current flowchart includes reusing the same session token across anyone using an account, with the only way to log out everyone else being to log our yourself. The goal is to make this use one session token per device. 
@@ -151,10 +151,10 @@ App authentication is how we authenticate and store an app's configuration. If a
 
 How are these values being used then? If they're encrypted, how does the app get access to them? Here's how:
 
-1. The [workflow starts running](#workflow_execution_model). This sets up a lot of different values necessary for Shuffle to find the start node, next nodes, parsing data, fixing conditions etc.
+1. The [workflow starts running](#workflow-execution-model). This sets up a lot of different values necessary for Shuffle to find the start node, next nodes, parsing data, fixing conditions etc.
 2. The backend looks at ALL nodes in the workflow, checking if any of their parameters have the field "configuration" set to true. This indicates it's a field to be replaced.
 3. It finds the appropriate apps' chosen authentication by ID (authentication_id)
-4. Shuffle runs [decryption on all](#encryption_and_hashing) the appropriate fields, then replaces the value JUST for this workflow execution.
+4. Shuffle runs [decryption on all](#encryption-and-hashing) the appropriate fields, then replaces the value JUST for this workflow execution.
 5. The workflow starts with the right values. These values are and should NOT be available to a user reading the workflow at any point. 
 6. When the app and workflow is finished - all these values are cleaned up and removed from the execution to ensure they're not stored.
 
@@ -162,7 +162,7 @@ How are these values being used then? If they're encrypted, how does the app get
 The execution model of Shuffle can be defined as such:
 
 1. A Workflow is triggered. This can be by a trigger, or a manual execution, making a request towards /api/v1/workflows/<workflow_id>/execute
-2. The backend fills in the appropriate gaps (e.g. startnode, source trigger or [app authentication](#app_authentication)), before adding an execution to be retrieved by Orborus at a later stage, with the appropriate priority (0-10, 10 being highest).
+2. The backend fills in the appropriate gaps (e.g. startnode, source trigger or [app authentication](#app-authentication)), before adding an execution to be retrieved by Orborus at a later stage, with the appropriate priority (0-10, 10 being highest).
 3. Orborus runs as an agent, constantly polling for jobs from Shuffle. By default, it retrieves 10 jobs at a time, before checking whether any can be started. This is done based on how many Workers are running in Docker at this time, compared to the environment variable SHUFFLE_ORBORUS_EXECUTION_CONCURRENCY.
 	- Orborus also cleans up Docker containers on an interval according to the environment variable SHUFFLE_ORBORUS_EXECUTION_TIMEOUT
 4. For each of the new jobs, Orborus creates a container for a Worker with the following information:	An execution ID and authorization, and whether to run in an optimized way.
@@ -172,7 +172,7 @@ The execution model of Shuffle can be defined as such:
   2. Optimized: If a Workflow is started from a trigger (not manually), the Worker starts an HTTP server, and acts as a temporary backend for this specific execution. This makes it possible to communicate and deploy Apps faster, without straining the backend. When the workflow is finished, it will send the full execution to the backend. This means the frontend MAY not have the full picture until after the workflow execution finishes.
 
 6. The Worker attempts starting each App's Docker container, starting with the startnode. As it finds that a node has finished, it will check it's status, before starting the following nodes upon success. If the App's Docker image doesn't exist, it will attempt to download in the order of: Backend, Dockerhub. If it doesn't exist, abort the workflow.
-7. The apps that were started by a Worker retrieves the full execution in order to be able to [identify variables](/docs/workflows#workflow_variables), [check conditions](/docs/workflows#conditions), authorization, [download files](/docs/features#file_storage) or from the cache etc. Order of operations in an App's Docker container:
+7. The apps that were started by a Worker retrieves the full execution in order to be able to [identify variables](/docs/workflows#workflow-variables), [check conditions](/docs/workflows#conditions), authorization, [download files](/docs/workflows#file-handling) or from the cache etc. Order of operations in an App's Docker container:
 
 	1. Download the workflow execution and current action from the backend.
 	2. Check if ALL [Conditions](/docs/workflows#conditions) are valid or not. 

@@ -3,29 +3,24 @@ Documentation for the Admin view of Shuffle. Best used by administrators. Previo
 
 ## Table of contents
 * [Introduction](#introduction)
-* [Tenant Overview](#organization_overview)
-* [App runs management for Sub-tenants (Enterprise)](#app_runs_management_sub-tenants)
-* [Data collection](#data_collection)
-* [Licensing](#licensing)
-* [User Management](#user_management)
-* [App Authentication](#app_authentication)
+* [Tenant Overview](#tenant-overview)
+* [App runs management for Sub-tenants (Enterprise)](#app-runs-management-for-sub-tenants-enterprise)
+* [Data collection](#data-collection)
+* [Onprem Licensing](#onprem-licensing)
+* [User Management](#user-management)
+* [App Authentication](#app-authentication)
 * [Locations](#locations)
-* [Schedules](#schedules)
-* [Files](#files)
-* [Datastore](#datastore)
-* [Tenants](#tenants)
-* [Statistics](#statistics)
 * [Health](#health)
 * [Notifications](#notifications)
 * [Billing](#billing)
-  	* [Onprem Licensing](#onprem_license)
-    * [Default Limits](#default_limits)
-  	* [Cloud Synchronization](#cloud_synchronization)
-  	* [License Key](#license_key)
-  * [Production Readiness](#production_readiness)
-  * [Checking Subscription Details](#subscription_details)
-  * [Viewing Enabled Features and Limits](#features_and_limits)
-  * [Upgrading or Increasing Limits](#upgrading_limits)
+  * [Onprem Licensing](#onprem-licensing)
+  * [Default Limits](#default-limits)
+  * [Cloud Synchronization](#cloud-synchronization)
+  * [License Key](#license-key)
+* [Production Readiness](#production-readiness-onprem)
+* [Checking Subscription Details](#checking-subscription-details)
+* [Viewing Enabled Features and Limits](#viewing-enabled-features-and-limits)
+* [Upgrading or Increasing Limits](#upgrading-or-increasing-limits)
 
 ## Introduction
 Tenants are Shuffle's way of organizing data, and can be thought of as tenants. Data from Apps, Workflows, Notifications, Files etc. are all related to an tenant from which users gain access based on their access rights. This document is made to explain what the different options for tenants are.
@@ -221,7 +216,7 @@ The important variables are:
 * `AUTH` - Runtime location authorization. This is sent as the `Authorization` header when Orborus polls the queue.
 * `SHUFFLE_SWARM_CONFIG` - Set to `run` when Orborus should run workers in Swarm/service mode.
 * `SHUFFLE_WORKER_IMAGE` or `SHUFFLE_WORKER_VERSION` - Optional worker image/version override.
-* `SHUFFLE_MEMCACHED` - Optional shared cache endpoint. See [Adding Memcached to runtime locations](#adding_memcached_to_runtime_locations).
+* `SHUFFLE_MEMCACHED` - Optional shared cache endpoint. See [Adding Memcached to runtime locations](#adding-memcached-to-runtime-locations).
 
 Below is an example, where the location's name is "Another env" and it is using `https://shuffler.io` as its backend. This works on-premises as well if you change out the BASE_URL.
 ```
@@ -425,7 +420,7 @@ To run Shuffle **in production** or to **scale beyond default limits**, a valid 
 For more information or to obtain an on-premise license, please contact **[support@shuffler.io](mailto:support@shuffler.io)**
 
 ### Cloud Synchronization
-Cloud synchronization is a feature used to get more capabilities on-premises, that otherwise wouldn't be possible. These range from scalability to collaboration, support, public workflow generation, accessibility and more. The goal is to give access to features that otherwise are impossible to build in a location solution. See [Hybrid Features](#hybrid_features) for more info.
+Cloud synchronization is a feature used to get more capabilities on-premises, that otherwise wouldn't be possible. These range from scalability to collaboration, support, public workflow generation, accessibility and more. The goal is to give access to features that otherwise are impossible to build in a location solution. See [Hybrid Features](#hybrid-features) for more info.
 
 <img width="1272" height="502" alt="image" src="https://github.com/user-attachments/assets/95cd65c2-55ba-4230-8129-206b5f390b87" />
 

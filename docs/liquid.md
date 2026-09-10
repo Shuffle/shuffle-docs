@@ -1,4 +1,8 @@
-# Liquid 
+# Liquid
+
+> [!IMPORTANT]
+> **See [Workflow Documentation: Liquid Formatting](/docs/workflows#liquid-formatting)** for the actively maintained documentation. Liquid formatting has been consolidated into the Workflows guide.
+
 Documentation for using [Liquid formatting](https://shopify.github.io/liquid/) inside Shuffle, including examples and most-used parts.
 
 You can learn more about liquid formatting in this Youtube video:
@@ -7,13 +11,13 @@ You can learn more about liquid formatting in this Youtube video:
 
 ## Table of contents
 * [Introduction](#introduction)
-* [Usage in Shuffle](#usage_and_issues)
-* [Most used use-cases](#most_used)
-* [All available filters](#list_of_available_filters)
-* [Example usage in Shuffle](#example_use_of_liquid_in_a_shuffle_workflow)
+* [Usage in Shuffle](#usage-and-issues)
+* [Most used use-cases](#most-used)
+* [All available filters](#list-of-available-filters)
+* [Example usage in Shuffle](#example-use-of-liquid-in-a-shuffle-workflow)
 
 ## Introduction
-With the introduction of version 0.9.0 of Shuffle, we [Liquid formatting](https://shopify.github.io/liquid/) was implemented. Liquid is a templating language, allowing you to perform a lot of useful formatting operations. Common usecases involve directly writing python code or using their Liquids filters to do commong things like Regex Replace and check size. 
+With the introduction of version 0.9.0 of Shuffle, we [Liquid formatting](https://shopify.github.io/liquid/) was implemented. Liquid is a templating language, allowing you to perform a lot of useful formatting operations. Common usecases involve directly writing python code or using their Liquids filters to do common things like Regex Replace and check size. 
 
 Shuffle uses the Python library [Liquidpy](https://github.com/pwwang/liquidpy). If you find something that should work in Liquid, but doesn't work in Shuffle, [please make an issue](https://github.com/pwwang/liquidpy/issues/new). 
 
@@ -31,7 +35,7 @@ Does **NOT** work:
 - Triggers
 
 ## Usage and Issues
-Liquid is available to anyone using Shuffle, with any app, in any [action parameter](/docs/workflows#passing_values) field belonging to that action. If it fails to parse, you will get a result back. 
+Liquid is available to anyone using Shuffle, with any app, in any [action parameter](/docs/workflows#passing-values) field belonging to that action. If it fails to parse, you will get a result back. 
 
 ## Shuffle's Implementation of Liquid
 The main use of Liquid within Shuffle to format text. We recommend using the "Repeat back to me" action in our "Shuffle Tools" app to test, before moving it into the field of choice once you know your formatting works.
@@ -338,11 +342,11 @@ tag1, tag2, tag3
 
 4. We then continue an error free session with a clean list, utilizing it in our workflow
 
-![Successfully parsed list of IP adresses](https://user-images.githubusercontent.com/31187099/147345723-05731f54-1d1a-43b8-bfe9-79ee1a7c9c3c.png "Parsed IPs")
+![Successfully parsed list of IP addresses](https://user-images.githubusercontent.com/31187099/147345723-05731f54-1d1a-43b8-bfe9-79ee1a7c9c3c.png "Parsed IPs")
 
 ### Example use of Liquid in a Shuffle workflow
 
-* When trying to reverse a JSON list using using Liquid formatting we get an error due to problems with the Liquid library in use. Take this JSON as an example,
+* When trying to reverse a JSON list using Liquid formatting we get an error due to problems with the Liquid library in use. Take this JSON as an example,
 
 [
     {

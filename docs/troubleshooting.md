@@ -2,42 +2,41 @@
 Documentation for troubleshooting and debugging known issues in Shuffle.
 
 ## Table of contents
-* [Debugging Executions](#debugging_executions)
-* [Debugging in the non-scale mode](#debugging_in_the_non_scale_mode)
-* [Orborus backend connection problems](#orborus_backend_connection_problems)
-* [Load all apps locally](#load_all_apps_locally)
-* [Orborus can't connect to backend](#orborus_can_not_reach_backend)
-* [How to stop executions in loop](#how_to_stop_executions_in_loop)
-* [Abort all specific workflow executions](#abort_all_running_executions_of_a_specific_workflow)
-* [Workflows are stuck](#workflows_are_stuck)
-* [Opensearch permission errors](#opensearch_permissions_error)
+* [Debugging Executions](#debugging-executions)
+* [Debugging in the non-scale mode](#debugging-in-the-non-scale-mode)
+* [Orborus backend connection problems](#orborus-backend-connection-problems)
+* [Load all apps locally](#load-all-apps-locally)
+* [Orborus can not reach backend](#orborus-can-not-reach-backend)
+* [How to stop executions in loop](#how-to-stop-executions-in-loop)
+* [Abort all running executions of a specific workflow](#abort-all-running-executions-of-a-specific-workflow)
+* [Workflows are stuck](#workflows-are-stuck)
+* [Opensearch permissions error](#opensearch-permissions-error)
 * [Recover admin user](#recover-admin-user)
-* [Delete user](#delete_user)
-* [Docker client version too new](#docker_client_version)
-* [Useful OpenSearch Queries](#useful_opensearch_queries)
+* [Delete user](#delete-user)
+* [Docker client version too new](#docker-client-version-too-new)
+* [Useful OpenSearch Queries](#useful-opensearch-queries)
 * [OpenSearch Dashboards](#opensearch-dashboards)
-* [Extract all workflows](#extract_all_workflows)
-* [Moving from Docker in a VM to Kubernetes or SaaS](#moving_from_docker_in_a_vm_to_kubernetes_or_saas)
-* [Rebuilding an OpenSearch index](#rebuilding_an_opsearch_index)
-* [Updates Failing](#updates_failing)
-* [Database not starting](#database_not_starting)
-* [OpenSearch TLS certificate setup reference](#opensearch_tls_certificate_setup_reference)
-* [TLS timeout error/Timeout Errors/EOF Errors](#TLS_timeout_error/Timeout_Errors/EOF_Errors)
-* [Shuffle on ARM](#shuffle_on_arm)
-* [Orborus can't connect to backend](#orborus_backend_connection_problems)
-* [Permission denied on file upload](#permission_denied_on_files)
-* [Docker Permission denied](#docker_permission_denied)
-* [Server is slow](#server_is_slow)
+* [Extract all workflows](#extract-all-workflows)
+* [Moving from Docker in a VM to Kubernetes or SaaS](#moving-from-docker-in-a-vm-to-kubernetes-or-saas)
+* [Rebuilding an OpenSearch index](#rebuilding-an-opensearch-index)
+* [Updates Failing](#updates-failing)
+* [Database not starting](#database-not-starting)
+* [OpenSearch TLS certificate setup reference](#opensearch-tls-certificate-setup-reference)
+* [TLS Timeout and EOF Errors](#tls-timeout-and-eof-errors)
+* [Shuffle on ARM](#shuffle-on-arm)
+* [Permission denied on files](#permission-denied-on-files)
+* [Docker Permission denied](#docker-permission-denied)
+* [Server is slow](#server-is-slow)
 * [How to handle wrong or bad images on old versions of docker](#how-to-handle-wrong-or-bad-images-on-old-versions-of-docker)
-* [Docker not working](#docker_not_working)
-* [Troubleshooting for executions not running in swarm mode](#Troubleshooting_for_executions_not_running_in_swarm_mode)
-* [Swarm init advertise address error (manual fix)](#swarm_init_advertise_address_error_manual_fix)
-* [Find app creator Python function](#find_code_openapi_app)
-* [Tenants/Suborgs seem to be lost](#reinstate_lost_tenants)
+* [Docker not working](#docker-not-working)
+* [Troubleshooting for executions not running in swarm mode](#troubleshooting-for-executions-not-running-in-swarm-mode)
+* [Swarm init advertise address error manual fix](#swarm-init-advertise-address-error-manual-fix)
+* [Find app creator Python function](#find-code-openapi-app)
+* [Tenants/Suborgs seem to be lost](#tenantssuborgs-seem-to-be-lost)
 * [Find top index items opensearch](#find-top-index-items-opensearch)
 * [Resetting MFA code](#resetting-mfa)
 * [Re-add user to lost organization](#add-user-to-lost-org)
-* [No module named 'xyz' in 'execute python' (Shuffle Tools)](#no-module-named-'xyz'-in-'execute-python'-(Shuffle-Tools))
+* [No module named 'xyz' in 'execute python' (Shuffle Tools)](#no-module-named-xyz-in-execute-python-shuffle-tools)
 
 ## Debugging Executions
 Please check the [Debugging section in the Configuration documentation](/docs/configuration#debugging)
@@ -371,7 +370,7 @@ Open `http://<your-server-ip>:5601` in your browser. Log in with your OpenSearch
 
 ### Using Dev Tools
 
-Go to **Dev Tools** (wrench icon in the left sidebar) to run queries directly against OpenSearch without needing curl. All the queries from the [Useful OpenSearch Queries](#useful_opensearch_queries) section work here.
+Go to **Dev Tools** (wrench icon in the left sidebar) to run queries directly against OpenSearch without needing curl. All the queries from the [Useful OpenSearch Queries](#useful-opensearch-queries) section work here.
 
 List all Shuffle indexes:
 ```
@@ -439,7 +438,7 @@ This procedure can help you extract workflows directly from OpenSearch even if t
    ```
 This script need to be run on the folder with the file `workflows.json`, it will create a `workflows_loaded` directory with all the workflows in it.
 This can also be very useful to either backup a copy your work or export it from a lab to a prod instance.
-* [Rebuilding an OpenSearch index](#rebuilding_an_opensearch_index)
+* [Rebuilding an OpenSearch index](#rebuilding-an-opensearch-index)
 
 ## Moving from Docker in a VM to Kubernetes or SaaS
 
@@ -572,7 +571,7 @@ docker exec -u0 -it "opensearch_ID" curl -X DELETE "https://localhost:9200/workf
 
 If you're on the default setup for shuffle and you start to notice that your workflows are getting stuck, It might be because you're running out of CPU needed to run the workflows. 
 
-To fix this, You will have to move towards setting up shuffle for [production readiness](/docs/configuration#production_readiness) in our configuration documentation.
+To fix this, You will have to move towards setting up shuffle for [production readiness](/docs/configuration#production-readiness) in our configuration documentation.
 
 
 ## Disclaimer
@@ -609,7 +608,7 @@ For full setup instructions for `SHUFFLE_OPENSEARCH_CERTIFICATE_FILE` (quick sta
 - [/docs/configuration#opensearch-tls-certificate-setup](/docs/configuration#opensearch-tls-certificate-setup)
 
 
-## TLS timeout error/Timeout Errors/EOF Errors
+## TLS Timeout and EOF Errors
 In certain cases, especially when you're running in swarm mode (Make sure ports: 2377, 7946 and 4789 between your machines **internally**), you may experience timeouts, EOFs. Or maybe, in different cases a TLS timeout error, or a similar network request issue. This is most likely due to the network configuration of your Shuffle instances not matching the server it's running on. 
 
 The main configuration is "MTUs", AKA Maximum Transmission Unit. This has to match _exactly_ - with the both the docker network driver bridge and shuffle_swarm_executions.
@@ -631,7 +630,7 @@ networks:
     # uncomment to set MTU for swarm mode.
     # MTU should be whatever is your host's preferred MTU is.
     # Refer to this doc to figure out what your host's MTU is:
-    # https://shuffler.io/docs/troubleshooting#TLS_timeout_error/Timeout_Errors/EOF_Errors
+    # https://shuffler.io/docs/troubleshooting#tls-timeout-error-timeout-errors-eof-errors
      driver_opts: # removed comment from here
        com.docker.network.driver.mtu: 1460 # removed comment from here.
 ```
@@ -735,7 +734,7 @@ If the server Shuffle is running on is slow, it's likely due to the same constra
 - CPU
 - RAM
 
-The normal reason this happens is due to too many processes running concurrently in Docker (too many containers). To look at ideal configurations, look at [production readiness](/docs/configuration#production_readiness) in our configuration documentation. 
+The normal reason this happens is due to too many processes running concurrently in Docker (too many containers). To look at ideal configurations, look at [production readiness](/docs/configuration#production-readiness) in our configuration documentation. 
 
 ----------------------------------
 
@@ -976,7 +975,7 @@ $docker-compose up -d
 ```
 Go back to your shuffle instance and you should see the org in question reinstated in the tenants tab. 
 
-## Find top index items opensearch (NOT FULLY DISCOVERED YET)
+## Find top index items opensearch
 As the Opensearch index may fill up over time, it is important to be able to debug the the available indexes. One particular issue we have had has been that it takes >60 seconds to load apps onprem at times. Here is how to resolve them.
 
 Get into the Opensearch container of port 9200 is not exposed by default:
@@ -1019,7 +1018,7 @@ Update the USERID and ORGID, ORGNAME fields, then run this command to re-add you
 curl -k -u admin:StrongShufflePassword321! https://localhost:9200/users/_update/USERID -d '{"doc": {"active_org.id": "ORGID", "active_org.name": "ORGNAME", "orgs": ["ORGID"]}}' -H "Content-Type: application/json"
 ```
 
-## No module named 'xyz' in 'execute python' (Shuffle Tools)
+## No module named xyz in execute python Shuffle Tools
 
 If you want to install a custom module like pandas (although, 'execute python' isn't made for heavy processing. We recommend making a custom python app for it).
 

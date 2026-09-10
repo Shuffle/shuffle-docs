@@ -1,4 +1,8 @@
 # Triggers
+
+> [!IMPORTANT]
+> **See [Workflow Documentation: Triggers](/docs/workflows#triggers)** for the actively maintained documentation. Triggers have been consolidated into the Workflows guide.
+
 Documentation for triggers, running workflow executions
 
 ## Table of contents
@@ -7,12 +11,12 @@ Documentation for triggers, running workflow executions
 * [Webhook](#webhook)
 * [Shuffle Subflow](#subflow)
 * [Schedule](#schedule)
-* [User Input](#user_input)
+* [User Input](#user-input)
 * [Pipelines](#pipelines)
 * [Email](#email)
 
 ## Introduction
-Triggers are the operators used to execute a [workflow](/docs/workflow) automatically. They are connected to a actions within workflows - often the starting node. Triggers usually take an execution argument that will be used to execute the workflow in question.
+Triggers are the operators used to execute a [workflow](/docs/workflows) automatically. They are connected to a actions within workflows - often the starting node. Triggers usually take an execution argument that will be used to execute the workflow in question.
 
 [Watch the video](https://www.loom.com/embed/9811d94782c249f899703491f286004c)
 
@@ -44,7 +48,7 @@ Say you want to get messages from a service like a SIEM, but it's in a different
 2. Your local instance looks for jobs from an organization you own on https://shuffler.io
 3. When a webhook job is found on https://shuffler.io - it will execute in your local instance.
 
-Read more about cloud synchronization in the [organization documentation](/docs/organizations#cloud_syncronization).
+Read more about cloud synchronization in the [organization documentation](/docs/tenants#cloud-synchronization).
 
 ### Finding executions
 When a trigger runs, you will NOT be notified about it anywhere. It will instead run behind the scenes. You can however discover their data and executions by going to the specific workflow's UI, then clicking "See all executions" on the bottom (the running person).
@@ -61,7 +65,7 @@ PS: Data in the POST request will be the execution argument. If HTTP queries are
 #### Authentication
 In later versions of Shuffle, you further have access to an authentication field. This field is based on the headers of the request, and any header added to this field will be **REQUIRED** from the sender of the webhook.
 
-One header for each line. In the image below, the request would need to contain the headers "authorization" and "authorization2" with the exact valus specified.
+One header for each line. In the image below, the request would need to contain the headers "authorization" and "authorization2" with the exact values specified.
 ![Triggers-view-6](https://github.com/frikky/shuffle-docs/blob/master/assets/triggers-view-6.png?raw=true)
 
 ### Webhook Example
@@ -147,7 +151,7 @@ Schedules are based on [google's cloud scheduler](https://cloud.google.com/sched
 ## User input
 - User Input is an app located within triggers. It provides a method to temporarily pause ongoing executions in a workflow, awaiting approval or denial from a human through a manual click before proceeding with or stopping subsequent executions.
 
-- This can currently be acheived through Subflows (Preffered for production), Email and SMS for rapid testing on the fly, but we will introduce many other options, including chat systems. 
+- This can currently be achieved through Subflows (preferred for production), Email and SMS for rapid testing on the fly, but we will introduce many other options, including chat systems. 
 
 - Note:
 If you have any suggestions pertaining to this, please let us know via a feature request on github.
@@ -171,10 +175,10 @@ User Input: Analyst decision for remediation actions, such as isolating a compro
 2. Drag in the user input node into your workflow
 
 3. Set it up where you will want approval before proceeding with subsequent nodes in the workflow.
-- Select Subflow as the input option (This is always preffered). You can use email and sms to rapidly test on the fly.
+- Select Subflow as the input option (This is always preferred). You can use email and sms to rapidly test on the fly.
   ![Screenshot 2024-01-16 100608](https://github.com/Shuffle/Shuffle-docs/assets/31187099/5f854f72-c2ea-4029-9e65-359582db1818)
 
-4. Set up your "trigger workflow" in my example it is the workflow labeled "UI test trigger" and select it in your user input node settings (as shown above). We will use this workflow to further customize our user input making how to use it limitless. (This is why this method is preferred). The example below shows how vesartile it can be
+4. Set up your "trigger workflow" in my example it is the workflow labeled "UI test trigger" and select it in your user input node settings (as shown above). We will use this workflow to further customize our user input making how to use it limitless. (This is why this method is preferred). The example below shows how versatile it can be
 ![Screenshot 2024-01-16 102648](https://github.com/Shuffle/Shuffle-docs/assets/31187099/7a8ed5f4-718f-48e0-af5d-a002d65f970a)
   
 5. When we execute our workflow then jump into our "UI test trigger" workflow (This is our "trigger workflow"), we should get an execution argument as follows.
@@ -193,7 +197,7 @@ User Input: Analyst decision for remediation actions, such as isolating a compro
 - API_continue and API_abort this opens a new tab informing you if the operation you selected was a success or not. As shown below
   ![Screenshot 2024-01-16 110009](https://github.com/Shuffle/Shuffle-docs/assets/31187099/8f8f6be5-3480-4785-810d-a1015667eb94)
 
-7. The Workflow run debugger is a new feature implemented in shuffle V 1.3.0 that helps you dig through and audit the perfomance of workflows, the errors encountered, logs and the current status of executions in you workflows. [Found here](https://shuffler.io/workflows/debug)
+7. The Workflow run debugger is a new feature implemented in shuffle V 1.3.0 that helps you dig through and audit the performance of workflows, the errors encountered, logs and the current status of executions in your workflows. [Found here](https://shuffler.io/workflows/debug)
   ![num7](https://github.com/Shuffle/Shuffle-docs/assets/31187099/04c5f00e-71cd-4871-b16b-fd892ddbd009)
 - With that said, you can use the Workflow run debugger to check whether or not the approval was granted and on which workflow was the request sent and on which workflow is a response expected, if the actions of the workflow are finished or whether or not we are still waiting for the user input. Think of this as a way to audit status of executions and workflows.
 ![num7 1](https://github.com/Shuffle/Shuffle-docs/assets/31187099/07356e00-9474-47bd-9e1f-8303db2eae18)
@@ -304,6 +308,6 @@ export | sigma /var/lib/tenzir/sigma_rules | to <webhook url>
 ```
 4. Check in Shuffle if any executions occurred
 
-## Email - Gmail & Outlook
+## Email
 Email triggers no longer exist, and should be handled with Email schedules instead: [Gmail](https://shuffler.io/workflows/e506060f-0c58-4f95-a0b8-f671103d78e5), [Outlook](https://shuffler.io/workflows/31d1a492-9fe0-4c4a-807d-b44d9cb81fc0)
 

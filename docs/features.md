@@ -8,7 +8,7 @@
 * [Best in class App Creator](#best-in-class-app-creator)
 * [The workflow designer](#the-workflow-designer)
 * [Default use-cases](#standard-workflows-and-apps)
-* [Cloud and Open Source](#local,-hosted,-cloud-and-hybrid)
+* [Cloud and Open Source](#local-hosted-cloud-and-hybrid)
 * [Multi-Org for free](#multi-tenancy-and-multi-org)
 * [File analysis](#file-storage)
 * [Key Value Store](#key-value-store)
@@ -18,7 +18,7 @@
 * [Autocomplete](#autocomplete)
 * [SSO and MFA](#sso-and-mfa)
 * [Marketplace](#marketplace)
-* [Development AI](#development-ai)
+* [Development AI & Workflow Generation](#development-ai--workflow-generation)
 
 ## Introduction
 With the problems described in [our about page](/docs/about) in mind, this document describes the features we have and will be implementing to ensure **anyone** can build on the Shuffle platform. Shuffle is not to only be used by developers, but by anyone curious about automation.
@@ -55,7 +55,7 @@ Shuffle's focus has and will always be on Open Source and collaboration. With th
 
 - [Shuffle cloud](https://shuffler.io) is a custom solution with mostly the same codebase, but is Micro-service oriented through Google Cloud Functions.
 - [The local and hosted](https://github.com/frikky/shuffle) version of Shuffle is the one hosted on Github, and comes out of the box with no limitations.
-- [Shuffle Hybrid](#hybrid_configuration) is another variant, allow for the local and cloud version to work together. This will further allow for connections between Shuffle instances in the future.
+- [Shuffle Hybrid](/docs/tenants#hybrid-features) is another variant, allow for the local and cloud version to work together. This will further allow for connections between Shuffle instances in the future.
 
 ![Cloud organizations](https://github.com/user-attachments/assets/0c6c0b5d-953a-4461-8470-bf8bddd04c72)
 
@@ -130,7 +130,7 @@ The Shuffle marketplace is where you can go and find the integrations and workfl
 
 ![Shuffle marketplace](https://github.com/user-attachments/assets/aeb6612d-7b59-4c10-917f-214ca7840fed)
 
-### Development AI  
-We're developing technology to allow for apps and workflows to be built based on text. This is based on OpenAPI's GPT-3 model, and can make it even easier for anyone to automate long-term. 
+### Development AI & Workflow Generation
+Shuffle allows apps and workflows to be built and modified directly from natural language prompts. This is powered by Google Cloud Platform (Google Cloud Vertex AI / Gemini models) with region-specific routing (such as EU or US regional boundaries configured via `SHUFFLE_GCE_LOCATION`) to guarantee data residency.
 
-This is available for testing at [https://shuffler.io/chat](https://shuffler.io/chat) and will be open sourced soon~
+You can use and test this directly in the workflow builder using the Agent Chat widget or via [Shuffle Agents](https://shuffler.io/agents). Learn more in our [AI documentation](/docs/AI).

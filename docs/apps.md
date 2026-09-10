@@ -1,5 +1,5 @@
 # Shuffle Apps
-Documentation for apps. If you'd like to make an app [check out this guide](/docs/app_creation)
+Documentation for apps. If you'd like to make an app [check out this guide](#app-creation-introduction)
 
 ## Table of contents
 * [Introduction](#introduction)
@@ -30,7 +30,7 @@ A subset of available apps can be found at [https://shuffler.io/apps](https://sh
 ## How they work
 Apps are the primary building blocks in workflows. Apps can be auto-generated from [OpenAPI](https://swagger.io/specification/) specifications or using Shuffle's app sdk. To enforce stability and usability, we use a versioning system to prevent sudden updates to apps.
 
-Apps can contain multiple actions, which can take multiple variables. They are made to be able to interact with each other by using each-others' data. Apps have the ability to be in multiple [environment](/docs/organizations#environments) with different data (e.g. different credentials), before passing them on.
+Apps can contain multiple actions, which can take multiple variables. They are made to be able to interact with each other by using each-others' data. Apps have the ability to be in multiple [environments](/docs/tenants#using-multiple-environments) with different data (e.g. different credentials), before passing them on.
 
 PS: In a future iteration, focus will move to an optional hybrid execution model (e.g. use cloud resources).
 
@@ -44,7 +44,7 @@ You can view an app's actions by selecting the app and clicking the edit icon.
 ![Actions View](https://github.com/user-attachments/assets/7ac431fa-be38-4f88-993a-95d45ed35aae?raw=true)
 
 ### Arguments
-Arguments are the variables used to perform an action. Arguments with an orange dot next to them are required, with yellow ones being optional. Arguments should have example text to to indicate the expected value. The first arguments of an app are _usually_ related to authentication or the target URL, where we suggest using [variables](/docs/workflows#variables)
+Arguments are the variables used to perform an action. Arguments with an orange dot next to them are required, with yellow ones being optional. Arguments should have example text to to indicate the expected value. The first arguments of an app are _usually_ related to authentication or the target URL, where we suggest using [variables](/docs/workflows#workflow-variables)
 
 You can see what parameters and action has by going to /apps, selecting an app and then the action.
 
@@ -74,7 +74,7 @@ A goal for Shuffle is to make it possible to search outside the apps you current
 ## Debugging apps
 Apps may fail at times, usually due to bad coding on the creators' side. This means that to get more information, you may be required to troubleshoot and debug to get the logs. 
 
-More about this in the [app creation](/docs/app_creation#debugging) debugging section
+More about this in the [app debugging](#debugging-apps-1) section
 
 ## Finding apps 
 If the app you're looking for exists, it will be available on [https://shuffler.io](https://shuffler.io) or [Github](https://github.com/frikky/shuffle-apps). Apps available on the Shuffle website, can further be clicked then exported or tested directly.
@@ -113,11 +113,11 @@ The options for importing are:
 
 
 ## Activating apps 
-Any public app can be activated, giving you access to a copy of the original app. This app is editable, meaning you can change the configuration of the app in it's entirety in your own Organization. Activation can be done by first [Finding the app](#finding_apps), then clicking the "Activate App" in the top right corner. If successful, you should se a notification that it's been activated.
+Any public app can be activated, giving you access to a copy of the original app. This app is editable, meaning you can change the configuration of the app in it's entirety in your own Organization. Activation can be done by first [Finding the app](#finding-apps), then clicking the "Activate App" in the top right corner. If successful, you should se a notification that it's been activated.
 
 Once an app is activated, you can use it within any Workflow, and find it under /apps. If you can already see the app under the /apps view, it means the app is already enabled. You need to be logged in. 
 
-If you want an app activated in your LOCAL environment, see [importing apps](#importing_apps)
+If you want an app activated in your LOCAL environment, see [importing apps](#importing-apps)
 
 ![Apps view activation 19](https://github.com/user-attachments/assets/081f2e47-528b-45b7-976c-675740b31baa)
 
@@ -137,8 +137,8 @@ All apps can be published. Published apps are available to EVERYONE using Shuffl
 
 **PS:** To remove a public app, [contact us](https://shuffler.io/contact)
 
-## Create custom apps 
-[Learn about app creation](/docs/app_creation)
+## Create custom apps
+[Learn about app creation](#app-creation-introduction)
 
 ## Importing remote apps
 
@@ -200,7 +200,7 @@ The app creator in Shuffle is built to handle any integration for HTTP apps you 
 ...
 
 **If you want to create an app**
-* Click the "Create from scratch" button, then [use the editor.](/docs/app_creation#edit_openapi_app)
+* Click the "Create from scratch" button, then [use the editor.](#ui-overview)
 
 ### UI overview 
 Creating or editing an app in Shuffle is made to be as simple and fast as possible. These are a few of the main main things in the UI.
@@ -218,7 +218,7 @@ Creating or editing an app in Shuffle is made to be as simple and fast as possib
 	- API key: An API-key to be put in a header or query 
 	- Bearer Auth: Wants a "Bearer token" from the user. Uses the "Authorization" header field.
 	- Basic Auth: Uses Basic auth. Requires username and password from a user.
-	- Oauth2: Based on Oauth2 and also works with OpenID. Works with all major providers, and handles refresh tokens for you. [More here](/docs/app_creation#oauth2)
+	- Oauth2: Based on Oauth2 and also works with OpenID. Works with all major providers, and handles refresh tokens for you. [More here](#oauth2)
 ```
 * Extra configuration items: These are extra headers or queries the user HAS to provide when using the app.
 * Actions: Where you add the paths for each endpoint.
@@ -763,7 +763,7 @@ When you have working apps, it is important to have them tested. Due to apps not
 1. Make a Workflow in Shuffle that runs the app actions you want tested
 2. Make sure the CI/CD uploads a TEST version of the app (different name / version)
 3. Add any configuration mechanism in the CI/CD that you want, e.g. to check for vulnerabilities
-4. Run the workflow automatically with the API, then validate if step 3 worked properly from the execution. The best way to check if any error occured is with the `workflowexecution.workflow.validation.valid` boolean.  
+4. Run the workflow automatically with the API, then validate if step 3 worked properly from the execution. The best way to check if any error occurred is with the `workflowexecution.workflow.validation.valid` boolean.  
 5. Use the production version of the app 
 
 Keep in mind these are just suggestions, and that it may not align with your company policies for how CI/CD is done.
