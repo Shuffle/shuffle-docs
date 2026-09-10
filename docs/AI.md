@@ -165,7 +165,7 @@ Shuffle provides built-in predefined skills out of the box:
    - **Required Tools**: `shuffle_host_monitors`.
    - **Default Prompt**: *"Take control of this host and help me with:..."*
 4. **Vulnerability Management (`vulnerability`)**:
-   - **Role**: Analyzes CVEs in plain language, calculates realistic exploitability using EPSS (Exploit Prediction Scoring System) and CISA KEV (Known Exploited Vulnerabilities) data, and outputs concrete step-by-step remediation plans.
+   - **Role**: Analyzes CVEs in plain language, reviews affected packages and OSV advisory data, and suggests remediation steps.
    - **Required Tools**: `shuffle_vulnerabilities`, `shuffle_software_and_packages`.
    - **Default Prompt**: *"Help me review and solve this vulnerability:..."*
 5. **Upcoming Presets**:
