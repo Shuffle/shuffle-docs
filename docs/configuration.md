@@ -5,8 +5,12 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 ## Table of contents
 
 * [Introduction](#introduction)
+* [Installation](#installation)
 * [Updating Shuffle](#updating-shuffle)
 * [Production readiness](#production-readiness)
+* [Production Planning Checklist](#production-planning-checklist)
+* [Host & OpenSearch Prerequisites (Linux)](#host--opensearch-prerequisites-linux)
+* [Essential Environment Variables](#essential-environment-variables-reference)
 * [Shuffle Scaling](#scaling-shuffle)
 * [Distributed Caching](#distributed-caching)
 * [Kubernetes](#kubernetes)
@@ -45,13 +49,62 @@ Check out the [installation guide](https://github.com/frikky/shuffle/blob/master
 
 System requirements may be found further down in the [Servers](#servers) section.
 
-```
+```bash
 git clone https://github.com/shuffle/Shuffle
 cd Shuffle
-docker-compose up -d
+```
+
+Edit `.env` before your first start. Set at least:
+
+```bash
+SHUFFLE_ENCRYPTION_MODIFIER=<random-long-secret>
+SHUFFLE_OPENSEARCH_PASSWORD=<strong-password>
+OPENSEARCH_INITIAL_ADMIN_PASSWORD=<same-strong-password-for-first-start>
+OUTER_HOSTNAME=<server-ip-or-dns-name>
+SSO_REDIRECT_URL=http://<server-ip-or-dns-name>:3001
+```
+
+Start the stack:
+
+```bash
+docker compose up -d
 ```
 
 ![image](https://user-images.githubusercontent.com/5719530/169809608-325b5e9f-af44-45ab-83e1-c2acbcaf206a.png)
+
+Verify running containers:
+
+```bash
+docker compose ps
+docker logs -f shuffle-backend
+docker logs -f shuffle-orborus
+docker logs -f shuffle-opensearch
+```
+
+Open Shuffle in your browser:
+- `http://<server-ip-or-dns-name>:3001`
+- `https://<server-ip-or-dns-name>:3443`
+
+### Post-Login Verification
+
+After logging in for the first time:
+1. Create the first admin user (unless configured in `.env` via `SHUFFLE_DEFAULT_USERNAME` and `SHUFFLE_DEFAULT_PASSWORD`).
+2. Navigate to `/apps` and verify that default apps are loaded.
+3. If apps are missing, check outbound connectivity to GitHub or your configured proxy settings.
+4. Build a quick test workflow with a **Start** node and **Shuffle Tools** or **HTTP** to verify execution.
+
+### Useful Docker Management Commands
+
+```bash
+docker compose pull              # Pull latest container images
+docker compose up -d             # Start all services in the background
+docker compose down              # Stop and remove containers and networks
+docker compose restart backend   # Restart backend service
+docker compose restart orborus   # Restart execution agent
+docker ps                        # List all running containers (including active workers/apps)
+docker network ls                # Inspect bridge and overlay networks
+docker volume ls                 # List persistent volumes
+```
 
 ### Updating Shuffle
 
@@ -89,8 +142,43 @@ Shuffle is by default configured to be easy to start using. This means we have h
 ![image](https://github.com/user-attachments/assets/1bf288e0-fbd7-47c1-aba2-5269acaa4f8d)
 
 **Here are the things we'll dive into**
+- [Production Planning Checklist](#production-planning-checklist)
+- [Host & OpenSearch Prerequisites (Linux)](#host--opensearch-prerequisites-linux)
 - [Environment Variables](#environment-variables)
 - [High Availability](#high-availability)
+
+### Production Planning Checklist
+
+Before deploying Shuffle to production, review and prepare these essential items:
+
+- **Persistent Storage**: Ensure persistent mounts for OpenSearch data (`./shuffle-database`) and Shuffle file uploads (`./shuffle-files`). In multi-node deployments, use shared storage (such as NFS) for files.
+- **Backup & Restore Strategy**: Regularly backup `./shuffle-database` and `./shuffle-files` to protect workflows, users, orgs, and execution logs.
+- **Resource Sizing**:
+  - *Lab / Evaluation*: Minimum 2 vCPU, 4 GB RAM, 30 GB disk.
+  - *Production*: 2+ vCPU (4+ recommended for high-throughput), 8+ GB RAM, 100+ GB SSD.
+- **Network Paths**: Verify that Shuffle workers and app containers can reach your internal tools (SIEM, EDR, ticketing systems, mail servers, Active Directory / LDAP) and that your firewall allows inbound webhook triggers.
+- **Outbound Internet & Proxy**: Ensure outbound access to GitHub (`github.com/shuffle/python-apps`), GHCR (`ghcr.io`), and Docker Hub for downloading apps and images. Configure corporate proxies if outbound access is restricted.
+- **Encryption Modifier**:
+  > [!CAUTION]
+  > A stable `SHUFFLE_ENCRYPTION_MODIFIER` is required. If this secret is lost, modified, or regenerated, all stored app authentications become unrecoverable and must be recreated from scratch.
+
+### Host & OpenSearch Prerequisites (Linux)
+
+OpenSearch requires specific kernel memory mappings and directory permissions to operate stably on Linux hosts:
+
+```bash
+# 1. Set correct ownership on the database storage directory
+sudo chown -R 1000:1000 shuffle-database
+
+# 2. Disable swap to ensure memory stability for OpenSearch
+sudo swapoff -a
+
+# 3. Increase max virtual memory map areas for OpenSearch
+sudo sysctl -w vm.max_map_count=262144
+
+# Make max_map_count persistent across reboots:
+echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.d/99-opensearch.conf
+```
 
 ### Environment Variables
 With Shuffle being a very technical system, it is important to understand that you have a lot of control mechanisms available to you in your local installation.
@@ -104,6 +192,24 @@ With Shuffle being a very technical system, it is important to understand that y
 - Opensearch Configuration (Networking, password & security systems etc)
 
 **PS:** Most of our environment variables start with `SHUFFLE_`
+
+#### Essential Environment Variables Reference
+
+| Variable | Default / Example | Description |
+| --- | --- | --- |
+| `FRONTEND_PORT` | `3001` | Default Web UI HTTP port. |
+| `FRONTEND_PORT_HTTPS` | `3443` | Default Web UI HTTPS port. |
+| `BACKEND_PORT` | `5001` | REST API backend port. |
+| `OUTER_HOSTNAME` | `<server-ip-or-fqdn>` | Hostname or IP that Orborus and workers use to communicate with the backend. |
+| `BASE_URL` | `http://<server-ip>:3001` | Internal and external base URL used by Shuffle services. |
+| `SHUFFLE_ENCRYPTION_MODIFIER` | `<random-long-secret>` | Master secret for encrypting app credentials and API keys in OpenSearch (AES-256). |
+| `SHUFFLE_OPENSEARCH_PASSWORD` | `<strong-password>` | OpenSearch password used by Shuffle backend. |
+| `OPENSEARCH_INITIAL_ADMIN_PASSWORD` | `<same-strong-password>` | Initial OpenSearch bootstrap admin password (required on first launch). |
+| `HTTP_PROXY` / `HTTPS_PROXY` | `http://proxy:8080` | Outbound proxy for downloading apps from GitHub or images from registries. |
+| `SHUFFLE_PASS_WORKER_PROXY` | `true` | Passes proxy settings into worker containers. |
+| `SHUFFLE_PASS_APP_PROXY` | `true` | Passes proxy settings into app containers. |
+| `SHUFFLE_LOGS_DISABLED` | `true` | Disables streaming container logs to backend to prevent high memory usage under heavy load. |
+| `SHUFFLE_ORBORUS_EXECUTION_CONCURRENCY` | `10` | Maximum number of concurrent workflow executions Orborus will schedule at once. |
 
 ### Servers
 When setting up Shuffle for production, we always recommend two or more servers (VMs), but it works fine with one to start. These are MINIMUM requirements, and we recommend adding more to avoid congestion.
@@ -587,9 +693,107 @@ You need to change the value of the environment `BASE_URL` of this Dockerfile, s
 
 ### Kubernetes
 
-Shuffle use with Kubernetes is now possible due to help from our contributors. You can read more about how it works on our [Github page](https://github.com/Shuffle/Shuffle/tree/main/functions/kubernetes), which includes extensive helm charts and configuration possibilities.
+Shuffle can be deployed on Kubernetes using the official Helm chart. This provides high availability, native pod lifecycle management, and scalable execution across your cluster nodes.
 
-Due to Kubernetes not being capable of building Shuffle Apps directly, an additional container for building them is available.
+For chart details and source templates, visit the [Shuffle Kubernetes repository](https://github.com/Shuffle/Shuffle/tree/main/functions/kubernetes).
+
+#### Kubernetes Requirements & Production Planning
+
+Before installing Shuffle on Kubernetes:
+- **Cluster & CLI**: A running Kubernetes cluster (v1.23+) with `kubectl` and Helm 3+.
+- **Dedicated Namespace**: Always use a dedicated namespace (`shuffle`). Do not deploy unrelated services into the same namespace because Shuffle-created worker and app Deployments/Services are dynamically managed here.
+- **RBAC Permissions**: Permission to create namespace-scoped deployments, services, roles, role bindings, service accounts, PVCs, secrets, and network policies.
+- **Storage Class**: A default storage class (or explicit volume claim configuration) for persistent OpenSearch storage.
+- **Database Strategy**: Decide whether to use the chart-provided single-node OpenSearch or point Shuffle to an external OpenSearch/Elasticsearch cluster via `backend.openSearch.url`.
+- **Registry Access**: Image pull access to `ghcr.io` and required app container registries.
+
+#### Preparing Kubernetes Secrets
+
+Store sensitive environment variables in a Kubernetes Secret rather than plain-text Helm values:
+
+```bash
+kubectl create namespace shuffle
+
+kubectl create secret generic shuffle-backend-env \
+  --namespace shuffle \
+  --from-literal=SHUFFLE_OPENSEARCH_PASSWORD='<strong-password>' \
+  --from-literal=SHUFFLE_ENCRYPTION_MODIFIER='<random-long-secret>' \
+  --from-literal=SHUFFLE_DEFAULT_USERNAME='admin' \
+  --from-literal=SHUFFLE_DEFAULT_PASSWORD='<strong-admin-password>' \
+  --from-literal=SHUFFLE_DEFAULT_APIKEY='<uuid-v4>'
+```
+
+#### Creating `values.yaml`
+
+Create a production `values.yaml` file:
+
+```yaml
+shuffle:
+  baseUrl: "https://shuffle.example.com"
+  org: "Shuffle"
+
+backend:
+  replicaCount: 1
+  extraEnvVarsSecret: shuffle-backend-env
+
+frontend:
+  replicaCount: 1
+
+orborus:
+  replicaCount: 1
+
+ingress:
+  enabled: true
+  hostname: shuffle.example.com
+```
+
+#### Installing with Helm
+
+Deploy Shuffle directly from the official OCI registry:
+
+```bash
+helm install shuffle oci://ghcr.io/shuffle/charts/shuffle \
+  --namespace shuffle \
+  --create-namespace \
+  --values values.yaml
+```
+
+#### Verifying Deployment
+
+Check pod status, services, and ingress:
+
+```bash
+kubectl get pods -n shuffle
+kubectl get svc -n shuffle
+kubectl get ingress -n shuffle
+helm status shuffle -n shuffle
+```
+
+#### Upgrading Shuffle
+
+To upgrade your deployment when a new chart version is released:
+
+```bash
+helm upgrade shuffle oci://ghcr.io/shuffle/charts/shuffle \
+  --namespace shuffle \
+  --values values.yaml
+```
+
+#### Uninstalling and Resource Cleanup
+
+When uninstalling Shuffle, Helm deletes chart-managed objects. Dynamically spawned worker and app pods managed by Orborus should be cleaned up using label selectors:
+
+```bash
+# 1. Uninstall the Helm release
+helm uninstall shuffle --namespace shuffle
+
+# 2. Clean up dynamic worker and app deployments & services created during executions
+kubectl delete svc --namespace shuffle \
+  -l "app.kubernetes.io/managed-by in (shuffle-orborus,shuffle-worker)"
+
+kubectl delete deploy --namespace shuffle \
+  -l "app.kubernetes.io/managed-by in (shuffle-orborus,shuffle-worker)"
+```
 
 ### Shuffle Apps on Kubernetes
 By default, Shuffle Worker creates a Kubernetes Deployment and Service for each app. Each app and version has its own Deployment and Service. Shuffle automatically deploys a set of apps, and other apps are deployed on demand when they are first used.
