@@ -11,6 +11,7 @@ Documentation for managing, prioritizing, and automating vulnerability remediati
 * [Asset tracking & Host Monitors](#asset-tracking--host-monitors)
 * [SOC & DevOps use cases](#soc--devops-use-cases)
 * [Automation & auto-ticketing](#automation--auto-ticketing)
+  * [Vulnerability Automation Readiness](#vulnerability-automation-readiness)
 * [AI Agents for Vulnerabilities](#ai-agents-for-vulnerabilities)
 * [API & Datastore access](#api--datastore-access)
 
@@ -245,6 +246,50 @@ You shouldn't have to manually copy CVE IDs into Jira or ServiceNow. Shuffle pro
 1. **Jira & ServiceNow Sync**: Configure category automations in `/vulnerabilities` to automatically create and synchronize tickets in your engineering issue tracker whenever a new High or Critical vulnerability is identified.
 2. **Status Synchronization**: When developers resolve the ticket or the scanner reports the vulnerability as resolved on the next scan, Shuffle automatically closes the vulnerability in your dashboard.
 3. **Task Playbooks**: Attach custom remediation playbooks to individual vulnerabilities so analysts can click a single button to execute workarounds (e.g. blocking an affected port on a firewall or disabling a vulnerable service).
+
+### Vulnerability Automation Readiness
+
+Before handling security findings across your fleet, Shuffle Security audits whether your vulnerability ingestion, asset correlation, and automated remediation pipelines are active. The **Automation Readiness** banner checks four vital pipeline stages:
+
+<!-- component:automation-readiness category="vulnerabilities" -->
+
+| Readiness Pillar | Verification Check | Target Workflow | Purpose & Manual Configuration |
+| :--- | :--- | :--- | :--- |
+| **Webhook Ingestion** | Inbound webhook active | `vulnerability_ingestion_1` (webhook) | Receives push notifications from scanner pipelines (e.g. Snyk, GitHub Dependabot, Wazuh). Toggle at `/vulnerabilities` -> **Ingest** header. |
+| **Scanner Polling Ingestion** | Scheduled workflow | `vulnerability_ingestion_1` (schedule) | Regularly polls vulnerability scanner APIs (Qualys, Tenable, AWS Inspector) for newly published findings. Activate in [`/usecases`](/usecases). |
+| **Vulnerability Correlation** | Active workflow | `asset_management_case_management_vuln_1` | Correlates CVEs against active assets, live Host Monitors, EPSS risk probabilities, and CISA KEV tags. Activate in [`/usecases`](/usecases). |
+| **Automated Response** | Active workflow | `asset_management_case_management_vuln_response_1` | Automatically creates Jira/ServiceNow tickets, triggers Ansible/SSM patch playbooks, and escalates overdue critical flaws to [Incidents](/docs/incidents). Activate in [`/usecases`](/usecases). |
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                   Vulnerability Automation Readiness                   │
+├────────────────────────┬───────────────────────────────────────────────┤
+│ Webhook Ingestion      │ [Active]    api/v1/hooks/webhook_<org_id>_vulns │
+│ Scanner Polling Ingest │ [Active]    vulnerability_ingestion_1        │
+│ Vuln Correlation       │ [Active]    asset_management_case_..._vuln_1 │
+│ Automated Response     │ [Active]    asset_management_case_..._resp_1 │
+└────────────────────────┴───────────────────────────────────────────────┘
+```
+
+> [!TIP]
+> **Inspecting and Toggling Readiness in the UI**  
+> 1. In the web application, this readiness card is rendered at **`/vulnerabilities`** (docked at the top of the findings table or in the automation drawer) and in **`/usecases`**.  
+> 2. Clicking any row opens the use case drawer to view the live workflow diagram, configured apps, and execution history in-place.  
+> 3. Click **"Enable all"** on the card to activate all unconfigured checks at once, or configure them individually via REST API:  
+>    ```bash
+>    # Trigger initial vulnerability configuration seeding
+>    curl -s -X POST "https://<your-shuffle-instance>/api/v1/usecases/setup_defaults" \
+>      -H "Authorization: Bearer $SHUFFLE_API_KEY" \
+>      -H "Content-Type: application/json" \
+>      -d '{"category": "vulnerabilities"}' | jq .
+>    ```
+
+<!-- TODO: Screenshot Needed: Vulnerability Automation Readiness Card
+- Route / UI Location: /vulnerabilities -> Top of queue or automation drawer
+- What to capture: The Automation Readiness card showing all 4 green check status rows (Webhook Ingestion, Scanner Polling Ingestion, Vulnerability Correlation, Automated Response) and the "Enable all" button.
+- Recommended filename: assets/vulnerabilities-automation-readiness.png
+- Inject syntax: ![Vulnerability Automation Readiness Card](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/vulnerabilities-automation-readiness.png)
+-->
 
 ---
 

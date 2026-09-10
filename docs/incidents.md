@@ -7,6 +7,7 @@ Documentation for managing incidents, alerts, cases, and automated response work
 * [Ingest: Getting alerts into Shuffle](#ingest-getting-alerts-into-shuffle)
 * [Schemaless ingest & translation to OCSF](#schemaless-ingest--translation-to-ocsf)
 * ["Automation for Incidents"](#automation-for-incidents)
+  * [Incident Automation Readiness](#4-incident-automation-readiness)
 * [SOC use cases](#soc-use-cases)
 * [Investigation workspace & tools](#investigation-workspace--tools)
   * [Tasks & Kanban board](#tasks--kanban-board)
@@ -183,6 +184,50 @@ Workflows don't just consume incident data; they report back into the incident i
 
 ### 3. Human-in-the-Loop Approvals
 For high-impact response actions (such as taking a critical server offline or revoking domain admin credentials), Shuffle allows you to insert approval nodes. The workflow will pause, send an interactive approval request to Slack, Teams, or the incident workspace, and wait for an analyst's explicit confirmation before executing.
+
+### 4. Incident Automation Readiness
+
+Before handling production alerts, Shuffle Security evaluates whether your core incident automation pipeline is active. The **Automation Readiness** console inspects four foundational pillars required for automated SecOps triage and response:
+
+<!-- component:automation-readiness category="cases" -->
+
+| Readiness Pillar | Verification Check | Default Flow / Key | Purpose & Manual Configuration |
+| :--- | :--- | :--- | :--- |
+| **Ingestion Webhook** | Inbound webhook active | `webhook_<org_id>_cases` | Listens for inbound alert payloads from SIEM, EDR, or alert forwarders. Toggle at `/incidents` -> **Webhook** in the header. |
+| **Threat Intel Enrichment** | Active workflow | `threat_intel_case_management_1` | Automatically enriches extracted observables (IPs, hashes, domains) against threat feeds. Activate in [`/usecases`](/usecases). |
+| **Assign & Escalate** | Active workflow | `case_management_assign_escalate_1` | Routes newly ingested incidents to on-call analysts and escalates unhandled alerts on SLA breach. Activate in [`/usecases`](/usecases). |
+| **Incident Configuration** | Datastore cache present | `shuffle-security_incidents_default` | Initializes standard IOC regex types, default threat feeds, and security routing rules. Seeded via `/preferences` -> **Incidents**. |
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                     Incident Automation Readiness                      │
+├────────────────────────┬───────────────────────────────────────────────┤
+│ Ingestion Webhook      │ [Active]    api/v1/hooks/webhook_<org_id>_cases │
+│ Threat Intel Enrich    │ [Active]    threat_intel_case_management_1    │
+│ Assign & Escalate      │ [Active]    case_management_assign_escalate_1 │
+│ Incident Configuration │ [Active]    shuffle-security_incidents_default│
+└────────────────────────┴───────────────────────────────────────────────┘
+```
+
+> [!TIP]
+> **Inspecting and Toggling Readiness in the UI**  
+> 1. In the web application, this readiness card appears docked directly above the incident queue at **`/incidents`** and in the sidebar of **`/usecases`**.  
+> 2. Clicking any row in the card opens the specific use case drawer to view the live workflow diagram, configured apps, and execution history without navigating away from your active page.  
+> 3. Click **"Enable all"** on the card to activate all unconfigured checks in a single batch, or manage them individually via REST API:  
+>    ```bash
+>    # Trigger initial incident configuration seeding
+>    curl -s -X POST "https://<your-shuffle-instance>/api/v1/usecases/setup_defaults" \
+>      -H "Authorization: Bearer $SHUFFLE_API_KEY" \
+>      -H "Content-Type: application/json" \
+>      -d '{"category": "cases"}' | jq .
+>    ```
+
+<!-- TODO: Screenshot Needed: Incident Automation Readiness Card
+- Route / UI Location: /incidents -> Top of queue or below KPI summary
+- What to capture: The Automation Readiness card showing all 4 green check status rows (Ingestion Webhook, Threat Intel Enrichment, Assign & Escalate, Incident Configuration) and the "Enable all" button.
+- Recommended filename: assets/incidents-automation-readiness.png
+- Inject syntax: ![Incident Automation Readiness Card](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/incidents-automation-readiness.png)
+-->
 
 ---
 
