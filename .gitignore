@@ -1,4 +1,5 @@
 *.swp
 *.swo
 
+.DS_STORE
 *.DS_STORE

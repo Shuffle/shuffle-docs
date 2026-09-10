@@ -14,6 +14,10 @@ Agents are a way to have an AI model interact with the world. In Shuffle, this m
 - Reasoning   (E.g. for workflow building and other heavy tasks)
 - Correlation (Historical alerts and cases)
 
+Try interacting with Shuffle's AI Agent directly below:
+
+<!-- component:agent-ui placeholder="Analyze an alert or investigate an IP..." -->
+
 ### How an Agent works under the hood
 When you run an agent in Shuffle (whether from [/agents](/agents), in a workflow node, or via the API), it doesn't just send a raw prompt to an LLM and hope for the best. It runs a full execution loop built directly into Shuffle:
 
@@ -60,23 +64,6 @@ You can control how deeply the agent thinks before acting using the `reasoning` 
 - `medium`: The default setting. Balanced between speed and multi-step investigation.
 - `high`: Deep reasoning. The agent performs cross-referencing, verifies intermediate results, and plans complex multi-app workflows.
 
-### MCP
-MCPs (Model Context Protocol) are the concept of having an AI Agent decide what actions to perform within a specific pool of available actions. It is typically used by agents as to have them be specialised, but there is nothing stopping them from being used directly as well.
-
-[In Shuffle, **EVERY SINGLE APP** is an MCP](/docs/API#MCP). This is available with the  `POST /api/v1/mcp` API and is based on the [MCP standard](https://modelcontextprotocol.io/docs/getting-started/intro). You may even point to multiple apps at once.
-
-The easiest way to try one in Shuffle is by going to [/agents](/agents), choosing an app (or more), and telling it what to use it for. This makes the agent act as an MCP. 
-
-<img width="840" height="397" alt="image" src="https://github.com/user-attachments/assets/e0b2894f-2b4d-4d0c-a8ce-63561f780e97" />
-
-They are also available for all apps in [Shuffle Security](https://security.shuffler.io/apps/outlook_office365). 
-
-<img width="778" height="269" alt="image" src="https://github.com/user-attachments/assets/f9eed81b-4251-41b6-b3c6-c2a12c29d7e6" />
-
-If you want to make your own API or Python script into an MCP, [make an app](/apps)! That is all it takes.
-
-<img width="840" height="581" alt="image" src="https://github.com/user-attachments/assets/083032e8-131b-42e1-b945-df9001bd02bc" />
-
 ### Question handling
 Questions are a way for the agent to fill in knowledge-gaps. In these cases, it asks questions automatically.
 
@@ -106,6 +93,27 @@ The field will automatically show up at the bottom, below the final output of th
 As with all platform-wide debugging in Shuffle, AI Agent runs are available in the [/workflows/debug](/workflows/debug) UI. By selecting "Agent Runs" at the top of the Workflow list, you will be given an overview of everything the agentic system has and will do in your environment.
 
 <img width="1211" height="556" alt="image" src="https://github.com/user-attachments/assets/fd5aec29-3052-4e94-ade5-7199faa96342" />
+
+## Model Context Protocol (MCP)
+MCPs (Model Context Protocol) are the concept of having an AI Agent decide what actions to perform within a specific pool of available actions. It is typically used by agents as to have them be specialised, but there is nothing stopping them from being used directly as well.
+
+[In Shuffle, **EVERY SINGLE APP** is an MCP](/docs/API#MCP). This is available with the  `POST /api/v1/mcp` API and is based on the [MCP standard](https://modelcontextprotocol.io/docs/getting-started/intro). You may even point to multiple apps at once.
+
+The easiest way to try one in Shuffle is by going to [/agents](/agents), choosing an app (or more), and telling it what to use it for. This makes the agent act as an MCP. 
+
+Try the **Shuffle Tools** MCP directly below to test individual tools and execute actions:
+
+<!-- component:try-mcp app="Shuffle Tools" -->
+
+<img width="840" height="397" alt="image" src="https://github.com/user-attachments/assets/e0b2894f-2b4d-4d0c-a8ce-63561f780e97" />
+
+They are also available for all apps in [Shuffle Security](https://security.shuffler.io/apps/outlook_office365). 
+
+<img width="778" height="269" alt="image" src="https://github.com/user-attachments/assets/f9eed81b-4251-41b6-b3c6-c2a12c29d7e6" />
+
+If you want to make your own API or Python script into an MCP, [make an app](/apps)! That is all it takes.
+
+<img width="840" height="581" alt="image" src="https://github.com/user-attachments/assets/083032e8-131b-42e1-b945-df9001bd02bc" />
 
 ## Using agents in Workflows
 You can use AI Agents as regular nodes inside any Shuffle workflow. This lets you combine the flexibility of an AI agent with the deterministic control of a standard playbook. For example, you can have a webhook trigger a workflow, let an AI Agent investigate the alert and gather context, and then have standard Shuffle nodes handle the final ticketing and notifications.
