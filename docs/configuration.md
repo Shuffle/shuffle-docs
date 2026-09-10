@@ -6,11 +6,12 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 
 * [Introduction](#introduction)
 * [Installation](#installation)
+* [Self-hosting Shuffle Security](#self-hosting-shuffle-security)
 * [Updating Shuffle](#updating-shuffle)
 * [Production readiness](#production-readiness)
-* [Production Planning Checklist](#production-planning-checklist)
-* [Host & OpenSearch Prerequisites (Linux)](#host--opensearch-prerequisites-linux)
-* [Essential Environment Variables](#essential-environment-variables-reference)
+* [Production checklist](#production-checklist)
+* [Host & OpenSearch prerequisites (Linux)](#host--opensearch-prerequisites-linux)
+* [Environment Variables](#environment-variables)
 * [Shuffle Scaling](#scaling-shuffle)
 * [Distributed Caching](#distributed-caching)
 * [Kubernetes](#kubernetes)
@@ -85,25 +86,68 @@ Open Shuffle in your browser:
 - `http://<server-ip-or-dns-name>:3001`
 - `https://<server-ip-or-dns-name>:3443`
 
-### Post-Login Verification
+### First login & verification
 
-After logging in for the first time:
-1. Create the first admin user (unless configured in `.env` via `SHUFFLE_DEFAULT_USERNAME` and `SHUFFLE_DEFAULT_PASSWORD`).
-2. Navigate to `/apps` and verify that default apps are loaded.
-3. If apps are missing, check outbound connectivity to GitHub or your configured proxy settings.
-4. Build a quick test workflow with a **Start** node and **Shuffle Tools** or **HTTP** to verify execution.
+Once Shuffle is running, open it in your browser:
+- `http://<server-ip>:3001`
+- `https://<server-ip>:3443`
 
-### Useful Docker Management Commands
+1. Set up your admin user (or log in directly if you set `SHUFFLE_DEFAULT_USERNAME` and `SHUFFLE_DEFAULT_PASSWORD` in `.env`).
+2. Go to `/apps` and make sure the default apps are loaded. If they aren't, check your network/proxy connection to GitHub.
+3. Build a quick test workflow with a Webhook/Schedule trigger and **Shuffle Tools** or **HTTP** to verify that executions run through properly.
+
+**PS:** If you're also running [Shuffle Security](/docs/incidents) (for Incidents, Alerts, and Case Management), open `http://<server-ip>:3002`. It connects to the exact same backend and shares your login credentials.
+
+### Useful Docker commands
 
 ```bash
 docker compose pull              # Pull latest container images
 docker compose up -d             # Start all services in the background
 docker compose down              # Stop and remove containers and networks
-docker compose restart backend   # Restart backend service
-docker compose restart orborus   # Restart execution agent
+docker compose restart backend   # Restart backend service (useful after .env changes)
+docker compose restart orborus   # Restart execution manager
 docker ps                        # List all running containers (including active workers/apps)
 docker network ls                # Inspect bridge and overlay networks
 docker volume ls                 # List persistent volumes
+```
+
+### Self-hosting Shuffle Security
+
+[Shuffle Security](/docs/incidents) is the SOC and incident response frontend for Shuffle. It connects directly to your existing `shuffle-backend` over the Docker network on port `3002` (HTTP) and `3444` (HTTPS).
+
+To add Shuffle Security to your existing `docker-compose.yml`:
+
+```yaml
+  shuffle-security:
+    image: ghcr.io/shuffle/shuffle-security:latest
+    container_name: shuffle-security
+    hostname: shuffle-security
+    ports:
+      - "${SHUFFLE_SECURITY_PORT:-3002}:80"
+      - "${SHUFFLE_SECURITY_PORT_HTTPS:-3444}:443"
+    networks:
+      - shuffle
+    environment:
+      - BACKEND_HOSTNAME=${BACKEND_HOSTNAME:-shuffle-backend}
+      - SHUFFLE_CORE_URL=${SHUFFLE_CORE_URL:-http://<server-ip>:3001}
+      - SHUFFLE_SECURITY_URL=${SHUFFLE_SECURITY_URL:-http://<server-ip>:3002}
+    restart: unless-stopped
+    depends_on:
+      - backend
+```
+
+Then pull and start the container:
+```bash
+docker compose up -d shuffle-security
+```
+
+Once running, access Shuffle Security at `http://<server-ip>:3002`. It uses the exact same backend API, user credentials, organizations, and OpenSearch database as Shuffle Core (`:3001`).
+
+**PS:** If you want to deploy the standalone Shuffle Security repository directly:
+```bash
+git clone https://github.com/shuffle/shuffle-security
+cd shuffle-security
+docker compose up -d
 ```
 
 ### Updating Shuffle
@@ -142,41 +186,40 @@ Shuffle is by default configured to be easy to start using. This means we have h
 ![image](https://github.com/user-attachments/assets/1bf288e0-fbd7-47c1-aba2-5269acaa4f8d)
 
 **Here are the things we'll dive into**
-- [Production Planning Checklist](#production-planning-checklist)
-- [Host & OpenSearch Prerequisites (Linux)](#host--opensearch-prerequisites-linux)
+- [Production checklist](#production-checklist)
+- [Host & OpenSearch prerequisites (Linux)](#host--opensearch-prerequisites-linux)
 - [Environment Variables](#environment-variables)
 - [High Availability](#high-availability)
 
-### Production Planning Checklist
+### Production checklist
 
-Before deploying Shuffle to production, review and prepare these essential items:
+Before running Shuffle in production, here are the key things to have in place:
 
-- **Persistent Storage**: Ensure persistent mounts for OpenSearch data (`./shuffle-database`) and Shuffle file uploads (`./shuffle-files`). In multi-node deployments, use shared storage (such as NFS) for files.
-- **Backup & Restore Strategy**: Regularly backup `./shuffle-database` and `./shuffle-files` to protect workflows, users, orgs, and execution logs.
+- **Storage & Backups**: OpenSearch data (`./shuffle-database`) and Shuffle file uploads (`./shuffle-files`) need persistent storage. If you run multiple backend nodes, `./shuffle-files` should be on shared storage like NFS. Don't forget to back up both folders regularly.
 - **Resource Sizing**:
-  - *Lab / Evaluation*: Minimum 2 vCPU, 4 GB RAM, 30 GB disk.
+  - *Testing / Lab*: Minimum 2 vCPU, 4 GB RAM, 30 GB disk.
   - *Production*: 2+ vCPU (4+ recommended for high-throughput), 8+ GB RAM, 100+ GB SSD.
-- **Network Paths**: Verify that Shuffle workers and app containers can reach your internal tools (SIEM, EDR, ticketing systems, mail servers, Active Directory / LDAP) and that your firewall allows inbound webhook triggers.
-- **Outbound Internet & Proxy**: Ensure outbound access to GitHub (`github.com/shuffle/python-apps`), GHCR (`ghcr.io`), and Docker Hub for downloading apps and images. Configure corporate proxies if outbound access is restricted.
-- **Encryption Modifier**:
+- **Network Access**: Make sure Shuffle workers and app containers can reach your internal tools (SIEM, EDR, ticketing systems, mail servers, Active Directory / LDAP) and that your firewall allows inbound webhook triggers.
+- **Outbound & Proxies**: Shuffle downloads apps from GitHub (`github.com/shuffle/python-apps`) and Docker images from `ghcr.io` / Docker Hub. If you're behind a corporate proxy, check the proxy section below.
+- **Encryption Secret**:
   > [!CAUTION]
-  > A stable `SHUFFLE_ENCRYPTION_MODIFIER` is required. If this secret is lost, modified, or regenerated, all stored app authentications become unrecoverable and must be recreated from scratch.
+  > Make sure your `SHUFFLE_ENCRYPTION_MODIFIER` stays the same! This is the master secret used to encrypt all app credentials. If you lose or change this variable, all your saved app authentications will break and you'll have to re-enter them.
 
-### Host & OpenSearch Prerequisites (Linux)
+### Host & OpenSearch prerequisites (Linux)
 
-OpenSearch requires specific kernel memory mappings and directory permissions to operate stably on Linux hosts:
+OpenSearch is RAM-heavy and has a few Linux kernel requirements to run properly without crashing:
 
 ```bash
-# 1. Set correct ownership on the database storage directory
+# 1. Give the database folder the right permissions (user 1000)
 sudo chown -R 1000:1000 shuffle-database
 
-# 2. Disable swap to ensure memory stability for OpenSearch
+# 2. Disable swap (OpenSearch runs much better without swap)
 sudo swapoff -a
 
-# 3. Increase max virtual memory map areas for OpenSearch
+# 3. Increase max virtual memory map count (otherwise OpenSearch won't start)
 sudo sysctl -w vm.max_map_count=262144
 
-# Make max_map_count persistent across reboots:
+# Make it permanent across reboots:
 echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.d/99-opensearch.conf
 ```
 
@@ -193,16 +236,20 @@ With Shuffle being a very technical system, it is important to understand that y
 
 **PS:** Most of our environment variables start with `SHUFFLE_`
 
-#### Essential Environment Variables Reference
+#### Most important environment variables
+
+Here are the environment variables you'll be touching the most in `.env`:
 
 | Variable | Default / Example | Description |
 | --- | --- | --- |
-| `FRONTEND_PORT` | `3001` | Default Web UI HTTP port. |
+| `FRONTEND_PORT` | `3001` | Default Web UI HTTP port (Shuffle Core). |
 | `FRONTEND_PORT_HTTPS` | `3443` | Default Web UI HTTPS port. |
+| `SHUFFLE_SECURITY_PORT` | `3002` | Default Web UI HTTP port for [Shuffle Security](/docs/incidents). |
+| `SHUFFLE_SECURITY_PORT_HTTPS` | `3444` | Default Web UI HTTPS port for Shuffle Security. |
 | `BACKEND_PORT` | `5001` | REST API backend port. |
 | `OUTER_HOSTNAME` | `<server-ip-or-fqdn>` | Hostname or IP that Orborus and workers use to communicate with the backend. |
 | `BASE_URL` | `http://<server-ip>:3001` | Internal and external base URL used by Shuffle services. |
-| `SHUFFLE_ENCRYPTION_MODIFIER` | `<random-long-secret>` | Master secret for encrypting app credentials and API keys in OpenSearch (AES-256). |
+| `SHUFFLE_ENCRYPTION_MODIFIER` | `<random-long-secret>` | Master secret for encrypting app credentials and API keys in OpenSearch (AES-256). **Keep this safe!** |
 | `SHUFFLE_OPENSEARCH_PASSWORD` | `<strong-password>` | OpenSearch password used by Shuffle backend. |
 | `OPENSEARCH_INITIAL_ADMIN_PASSWORD` | `<same-strong-password>` | Initial OpenSearch bootstrap admin password (required on first launch). |
 | `HTTP_PROXY` / `HTTPS_PROXY` | `http://proxy:8080` | Outbound proxy for downloading apps from GitHub or images from registries. |
@@ -693,18 +740,16 @@ You need to change the value of the environment `BASE_URL` of this Dockerfile, s
 
 ### Kubernetes
 
-Shuffle can be deployed on Kubernetes using the official Helm chart. This provides high availability, native pod lifecycle management, and scalable execution across your cluster nodes.
+Shuffle on Kubernetes is possible thanks to our official Helm chart! This lets you run Shuffle across your cluster nodes with native pod management. For chart details and source templates, visit the [Shuffle Kubernetes repository](https://github.com/Shuffle/Shuffle/tree/main/functions/kubernetes).
 
-For chart details and source templates, visit the [Shuffle Kubernetes repository](https://github.com/Shuffle/Shuffle/tree/main/functions/kubernetes).
+#### Things to prepare for Kubernetes
 
-#### Kubernetes Requirements & Production Planning
-
-Before installing Shuffle on Kubernetes:
+Before installing Shuffle with Helm:
 - **Cluster & CLI**: A running Kubernetes cluster (v1.23+) with `kubectl` and Helm 3+.
-- **Dedicated Namespace**: Always use a dedicated namespace (`shuffle`). Do not deploy unrelated services into the same namespace because Shuffle-created worker and app Deployments/Services are dynamically managed here.
-- **RBAC Permissions**: Permission to create namespace-scoped deployments, services, roles, role bindings, service accounts, PVCs, secrets, and network policies.
-- **Storage Class**: A default storage class (or explicit volume claim configuration) for persistent OpenSearch storage.
-- **Database Strategy**: Decide whether to use the chart-provided single-node OpenSearch or point Shuffle to an external OpenSearch/Elasticsearch cluster via `backend.openSearch.url`.
+- **Dedicated Namespace**: Always use a dedicated namespace (`shuffle`). Don't deploy unrelated services into the same namespace, because Shuffle-created worker and app Deployments/Services are dynamically managed here.
+- **RBAC Permissions**: Permissions to create namespace-scoped deployments, services, roles, role bindings, service accounts, PVCs, secrets, and network policies.
+- **Storage Class**: A default storage class (or explicit volume claim) for persistent OpenSearch storage.
+- **Database**: Decide whether to use the chart's built-in OpenSearch or point Shuffle to an external OpenSearch/Elasticsearch cluster via `backend.openSearch.url`.
 - **Registry Access**: Image pull access to `ghcr.io` and required app container registries.
 
 #### Preparing Kubernetes Secrets

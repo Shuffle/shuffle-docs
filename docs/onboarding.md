@@ -1,11 +1,11 @@
 # Shuffle Onboarding
 
 > [!IMPORTANT]
-> The contents of this onboarding guide have been consolidated into our primary documentation:
-> - For conceptual design, system layers, and orchestration models, see [Architecture](/docs/architecture).
-> - For installation, host sizing, environment variables, and Kubernetes Helm deployment, see [Configuration](/docs/configuration).
-> - For diagnostic commands, live health checks, and systematic debugging runbooks, see [Troubleshooting](/docs/troubleshooting).
-> - For a step-by-step introduction to building workflows, see [Getting Started](/docs/getting_started).
+> We've moved the contents of this onboarding guide into our main documentation so everything is easier to find:
+> - System design & how things work: [Architecture](/docs/architecture)
+> - Setup, requirements, `.env`, and Kubernetes: [Configuration](/docs/configuration)
+> - Debugging, common issues, and getting logs: [Troubleshooting](/docs/troubleshooting)
+> - Building your first workflow: [Getting Started](/docs/getting_started)
 
 For reference or more details, use:
 

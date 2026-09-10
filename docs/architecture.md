@@ -4,7 +4,7 @@ Documentation to understand the Shuffle architecture and thoughts behind our cho
 ## Table of contents
 * [Introduction](#introduction)
 * [Overview](#architecture-overview)
-* [Server Layer and Runtime Layer](#server-layer-and-runtime-layer)
+* [Server vs. Runtime](#server-vs-runtime)
 * [Runtime Orchestration](#runtime-orchestration)
 * [Frameworks](#frameworks)
 * [Automation Engine](#automation-engine)
@@ -27,9 +27,9 @@ Shuffle Installation models:
 - [Shuffle Cloud (SaaS)](https://shuffler.io/pricing)
 
 ## Architecture overview
-The platform is split into two primary layers: the **Server Layer** and the **Runtime Layer**. The server layer hosts everything from web UI and REST API activity to authentication and workflow validation, while the runtime layer manages and executes workflows in an isolated, microservice-based architecture. The server and runtime layers can run on a single host or be distributed across multiple clustered servers.
+The platform is split into two main parts: Server and Workers (Runtime). The server acts as the host of everything from API activity to Workflow validation, while the Workers are another standalone unit, working in a microservice-esque way. The top and bottom part can be installed on different hosts and be clustered.
 
-For hands-on deployment, sizing, and environment variables, see [Configuration](/docs/configuration). For operational diagnostics, log collection, and debugging checklists, see [Troubleshooting](/docs/troubleshooting).
+If you are looking for how to install, configure, or size Shuffle, check out [Configuration](/docs/configuration). For debugging and log collection, see [Troubleshooting](/docs/troubleshooting).
 
 Single Server installation:
 ![Single Server installation](https://github.com/user-attachments/assets/a51b3973-9849-4b68-b1b5-a1259bb9a4c0)
@@ -37,25 +37,28 @@ Single Server installation:
 Simplified:
 ![Simplified Architecture](https://github.com/frikky/shuffle-docs/blob/master/assets/shuffle_architecture.png?raw=true)
 
-### Server Layer and Runtime Layer
+### Server vs. Runtime
 
-#### 1. Server Layer
-The server layer handles user interaction, persistence, and control plane operations:
-- `shuffle-frontend`: React-based web interface and reverse proxy. Handles routing, session management, and TLS termination.
-- `shuffle-backend`: REST API written in Go. Validates workflows, loads app metadata, handles file storage, manages tenant authorization, and talks to the database.
-- `shuffle-opensearch`: Scalable document database storing users, organizations, workflows, executions, apps, file metadata, health data, and platform state.
+To understand Shuffle better, think of it as two layers working together:
 
-#### 2. Runtime Layer
-The runtime layer executes workflows in real time:
-- `shuffle-orborus`: Execution agent written in Go. Polls the backend for queued workflow executions and spawns worker containers.
-- `shuffle-worker`: Workflow execution controller written in Go. Manages the lifecycle of a single workflow execution, determining node order, evaluating conditions, and provisioning app containers.
-- **App containers**: Ephemeral, sandboxed Docker containers running individual actions (such as HTTP, Shuffle Tools, custom Python apps, or third-party integrations).
+1. **The Server Layer**
+This handles the web UIs, our REST APIs, authentication, and database access:
+- `shuffle-frontend`: React frontend for Shuffle Core (Workflows, Triggers, Apps) and reverse proxy on port `3001`.
+- `shuffle-security`: React frontend for [Shuffle Security](/docs/incidents) (Incidents, Alerts, Observables, Host Monitors) on port `3002`.
+- `shuffle-backend`: The core Go API on port `5001`. Handles workflow validation, app metadata, file storage, and talks to OpenSearch.
+- `shuffle-opensearch`: Our document database. Stores your users, workflows, organizations, execution results, apps, and platform health.
+
+2. **The Runtime Layer**
+This is where workflows actually get executed in real time:
+- `shuffle-orborus`: The execution manager in Go. Polls the backend for new jobs and starts workers.
+- `shuffle-worker`: Controls an individual workflow execution, figures out which node runs next, and starts up apps.
+- **App containers**: Ephemeral Docker containers that run the actual actions (like HTTP, Shuffle Tools, or any custom app).
 
 ### Runtime Orchestration
 
-Shuffle supports two primary runtime orchestration models:
-- **Docker & Docker Swarm**: In standard Docker deployments, Orborus and the backend use the Docker socket to launch workers and app containers. Orborus automatically manages an overlay network (`shuffle_swarm_executions`) so runtime containers can run across multiple Swarm worker nodes.
-- **Kubernetes**: In Kubernetes environments, Orborus and workers use Kubernetes API permissions (service accounts and roles) to create worker and app Deployments and Services dynamically within the `shuffle` namespace. Alternatively, apps can be pre-deployed via Helm for strict enterprise policies.
+How do workers and apps actually get deployed? We support two main models:
+- **Docker & Docker Swarm**: By default, Orborus uses the Docker socket to spin up worker and app containers. When running across multiple servers, Orborus sets up an overlay network (`shuffle_swarm_executions`) so containers can run on any node in the Swarm.
+- **Kubernetes**: If you run on Kubernetes, Orborus and workers use Kubernetes API permissions inside the `shuffle` namespace to spin up worker and app Deployments and Services on the fly.
 
 ## Frameworks
 Shuffle uses and is built upon existing, well established frameworks to help the Security community move forward, rather than just increase complexity. 

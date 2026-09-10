@@ -4,9 +4,9 @@ Documentation for troubleshooting and debugging known issues in Shuffle.
 ## Table of contents
 * [Debugging Executions](#debugging-executions)
 * [Debugging in the non-scale mode](#debugging-in-the-non-scale-mode)
-* [Collecting Logs & Diagnostics](#collecting-logs--diagnostics)
-* [Systematic Debugging Checklists & Runbooks](#systematic-debugging-checklists--runbooks)
-* [Support Escalation & Diagnostics Bundle](#support-escalation--diagnostics-bundle)
+* [How to get logs](#how-to-get-logs)
+* [Common issues and how to fix them](#common-issues-and-how-to-fix-them)
+* [Need help? Here's what to share with us](#need-help-heres-what-to-share-with-us)
 * [Orborus backend connection problems](#orborus-backend-connection-problems)
 * [Load all apps locally](#load-all-apps-locally)
 * [Orborus can not reach backend](#orborus-can-not-reach-backend)
@@ -77,18 +77,18 @@ while true; do
     fi
     sleep 1
 done
-## Collecting Logs & Diagnostics
+## How to get logs
 
-When troubleshooting issues or reporting a bug, collect logs from both the server layer (frontend, backend, database) and the runtime layer (Orborus, workers, and app containers).
+When debugging or reporting an issue, the first thing to check is logs from both the server (frontend, backend, database) and the runtime (Orborus, workers, and apps).
 
-### Docker Log Collection
+### Docker logs
 
-Check container status across the stack:
+Check what's actually running:
 ```bash
 docker compose ps
 ```
 
-Collect the last 300 lines of logs from core services:
+Get the last 300 lines of logs from the main services:
 ```bash
 docker logs --tail 300 shuffle-frontend
 docker logs --tail 300 shuffle-backend
@@ -96,27 +96,28 @@ docker logs --tail 300 shuffle-orborus
 docker logs --tail 300 shuffle-opensearch
 ```
 
-Follow logs in real time while reproducing an issue:
+Follow logs live while you test or reproduce the problem:
 ```bash
 docker logs -f shuffle-backend
 docker logs -f shuffle-orborus
 ```
 
-Identify and inspect active worker and app containers:
+To see worker and app containers currently running:
 ```bash
-# List active workers and apps
 docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}"
 docker ps | grep -i worker
 docker ps | grep -i tools
+```
 
-# Inspect specific container logs and configuration
+To get logs from a specific worker or app container:
+```bash
 docker logs --tail 200 <container_id_or_name>
 docker inspect <container_id_or_name>
 ```
 
-### Kubernetes Log Collection
+### Kubernetes logs
 
-Inspect pod health and cluster events in the `shuffle` namespace:
+Check pods and events in your `shuffle` namespace:
 ```bash
 kubectl get pods -n shuffle -o wide
 kubectl get deploy -n shuffle
@@ -124,14 +125,14 @@ kubectl get svc -n shuffle
 kubectl get events -n shuffle --sort-by=.lastTimestamp
 ```
 
-Collect core service logs:
+Get logs from the core deployments:
 ```bash
 kubectl logs -n shuffle deploy/shuffle-backend --tail=300
 kubectl logs -n shuffle deploy/shuffle-frontend --tail=300
 kubectl logs -n shuffle deploy/shuffle-orborus --tail=300
 ```
 
-Inspect dynamic worker and app pods:
+Find and inspect worker/app pods:
 ```bash
 kubectl get pods -n shuffle | grep -i worker
 kubectl get pods -n shuffle | grep -i app
@@ -139,15 +140,15 @@ kubectl logs -n shuffle <pod-name> --tail=200
 kubectl describe pod -n shuffle <pod-name>
 ```
 
-### Live Health Checks
+### Health check endpoints
 
-Test API responsiveness directly:
+You can ping Shuffle's health endpoints directly to see if the API is responding:
 ```bash
 curl http://<shuffle-host>:3001/api/v1/_ah/health
 curl http://<shuffle-host>:3001/api/v1/health
 ```
 
-Check OpenSearch cluster health:
+To check OpenSearch health:
 - From Docker:
   ```bash
   docker exec -it shuffle-opensearch bash
@@ -161,174 +162,145 @@ Check OpenSearch cluster health:
 
 ---
 
-## Systematic Debugging Checklists & Runbooks
+## Common issues and how to fix them
 
-### 1. UI Does Not Load
+Here's a breakdown of the most common issues people run into with Shuffle, and how to fix them.
 
-**Symptoms**: Browser shows connection refused, timeout, or a blank white screen.
+### UI does not load
 
-**Check**:
-- Ensure `shuffle-frontend` container or pod is in a `Running` state.
-- Verify port `3001` (HTTP) or `3443` (HTTPS) is accessible from your network and not blocked by host firewalls (`ufw`, `iptables`, security groups).
-- Ensure the frontend can reach the backend container (`shuffle-backend:5001`).
-- Check reverse proxy or ingress TLS configuration if accessing over a custom domain.
+If you open Shuffle in your browser and get a blank page or connection refused:
+1. Make sure `shuffle-frontend` is running (`docker compose ps` or `kubectl get pods -n shuffle`).
+2. Make sure port `3001` (HTTP) or `3443` (HTTPS) is open in your firewall (`ufw`, `iptables`, AWS security groups).
+3. Make sure the frontend container can reach `shuffle-backend:5001`.
+4. Check the frontend and backend logs:
+   ```bash
+   docker logs --tail 200 shuffle-frontend
+   docker logs --tail 200 shuffle-backend
+   ```
+   If on Kubernetes:
+   ```bash
+   kubectl logs -n shuffle deploy/shuffle-frontend --tail=200
+   kubectl logs -n shuffle deploy/shuffle-backend --tail=200
+   ```
 
-**Commands**:
-```bash
-# Docker
-docker compose ps
-docker logs --tail 200 shuffle-frontend
-docker logs --tail 200 shuffle-backend
-curl -I http://localhost:3001
+### Backend starts but login or setup fails
 
-# Kubernetes
-kubectl describe ingress -n shuffle
-kubectl logs -n shuffle deploy/shuffle-frontend --tail=200
-kubectl logs -n shuffle deploy/shuffle-backend --tail=200
-```
+If you can't create your first admin user, or get a `401 Unauthorized` / `500 Internal Error`:
+1. Check if OpenSearch is running and healthy:
+   ```bash
+   docker exec -it shuffle-opensearch curl -k -u admin:'<password>' https://localhost:9200/_cluster/health?pretty
+   ```
+2. Double check that `SHUFFLE_OPENSEARCH_PASSWORD` in your `.env` matches the password OpenSearch was initialized with (`OPENSEARCH_INITIAL_ADMIN_PASSWORD`).
+3. Check permissions on your database folder — user 1000 needs ownership:
+   ```bash
+   sudo chown -R 1000:1000 shuffle-database
+   ```
+4. Check backend logs to see the exact error:
+   ```bash
+   docker logs --tail 300 shuffle-backend
+   ```
+   **PS:** If you changed `SHUFFLE_ENCRYPTION_MODIFIER`, existing credentials won't be decryptable.
 
----
+### Apps are missing or won't download
 
-### 2. Backend Starts but Login or Setup Fails
+If you go to `/apps` and the page is empty, or you get errors when clicking "Download from Github":
+1. Shuffle needs to reach `https://github.com/shuffle/python-apps` to pull apps. Check if the backend has internet access:
+   ```bash
+   docker exec -it shuffle-backend sh -c "nslookup github.com && curl -I https://github.com/shuffle/python-apps"
+   ```
+2. If you are behind a corporate proxy, make sure `HTTP_PROXY` and `HTTPS_PROXY` are set in `.env`.
+3. Make sure `./shuffle-apps` directory is writable by Docker.
+4. If you don't have internet access at all, see [how to load all apps locally](#load-all-apps-locally).
 
-**Symptoms**: Unable to create the first admin user, or login attempts result in `401 Unauthorized` or `500 Internal Error`.
+### Executions stay queued or never start
 
-**Check**:
-- OpenSearch is healthy (`_cluster/health` status is `green` or `yellow`).
-- The database password in `SHUFFLE_OPENSEARCH_PASSWORD` matches the actual OpenSearch credentials (`OPENSEARCH_INITIAL_ADMIN_PASSWORD` on first run).
-- Persistent volume permissions on `./shuffle-database` belong to user `1000:1000`.
-- `SHUFFLE_ENCRYPTION_MODIFIER` was set before first startup and has not been changed.
+If your workflows stay in `WAITING` status or the execution icon spins forever:
+1. Check if Orborus is running. Orborus is what polls the backend and spawns workers:
+   ```bash
+   docker logs -f shuffle-orborus
+   ```
+2. Make sure Orborus can reach the backend. If you're using Docker, `OUTER_HOSTNAME` needs to be an IP or hostname that newly created containers can reach from their network (don't use `localhost` or `127.0.0.1`!).
+3. If running Docker Swarm, make sure the `shuffle_swarm_executions` network exists and isn't corrupted. If in doubt: delete the network and restart Orborus (it will recreate it).
+4. If on Kubernetes, make sure Orborus has RBAC permissions to create deployments in the `shuffle` namespace:
+   ```bash
+   kubectl auth can-i create deployments --as=system:serviceaccount:shuffle:shuffle-orborus -n shuffle
+   ```
+5. Check if your concurrency limit is maxed out (`SHUFFLE_ORBORUS_EXECUTION_CONCURRENCY`).
 
-**Commands**:
-```bash
-docker logs --tail 300 shuffle-backend
-docker logs --tail 300 shuffle-opensearch
-docker exec -it shuffle-opensearch curl -k -u admin:'<password>' https://localhost:9200/_cluster/health?pretty
-```
+### Worker starts but app actions fail
 
----
+If a workflow starts, but an app node fails immediately with `FAILURE` or exit code 1:
+1. Find the failing worker or app container and inspect its logs:
+   ```bash
+   docker ps | grep -i worker
+   docker logs --tail 200 <worker_or_app_container_id>
+   ```
+2. Check if Docker can pull the app image (from `ghcr.io` or Docker Hub).
+3. If the app needs to talk to internal systems through a proxy, make sure `SHUFFLE_PASS_APP_PROXY=true` is set.
+4. If using internal HTTPS with a self-signed certificate, you may need to mount your root CA into the app container or disable SSL verification in the app's configuration.
 
-### 3. Apps Are Missing or Failing to Download
+### OpenSearch is crashing or unhealthy
 
-**Symptoms**: Navigating to `/apps` shows an empty list or errors when clicking "Download from Github".
+If OpenSearch restarts in a loop, exits with code 137 (OOM), or gives permission errors:
+1. Check host RAM (`free -m`). OpenSearch is memory-hungry; we recommend at least 8 GB RAM on the host.
+2. Check `vm.max_map_count`:
+   ```bash
+   sudo sysctl vm.max_map_count
+   ```
+   If it's not `262144`, set it:
+   ```bash
+   sudo sysctl -w vm.max_map_count=262144
+   ```
+3. Turn off swap:
+   ```bash
+   sudo swapoff -a
+   ```
+4. Fix folder permissions:
+   ```bash
+   sudo chown -R 1000:1000 shuffle-database
+   ```
 
-**Check**:
-- Backend can resolve and reach `https://github.com/shuffle/python-apps`.
-- If behind a corporate proxy, verify `HTTP_PROXY`, `HTTPS_PROXY`, and `SHUFFLE_APP_DOWNLOAD_LOCATION` in `.env`.
-- The local `./shuffle-apps` directory is mounted and writable.
+### High memory usage or host slowing down
 
-**Commands**:
-```bash
-docker logs -f shuffle-backend
-docker exec -it shuffle-backend sh -c "nslookup github.com && curl -I https://github.com/shuffle/python-apps"
-```
-
----
-
-### 4. Executions Stay Queued or Never Start
-
-**Symptoms**: Workflows show `WAITING`, stay queued, or execution circles spin indefinitely.
-
-**Check**:
-- Orborus container or pod is running and polling without errors.
-- Orborus can reach the backend API using `BASE_URL` or `OUTER_HOSTNAME`.
-- `OUTER_HOSTNAME` points to an IP/DNS reachable from newly spawned worker containers (do not use `localhost` or `127.0.0.1` inside container networks).
-- Docker socket (`/var/run/docker.sock`) is mounted, or Kubernetes service account has RBAC permissions to deploy pods.
-- Concurrency limit (`SHUFFLE_ORBORUS_EXECUTION_CONCURRENCY`) is not saturated.
-
-**Commands**:
-```bash
-# Docker
-docker logs -f shuffle-orborus
-docker inspect shuffle-orborus
-docker ps | grep -i worker
-
-# Kubernetes
-kubectl logs -n shuffle deploy/shuffle-orborus --tail=300
-kubectl auth can-i create deployments --as=system:serviceaccount:shuffle:shuffle-orborus -n shuffle
-kubectl get events -n shuffle --sort-by=.lastTimestamp
-```
-
----
-
-### 5. Worker Starts but App Actions Fail
-
-**Symptoms**: Workflow begins, but specific app nodes fail immediately with `FAILURE` or exit code 1.
-
-**Check**:
-- App Docker image exists locally or can be pulled from `ghcr.io` or Docker Hub.
-- Worker and app containers can reach the backend and target APIs.
-- Required app credentials and authentication configurations are filled in.
-- Proxy variables (`SHUFFLE_PASS_WORKER_PROXY`, `SHUFFLE_PASS_APP_PROXY`) and custom CA certificates are mounted if targeting internal systems with self-signed SSL.
-
-**Commands**:
-```bash
-# Inspect worker and failing app container logs
-docker ps | grep -i worker
-docker logs --tail 200 <worker-container-id>
-docker logs --tail 200 <app-container-id>
-```
-
----
-
-### 6. OpenSearch Is Unhealthy
-
-**Symptoms**: Database container restarts repeatedly, crashes with `exit code 137` (OOM), or displays permissions errors.
-
-**Check**:
-- Host has at least 8 GB RAM and sufficient disk space (`df -h`).
-- Linux kernel parameter `vm.max_map_count` is set to `262144`.
-- Host swap is disabled (`swapoff -a`).
-- `./shuffle-database` ownership is `1000:1000`.
-
-**Commands**:
-```bash
-df -h
-free -m
-docker logs --tail 300 shuffle-opensearch
-sudo sysctl vm.max_map_count
-sudo chown -R 1000:1000 shuffle-database
-```
+If Shuffle is eating up too much RAM or CPU:
+1. Check what's taking up resources:
+   ```bash
+   docker stats
+   ```
+2. If app logs are filling up memory under heavy load, turn off log streaming by adding this to `.env`:
+   ```bash
+   SHUFFLE_LOGS_DISABLED=true
+   ```
+   Restart Orborus after changing this.
+3. Clean up stopped containers and dangling images:
+   ```bash
+   docker system prune -f
+   ```
+4. Lower the execution concurrency in `.env`:
+   ```bash
+   SHUFFLE_ORBORUS_EXECUTION_CONCURRENCY=5
+   ```
 
 ---
 
-### 7. Memory Pressure and High Resource Consumption
+## Need help? Here's what to share with us
 
-**Symptoms**: Host becomes sluggish, containers are killed by OOM killer, or CPU load spikes.
+If you're stuck and need help from the Shuffle team or community, you can reach out on [Discord](https://discord.gg/B2CBzUm), open an issue on [GitHub](https://github.com/Shuffle/Shuffle/issues), or email us at support@shuffler.io.
 
-**Check**:
-- App log forwarding is streaming too much data. Set `SHUFFLE_LOGS_DISABLED=true` in Orborus configuration.
-- Concurrency limit (`SHUFFLE_ORBORUS_EXECUTION_CONCURRENCY`) is higher than host capacity.
-- Stale stopped containers and dangling images are consuming disk space.
+Before sending logs, **please make sure to remove any passwords, API keys, or sensitive customer data!**
 
-**Commands**:
-```bash
-docker stats
-docker ps
-docker system df
-docker system prune -f
-docker logs --tail 200 shuffle-orborus
-```
+Here's what helps us debug your issue fastest:
+- How you're running Shuffle (Docker Compose, Docker Swarm, Kubernetes, or Hybrid)
+- What version of Shuffle you're on (e.g. `2.1.1` or `nightly`)
+- Your sanitized `.env` or `values.yaml`
+- A screenshot or description of the error
+- Logs from around the time the issue happened
 
----
+### Quick script to bundle your logs
 
-## Support Escalation & Diagnostics Bundle
+To save time, here's a script that grabs all the relevant info into a single `.tar.gz` file you can share with us:
 
-When opening an issue on GitHub or requesting support from Shuffle, collect and attach a diagnostic bundle from the failure window. Always sanitize passwords, tokens, and customer data before sending.
-
-### Information to Include in a Support Ticket
-
-- **Deployment Type**: Docker Compose, Docker Swarm, Kubernetes Helm, or Hybrid.
-- **Shuffle Version**: Version tag (e.g. `2.1.1` or `nightly`).
-- **Environment**: Sanitized `.env` file or Helm `values.yaml`.
-- **Symptoms & Error Messages**: Exact error text or screenshots from the workflow editor.
-- **Network Environment**: Outbound proxy, custom CA roots, private registry, or air-gapped install.
-- **Recent Changes**: Upgrades, storage migrations, DNS/firewall modifications, or host reboots.
-
-### Automated Diagnostic Bundle Commands
-
-#### For Docker Compose Deployments:
-
+**For Docker:**
 ```bash
 mkdir -p shuffle-debug && cd shuffle-debug
 
@@ -343,11 +315,10 @@ docker logs --tail 400 shuffle-opensearch > opensearch.log 2>&1
 docker logs --tail 400 shuffle-frontend > frontend.log 2>&1
 
 cd .. && tar -czf shuffle-debug.tar.gz shuffle-debug/
-echo "Diagnostic bundle created: shuffle-debug.tar.gz"
+echo "Log bundle created: shuffle-debug.tar.gz"
 ```
 
-#### For Kubernetes Deployments:
-
+**For Kubernetes:**
 ```bash
 mkdir -p shuffle-k8s-debug && cd shuffle-k8s-debug
 
@@ -362,7 +333,7 @@ kubectl logs -n shuffle deploy/shuffle-orborus --tail=400 > orborus.log 2>&1
 kubectl logs -n shuffle deploy/shuffle-frontend --tail=400 > frontend.log 2>&1
 
 cd .. && tar -czf shuffle-k8s-debug.tar.gz shuffle-k8s-debug/
-echo "Kubernetes diagnostic bundle created: shuffle-k8s-debug.tar.gz"
+echo "Kubernetes log bundle created: shuffle-k8s-debug.tar.gz"
 ```
 
 ---
