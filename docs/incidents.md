@@ -57,15 +57,43 @@ Every organization in Shuffle Security gets a dedicated inbound webhook URL to r
 > **Where is the Ingestion Webhook located in the UI?**  
 > 1. Go to **`/incidents`** in Shuffle Security.  
 > 2. Look at the top header bar directly above the incidents table: you'll see the **Ingest** pill row.  
-> 3. Click the **"Webhook"** button (marked with the broadcast icon next to "+").  
+> 3. Click the **"Webhook"** button next to "+".  
 > 4. A modal opens showing your unique **Webhook URL** (`https://<instance>/api/v1/hooks/webhook_<org_id>_cases`), an enable/disable toggle switch, and a **"Copy Webhook URL"** button.  
 > 5. You can copy this URL directly into your SIEM, EDR, or alert script. The modal also provides a sample `curl` command with authentication headers to test sending an alert.
+
+<!-- TODO: Screenshot Needed: Ingestion Webhook Dialog
+- Route / UI Location: /incidents -> Click "Webhook" button in the Ingest pill row above the table.
+- What to capture: The open Webhook modal showing the organization webhook URL (webhook_<org_id>_cases), enable/disable toggle, "Copy Webhook URL" button, and sample curl command.
+- Recommended filename: assets/incidents-webhook-modal.png
+- Inject syntax: ![Ingestion Webhook Modal](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/incidents-webhook-modal.png)
+-->
 
 ### 2. Polling Workflows (Scheduled Pull)
 If your tools don't support webhooks or sit behind private network perimeters, you can use Shuffle's built-in **Ingest Tickets** workflow. It runs on a schedule (e.g. every 2 minutes), queries your alert source APIs (like Microsoft Defender, Email inboxes, or cloud SIEMs), and streams new detections directly into Incidents. You can click the **Sync Now** button in the Ingest pill row to immediately trigger polling.
 
 ### 3. The Incidents Dashboard (`/incidents`)
 All ingested events land in the unified incident queue at `/incidents`:
+
+<!-- component:incident-status title="Live Incident Queue & Health" subtitle="Real-time findings and queue telemetry from your active Shuffle incident pipeline." -->
+
+The incident queue tracks events through standardized lifecycle stages:
+
+| Status Stage | Meaning | Primary Owner | Expected Action |
+| :--- | :--- | :--- | :--- |
+| **New / Open** | Freshly ingested alert awaiting initial triage | Triage Analyst / Automation | Evaluate observables, execute enrichment, escalate or resolve. |
+| **In Progress** | Active investigation underway | Assigned SOC Analyst | Inspect case canvas, correlate IOCs, trigger response playbooks. |
+| **Under Review** | Containment executed, pending sign-off | Incident Lead / Team Lead | Verify eradication, confirm post-incident RCA. |
+| **Resolved / Closed** | Threat neutralized or confirmed false positive | SOC Analyst | Archive case; feedback IOCs to detection rules. |
+
+> [!TIP]
+> **Querying Incidents via REST API / CLI**  
+> You can programmatically query the incidents queue from any script or CI pipeline:  
+> ```bash
+> curl -s -X POST "https://<your-shuffle-instance>/api/v1/datastore/search" \
+>   -H "Authorization: Bearer $SHUFFLE_API_KEY" \
+>   -H "Content-Type: application/json" \
+>   -d '{"category": "shuffle-security_incidents", "query": "*", "size": 10}' | jq .
+> ```
 
 - **Header Bar & Controls**:
   - **Ingest Row**: Contains the Webhook button, connected detection sources, and the `+` button to connect additional alert tools via the App Search Drawer.
@@ -79,6 +107,13 @@ All ingested events land in the unified incident queue at `/incidents`:
   - **Created & Age**: Relative timestamp tracking time elapsed against your SLA.
 - **Bulk Actions**: Select multiple incidents via row checkboxes to bulk-assign analysts, change statuses, or purge noise.
 - **Case Canvas (`/incidents/:id`)**: Clicking any row navigates directly to the interactive investigation workspace.
+
+<!-- TODO: Screenshot Needed: Incidents Dashboard Table
+- Route / UI Location: /incidents
+- What to capture: Full view of the /incidents dashboard with sample detections, showing the top Ingest pill row, search and status filter tabs (Open, In Progress), severity badges (Critical, High, Medium), assignee avatars, and observables count badges.
+- Recommended filename: assets/incidents-dashboard-table.png
+- Inject syntax: ![Incidents Dashboard Overview](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/incidents-dashboard-table.png)
+-->
 
 ---
 
@@ -188,6 +223,13 @@ Explore and activate all available flow templates at [`/usecases`](/usecases).
 
 Clicking into an incident opens the interactive investigation canvas:
 
+<!-- TODO: Screenshot Needed: Incident Investigation Workspace Canvas
+- Route / UI Location: /incidents/:id (click any incident from the table)
+- What to capture: The interactive investigation canvas showing the header (title, severity, status dropdown, assignee), the Kanban task board lanes, and case timeline.
+- Recommended filename: assets/incidents-investigation-workspace.png
+- Inject syntax: ![Incident Investigation Canvas](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/incidents-investigation-workspace.png)
+-->
+
 ### Tasks & Kanban board
 Coordinate multi-step investigations without losing track of progress:
 - **Kanban Lanes**: Drag and drop tasks between **To Do**, **In Progress**, and **Done** (or configure custom status lanes in `/preferences`).
@@ -199,6 +241,13 @@ Coordinate multi-step investigations without losing track of progress:
 - **Threat Intelligence Feeds**: Integrated with threat feeds at `/incidents/threat-feeds` to automatically cross-reference indicators with VirusTotal, AbuseIPDB, AlienVault OTX, and MISP. When an IP, domain, or file hash is extracted from an alert, Shuffle queries your configured threat feeds in real time to calculate reputation scores and populate threat context directly on the incident canvas.
 - **CVE Correlation**: CVE identifiers extracted from alerts are cross-referenced with your [Vulnerabilities](/docs/vulnerabilities) backlog and real-world exploitation signals (EPSS and CISA KEV).
 - **TLP Controls**: Assign Traffic Light Protocol levels (`TLP:RED`, `TLP:AMBER`, `TLP:GREEN`, `TLP:CLEAR`) to prevent sensitive internal observables from leaking to external lookup services.
+
+<!-- TODO: Screenshot Needed: Observables & Threat Intel Enrichment
+- Route / UI Location: /incidents/:id -> Observables tab (or /incidents/observables)
+- What to capture: Observables list showing IOC types (IP, domain, hash), reputation score badges (VirusTotal / AbuseIPDB), TLP tags, and the one-click response action button.
+- Recommended filename: assets/incidents-observables-enrichment.png
+- Inject syntax: ![Observables & Threat Intel Correlation](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/incidents-observables-enrichment.png)
+-->
 
 ### Email threads & alert deduplication
 - **Conversation Threading**: Groups related emails and alert floods into clean conversation threads based on Message-IDs and subjects.

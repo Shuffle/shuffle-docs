@@ -61,6 +61,8 @@ The Shuffle Host Monitor is a lightweight, cross-platform daemon engineered to r
 
 ### Adding a Host & Daemon Ingestion
 
+<!-- component:add-host title="Deploy Shuffle Host Monitor Daemon" -->
+
 > [!TIP]
 > **Where is the Ingest Endpoint / Add Host button located in the UI?**  
 > 1. Go to **`/monitors`** in Shuffle Security.  
@@ -68,17 +70,39 @@ The Shuffle Host Monitor is a lightweight, cross-platform daemon engineered to r
 > 3. The **Add Host modal** opens, letting you choose your target operating system (macOS, Windows, Linux) and toggle desired capabilities (Disk Encryption, Screenlock, Software Inventory, Code Package Scanner, and Response Actions).  
 > 4. Shuffle automatically generates your pre-authenticated, one-line install command containing your organization's registration token:  
 >    - **macOS & Linux**:  
->      `curl -sSL https://<instance>/api/v1/monitors/install.sh | sudo bash -s -- --token <ORG_TOKEN>`  
+>      ```bash
+>      curl -sSL https://<instance>/api/v1/monitors/install.sh | sudo bash -s -- --token <ORG_TOKEN>
+>      ```  
 >    - **Windows (PowerShell)**:  
->      `irm https://<instance>/api/v1/monitors/install.ps1 | iex`  
+>      ```powershell
+>      irm https://<instance>/api/v1/monitors/install.ps1 | iex
+>      ```  
 > 5. You can run this command directly on a machine or distribute it across your fleet using your MDM or configuration manager (Jamf, Microsoft Intune, Kandji, Ansible).  
 > 6. Once installed, the daemon immediately connects back to Shuffle's secure ingestion endpoint (`/api/v1/monitors`) over HTTPS and WebSockets, sending heartbeats and telemetry in real time.
+
+<!-- TODO: Screenshot Needed: Add Host Registration Modal
+- Route / UI Location: /monitors -> Click "+ Add Host" button in top-right header.
+- What to capture: The open Add Host modal showing the OS selector tabs (macOS, Windows, Linux), capability checkboxes, and the generated one-line install command containing --token <ORG_TOKEN>.
+- Recommended filename: assets/monitors-add-host-modal.png
+- Inject syntax: ![Add Host Registration Modal](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/monitors-add-host-modal.png)
+-->
 
 ---
 
 ## The Host Monitors dashboard
 
 The fleet management interface at **`/monitors`** provides an interactive command center for all registered endpoints:
+
+<!-- component:host-status title="Fleet Posture & Compliance Status" subtitle="Real-time endpoint compliance, disk encryption, and software inventory across registered hosts." -->
+
+The fleet posture checks continuously evaluate endpoints against organizational and regulatory baselines:
+
+| Posture Control | Monitored Attribute | Compliance Standard | Default Action upon Failure |
+| :--- | :--- | :--- | :--- |
+| **Disk Encryption** | FileVault 2 (macOS), BitLocker (Windows), LUKS (Linux) | SOC 2 CC6.1, ISO 27001 A.10 | Notify user via Slack, flag non-compliant status in fleet inventory. |
+| **Screen Lock Timeout** | Inactivity timeout ≤ 15 minutes | CIS Benchmark 2.3.1 | Alert employee, prompt configuration profile re-application. |
+| **Software Inventory** | Installed applications, versions, and binaries | CIS Control 2 (Software Asset Inventory) | Flag known unapproved software or outdated binaries. |
+| **Code Package Scanner** | Local `package.json`, `requirements.txt`, `Cargo.toml`, `go.mod` | DevSecOps Pipeline Baseline | Alert developer before committing vulnerable dependencies to production. |
 
 - **Fleet Posture Tiles**: At-a-glance status cards across your entire fleet:
   - **Compliance Checks**: Fleet percentage with active FileVault / BitLocker disk encryption and screen lock timeouts.
@@ -87,10 +111,10 @@ The fleet management interface at **`/monitors`** provides an interactive comman
   - **Response Actions**: Number of hosts capable of automated remote containment.
 - **Search & OS Tabs**: Search machines by hostname, IP address, or logged-in user, and filter by platform (`All`, `macOS`, `Windows`, `Linux`).
 - **Fleet Table Columns**:
-  - **Host**: Operating system icon, hostname, and primary IP address.
+  - **Host**: Operating system platform, hostname, and primary IP address.
   - **Operating System**: OS distribution name and exact kernel/build version.
   - **Last Seen**: Relative heartbeat timestamp with a live green (online) or gray (offline) status indicator dot.
-  - **Compliance Checks**: Live icons showing the status of Hard Drive Encryption and Screen Lock policy enforcement.
+  - **Compliance Checks**: Indicators showing the status of Hard Drive Encryption and Screen Lock policy enforcement.
   - **Installed Software**: Count badge of cataloged software applications.
   - **Code Scanner**: Status badge showing whether the local package scanner is active.
   - **Actions Menu**: Quick access dropdown to open the **Web Terminal** or trigger pre-configured containment playbooks.
@@ -101,6 +125,20 @@ The fleet management interface at **`/monitors`** provides an interactive comman
   - **Code Packages**: List of local project directories inspected with package dependency trees.
   - **Response Actions**: Execute immediate containment or diagnostic scripts on the endpoint.
 - **Web Terminal (`/terminal`)**: Open an interactive, browser-based shell to the host with zero inbound ports required.
+
+<!-- TODO: Screenshot Needed: Host Monitors Fleet Dashboard
+- Route / UI Location: /monitors
+- What to capture: The fleet overview page showing the four top posture tiles (Compliance Checks %, Installed Software count, Code Package Scanner, Response Actions), platform tabs (All, macOS, Windows, Linux), and the host table with live status indicator dots and compliance badges.
+- Recommended filename: assets/monitors-dashboard-overview.png
+- Inject syntax: ![Host Monitors Fleet Dashboard](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/monitors-dashboard-overview.png)
+-->
+
+<!-- TODO: Screenshot Needed: Host Detail Panel (HostDetailPanel)
+- Route / UI Location: /monitors -> Click any host row
+- What to capture: The slide-out HostDetailPanel showing system hardware specifications, compliance verification pass/fail status (FileVault/BitLocker, screen lock timer), and the installed software list.
+- Recommended filename: assets/monitors-host-detail-panel.png
+- Inject syntax: ![Host Detail Panel](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/monitors-host-detail-panel.png)
+-->
 
 ---
 
@@ -154,6 +192,13 @@ Shuffle Security provides an embedded **Remote Web Terminal** accessible directl
 - **Zero Inbound Ports**: The Host Monitor daemon maintains an outbound connection over secure WebSockets, meaning you do not need to open inbound firewall ports or expose SSH to the public internet.
 - **Role-Based Access Control**: Terminal access is strictly gated by administrator and support permissions in `/settings/permissions`.
 - **Live Forensics & Troubleshooting**: Run commands, inspect running processes, check network sockets, or view log files in real time directly from your browser.
+
+<!-- TODO: Screenshot Needed: Remote Web Terminal View
+- Route / UI Location: /terminal (or Host Detail -> Terminal button)
+- What to capture: The embedded browser terminal window connected to an active host executing diagnostic commands (e.g. whoami, ps aux, network checks).
+- Recommended filename: assets/monitors-web-terminal.png
+- Inject syntax: ![Remote Web Terminal](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/monitors-web-terminal.png)
+-->
 
 ---
 

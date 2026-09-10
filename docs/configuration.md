@@ -150,6 +150,13 @@ cd shuffle-security
 docker compose up -d
 ```
 
+<!-- TODO: Screenshot Needed: Self-Hosted Shuffle Security Interface
+- Route / UI Location: http://<server-ip>:3002/incidents
+- What to capture: Shuffle Security running on a self-hosted instance, showing the top product switcher in the header (Shuffle Core vs. Shuffle Security) and the active incidents queue.
+- Recommended filename: assets/configuration-shuffle-security-selfhosted.png
+- Inject syntax: ![Self-Hosted Shuffle Security Interface](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/configuration-shuffle-security-selfhosted.png)
+-->
+
 ### Updating Shuffle
 
 `From version v1.1 onwards, we are using ghcr.io/shuffle/* registry instead of ghcr.io/frikky/*`

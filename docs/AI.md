@@ -48,6 +48,13 @@ Shuffle enables organizations to configure or switch their active LLM provider d
    - Click **Save**. The configuration is securely stored in your organization's App Authentication.
    - All subsequent agent runs, workflow AI nodes, and Ask AI queries across your organization immediately route to the new model in real time.
 
+<!-- TODO: Screenshot Needed: LLM Provider Selector Drawer
+- Route / UI Location: /agents -> Click the active LLM provider chip (e.g. "Shuffle AI" or model badge) in the top header bar.
+- What to capture: The open provider sidebar showing presets for Local (Ollama, LM Studio) and Cloud models (Gemini, OpenAI, Anthropic), endpoint URL, Model dropdown, and the "Test Connection" button.
+- Recommended filename: assets/ai-provider-selector-drawer.png
+- Inject syntax: ![AI Provider Selector Drawer](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/ai-provider-selector-drawer.png)
+-->
+
 ---
 
 ## AI Agents
@@ -55,6 +62,13 @@ Shuffle enables organizations to configure or switch their active LLM provider d
 Agents in Shuffle are autonomous, goal-oriented systems that interact with the world using tools (playbooks, MCP apps, and custom scripts) to achieve specific operational outcomes.
 
 <!-- component:agent-ui placeholder="Analyze an alert or investigate an IP..." -->
+
+<!-- TODO: Screenshot Needed: AI Agents Workspace & Autonomous Execution
+- Route / UI Location: /agents
+- What to capture: The active Agents console showing an agent execution with prompt input, thought/planning loop, tool executions (calling Shuffle apps), and structured output.
+- Recommended filename: assets/ai-agents-workspace.png
+- Inject syntax: ![AI Agents Workspace](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/ai-agents-workspace.png)
+-->
 
 ### How an Agent works under the hood
 
@@ -219,6 +233,13 @@ External AI (ChatGPT / Claude)             Shuffle OAuth Server                Y
   - `workflows:run`: Execute automated security workflows and playbooks.
   - `incidents:read` / `incidents:write`: Query and update incident cases.
 - **Centralized Multi-App Gateway**: Unlike standard MCP setups where an external LLM must connect to dozens of separate servers, Shuffle functions as a centralized gateway. A single OAuth connection grants the external model secure, audited access to thousands of enterprise tools.
+
+<!-- TODO: Screenshot Needed: MCP App & Tools Authorization View
+- Route / UI Location: /oauth/authorize (or /settings/mcp / Agent drawer tools tab)
+- What to capture: The MCP authorization dialog showing requested granular scopes (mcps:read, apps:execute, workflows:run) and connected enterprise tools.
+- Recommended filename: assets/ai-mcp-tools-configuration.png
+- Inject syntax: ![MCP App & Tools Configuration](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/ai-mcp-tools-configuration.png)
+-->
 
 ### Using Shuffle from ChatGPT
 

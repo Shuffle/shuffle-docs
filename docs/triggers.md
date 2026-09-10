@@ -125,7 +125,7 @@ Requirements:
 4. It's time we explore the results. In total, this should execute FOUR times: 1 for the first workflow and once for EACH of the objects in the list.
 ![Triggers-subflow-4](https://github.com/frikky/shuffle-docs/blob/master/assets/triggers-subflow-4.png?raw=true)
 
-5. Here's a view of the total workflows. Notice how three of them have a different icon? This is because they are subflows. PS: It will always show the maximum amount of nodes in the workflow, whether it's a subflow or not.
+5. Here's a view of the total workflows. Notice how three of them are marked as subflows. PS: It will always show the maximum amount of nodes in the workflow, whether it's a subflow or not.
 ![Triggers-subflow-5](https://github.com/frikky/shuffle-docs/blob/master/assets/triggers-subflow-5.png?raw=true)
 
 6. Exploring the subflows, we find that the IP's have been searched for in Virustotal, and that we have a reference to the parent. Clicking the reference will take you to the parent execution.
@@ -267,7 +267,7 @@ To view and manage the downloaded Sigma rules:
 ![Sigma Ui](https://github.com/user-attachments/assets/dabd95f6-8a54-4c41-8f85-dc496e77e79b)
 
 
-   - To edit an existing rule, click on the edit icon, make your changes, and save.
+   - To edit an existing rule, click the Edit button, make your changes, and save.
 
 ![Edit Sigma](https://github.com/user-attachments/assets/a153cae1-e161-413b-b7c2-9fc9fe932d52)
 

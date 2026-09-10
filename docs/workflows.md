@@ -189,7 +189,7 @@ With a saved workflow, click the Orange play button. Execution begins at your st
 
 <img width="1044" height="80" alt="Screenshot 2026-07-02 at 7 31 39 PM" src="https://github.com/user-attachments/assets/ffed7c6e-9473-43ea-9918-068317be6b84" />
 
-To review past executions, go to [/workflows](/workflows), click the name of your workflow, and click the activity icon. It shows the status and output of every previous run.
+To review past executions, go to [/workflows](/workflows), click the name of your workflow, and click Executions. It shows the status and output of every previous run.
 
 <img width="919" height="96" alt="Screenshot 2026-07-02 at 10 19 30 PM" src="https://github.com/user-attachments/assets/15fce389-146f-4867-82f4-f98a38be3142" />
 
@@ -254,7 +254,7 @@ This section walks through building a simple workflow from scratch: two nodes, c
 
 ### Step 4 — Execute
 
-1. Click the save button (diskette icon).
+1. Click the Save button.
 2. Click the green play button.
 3. A side panel opens showing the execution progress. Each node turns green as it completes.
 4. Click the second node in the panel to see its output — it should match the input from the first node.
@@ -296,13 +296,13 @@ The fewer nodes a workflow uses, the faster it runs and the easier it is to main
 
 The starting node is the first action that runs when a workflow executes. It is marked with a turquoise circular border. It is not a trigger — it is the first app action that receives data from a trigger.
 
-To change the starting node, hover over a different node until you see the "FLAG ICON" and press it (located in the top-right corner when hovering over a node). The shape of the node changes from a square to a circle.
+To change the starting node, hover over a different node until you see the flag control in the top-right corner and click it. The shape of the node changes from a square to a circle.
 
 ### Apps and actions
 
 An app bundles one or more actions that connect to a specific service. Apps must be activated within your tenant before they can appear in the left panel.
 
-Each app action requires authentication. Click the app on your workflow, go to Setup, and press the plus icon to add your credentials. Authenticated apps in one workflow are available across your tenant and can be distributed across your sub-tenants.
+Each app action requires authentication. Click the app on your workflow, go to Setup, and press the "+" button to add your credentials. Authenticated apps in one workflow are available across your tenant and can be distributed across your sub-tenants.
 
 ### HTTP App and REST API
 
@@ -641,7 +641,7 @@ Read more about cloud synchronization in the [organization documentation](/docs/
 
 ### Finding Trigger Executions
 
-When a trigger fires, you will not be notified by default — it runs behind the scenes. You can discover trigger executions and their data by opening the workflow and clicking the running person icon ("See all executions") at the bottom of the canvas, or by using the [Workflow Run Debugger](#workflow-run-debugger).
+When a trigger fires, you will not be notified by default — it runs behind the scenes. You can discover trigger executions and their data by opening the workflow and clicking the Executions button ("See all executions") at the bottom of the canvas, or by using the [Workflow Run Debugger](#workflow-run-debugger).
 
 ### Webhook
 
@@ -741,7 +741,7 @@ Using `$Repeat_list.#` triggers an independent subflow execution for each object
 
 ![Subflow Multiple Executions](https://github.com/frikky/shuffle-docs/blob/master/assets/triggers-subflow-4.png?raw=true)
 
-5. Inspect the execution list. Subflow executions display a distinctive subflow icon.
+5. Inspect the execution list. Subflow executions are designated with a subflow label.
 
 ![Execution List Showing Subflows](https://github.com/frikky/shuffle-docs/blob/master/assets/triggers-subflow-5.png?raw=true)
 
@@ -907,7 +907,7 @@ To make an app action accept file uploads:
 2. Click "New Action."
 3. Enable "File Upload" and enter the parameter name (e.g. `file`).
 4. Paste a curl request into the URL path field to auto-populate the endpoint.
-5. The file icon on the action indicates it accepts files. A `File_id` field appears when used in a workflow.
+5. A file indicator on the action marks that it accepts files. A `File_id` field appears when used in a workflow.
 
 ## Shuffle Datastore
 
@@ -1034,7 +1034,7 @@ Use the **Filter List** action in the Shuffle Tools app (covered in [Condition L
 
 ## Exploring Executions
 
-Click the "running person" (activity) icon (bottom-left of the workflow editor) to open the execution sidebar. It shows the history of workflow runs and lets you dig into individual results.
+Click the Executions button at the bottom-left of the workflow editor to open the execution sidebar. It shows the history of workflow runs and lets you dig into individual results.
 
 [![Exploring Workflow Executions](https://img.youtube.com/vi/TW_qz1QVTUU/hqdefault.jpg)](https://www.youtube.com/watch?v=TW_qz1QVTUU)
 
@@ -1043,7 +1043,7 @@ Click the "running person" (activity) icon (bottom-left of the workflow editor) 
 Each entry/run shows:
 
 - **Color**: green (finished), yellow (running/waiting), red (failed/aborted)
-- **Icon**: play button (manual run), or a trigger icon (webhook, schedule, subflow, etc.)
+- **Execution Type**: manual run, or trigger origin (webhook, schedule, subflow, etc.)
 - **Timestamp**: when the execution started
 - **Arrow**: white normally, orange for the last execution you clicked
 
@@ -1066,7 +1066,7 @@ The action list shows each step within the execution in order. For each action y
 
 [![Debugging Execution Actions](https://img.youtube.com/vi/cM7521J7O8A/hqdefault.jpg)](https://www.youtube.com/watch?v=cM7521J7O8A)
 
-**Tip:** Clicking a JSON result value copies its path (e.g. `#nodename.success`). Clicking the copy icon copies the actual value.
+**Tip:** Clicking a JSON result value copies its path (e.g. `#nodename.success`). Clicking the Copy button copies the actual value.
 
 ### Workflow Run Debugger
 
@@ -1076,8 +1076,8 @@ The [Workflow Run Debugger](https://shuffler.io/workflows/debug) lets you search
 
 **How to access:**
 
-1. Open a workflow and click the "running person" (activity) icon (bottom-left).
-2. In the execution list, click the graph/search icon (top-right).
+1. Open a workflow and click the Executions button (bottom-left).
+2. In the execution list, click Debugger (top-right).
 3. Or navigate directly to `https://shuffler.io/workflows/debug?workflow_id=<your-workflow-id>`.
 
 <img width="1436" height="685" alt="Screenshot 2026-07-15 at 9 44 52 PM" src="https://github.com/user-attachments/assets/24b15606-c5c8-4a7b-9daf-fcf6124b1618" />
@@ -1118,7 +1118,7 @@ Every workflow is backed up at most once per 60 seconds. They are stored in a se
 
 [![Workflow Versioning and Revisions](https://img.youtube.com/vi/-EgOD6ThR0w/hqdefault.jpg)](https://www.youtube.com/watch?v=-EgOD6ThR0w)
 
-Access backups from the revision icon in the bottom bar. Select a previous version to restore it. Your current state is also saved before reverting.
+Access backups from the Revisions button in the bottom bar. Select a previous version to restore it. Your current state is also saved before reverting.
 
 <img width="1439" height="809" alt="revision/history_workflow" src="https://github.com/user-attachments/assets/58ebb76c-6352-4014-aa23-6af420f6f57d" />
 

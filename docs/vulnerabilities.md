@@ -45,7 +45,7 @@ Because findings live in the same datastore as the rest of your Shuffle environm
 
 Vulnerabilities in modern organizations go far beyond unpatched operating system packages. Shuffle organizes findings across four distinct categories:
 
-| Category | Icon / Key | What it covers | Common Sources |
+| Category | Category Key | What it covers | Common Sources |
 | :--- | :--- | :--- | :--- |
 | **Software / CVE** | `software_cve` | OS packages, kernel vulnerabilities, installed desktop and server software. | Wazuh, Tenable, Qualys, Rapid7, Defender |
 | **User / Identity** | `user_identity` | Stale MFA, compromised credentials, overprivileged accounts, exposed API keys. | Okta, Azure AD / Entra ID, Google Workspace |
@@ -86,6 +86,17 @@ Through Shuffle's threat intel integrations (accessible at `/incidents/threat-fe
 - **AlienVault OTX & VirusTotal**: Detects active weaponized malware samples exploiting the CVE.
 - **AbuseIPDB & MISP**: Identifies scanning campaigns probing your perimeter for specific vulnerabilities.
 
+<!-- component:cve-lookup title="Live CVE & Exploit Intelligence Lookup" placeholder="Enter CVE or GHSA (e.g. CVE-2024-3094, CVE-2021-44228)..." -->
+
+> [!TIP]
+> **How to Lookup and Triage Any Advisory**  
+> - **In the Web App**: Use the interactive search tool above or navigate to **`/vulnerabilities`** and enter the CVE identifier (e.g., `CVE-2024-3094`) in the search bar. Clicking into an advisory queries OSV.dev, real-world exploitation in the CISA KEV catalog, and 30-day EPSS likelihood in real time.  
+> - **Via REST API / Terminal**: Query the backend directly from any shell, CI pipeline, or Python automation:  
+>   ```bash
+>   curl -s -X GET "https://<your-shuffle-instance>/api/v1/vulnerabilities/CVE-2024-3094" \
+>     -H "Authorization: Bearer $SHUFFLE_API_KEY" | jq .
+>   ```
+
 ---
 
 ## Ingest: Vulnerability scanners & pipelines
@@ -101,9 +112,16 @@ Stream real-time scan findings directly from your CI/CD pipelines, container reg
 > **Where is the Ingestion Webhook located in the UI?**  
 > 1. Go to **`/vulnerabilities`** in Shuffle Security.  
 > 2. Look at the top header bar directly above the vulnerabilities table: you'll see the **Ingest** pill row.  
-> 3. Click the **"Webhook"** button (marked with the broadcast icon next to "+").  
+> 3. Click the **"Webhook"** button next to "+".  
 > 4. A modal opens displaying your unique **Vulnerability Webhook URL** (`https://<instance>/api/v1/hooks/webhook_<org_id>_vulnerabilities`), an enable/disable toggle switch, and a **"Copy Webhook URL"** button.  
 > 5. Configure this URL in your scanner or CI/CD webhook settings to push findings in JSON format automatically.
+
+<!-- TODO: Screenshot Needed: Vulnerabilities Ingestion Webhook Dialog
+- Route / UI Location: /vulnerabilities -> Click "Webhook" button in the Ingest pill row above the table.
+- What to capture: The open Webhook dialog displaying the dedicated vulnerability push URL (webhook_<org_id>_vulnerabilities), enable/disable toggle, and sample curl payload.
+- Recommended filename: assets/vulnerabilities-webhook-modal.png
+- Inject syntax: ![Vulnerabilities Ingestion Webhook Dialog](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/vulnerabilities-webhook-modal.png)
+-->
 
 ### 2. "Ingest Vulnerabilities" Workflow (Scheduled Pull)
 Shuffle provides a pre-built **Ingest Vulnerabilities** workflow that runs on a recurring schedule (e.g. every 12 hours). It connects to your authenticated scanner APIs:
@@ -123,6 +141,17 @@ Just like [Incidents](/docs/incidents#schemaless-ingest--translation-to-ocsf), v
 ## The Vulnerabilities dashboard
 
 The main workspace at **`/vulnerabilities`** is engineered to help teams isolate high-risk flaws without getting buried in thousands of informational entries:
+
+<!-- component:vuln-status title="Live Vulnerability Backlog & Prioritization" subtitle="Live CVE findings, severity breakdown, and exploit likelihood tracked in your environment." -->
+
+The vulnerability backlog organizes findings across clear severity and exploitation tiers:
+
+| Risk Tier | Criteria | Remediation SLA | Recommended SOC / Engineering Action |
+| :--- | :--- | :--- | :--- |
+| **Critical** | CISA KEV listed, EPSS > 50%, or CVSS ≥ 9.0 | 24 - 48 Hours | Immediate patch deployment via Ansible/SSM, or temporary network isolation of affected host. |
+| **High** | Public weaponized PoC available, or CVSS 7.0 - 8.9 | 7 Days | Schedule patch release or apply vendor mitigations in the current sprint. |
+| **Medium** | Theoretical exploit requiring local access, or CVSS 4.0 - 6.9 | 30 Days | Bundle into standard monthly patch cycles. |
+| **Low / Info** | Minimal impact, hardened configuration needed | Best Effort | Review during quarterly infrastructure baselines. |
 
 - **Header Bar & Category Filter Tabs**:
   - **Category Tabs**: Switch views instantly between:
@@ -145,6 +174,20 @@ The main workspace at **`/vulnerabilities`** is engineered to help teams isolate
 - **Vulnerability Detail Drawer (`VulnerabilitySidebar`)**: Clicking any row slides open a detailed investigation drawer showing full CVSS metrics, EPSS breakdown, vendor advisory links, all mapped host monitors/cloud assets, and buttons to trigger remediation workflows.
 - **Asset Posture View (`/vulnerabilities/assets`)**: Switch to the Assets tab to view vulnerabilities aggregated by host or container image.
 
+<!-- TODO: Screenshot Needed: Vulnerabilities Dashboard Table & Filters
+- Route / UI Location: /vulnerabilities
+- What to capture: Full view of the /vulnerabilities table with sample findings across categories, showing category tabs (Software / CVE, User / Identity, Cloud Misconfig, Code / Deps), CISA KEV badge, EPSS score percentages, and affected asset count badges.
+- Recommended filename: assets/vulnerabilities-dashboard-overview.png
+- Inject syntax: ![Vulnerabilities Dashboard Overview](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/vulnerabilities-dashboard-overview.png)
+-->
+
+<!-- TODO: Screenshot Needed: Vulnerability Detail Drawer (VulnerabilitySidebar)
+- Route / UI Location: /vulnerabilities -> Click any vulnerability row (e.g. CVE-2024-6387)
+- What to capture: The slide-out VulnerabilitySidebar showing CVSS severity breakdown, EPSS score & percentile, affected host monitor list, and automated remediation action buttons.
+- Recommended filename: assets/vulnerabilities-detail-drawer.png
+- Inject syntax: ![Vulnerability Detail Drawer](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/vulnerabilities-detail-drawer.png)
+-->
+
 ---
 
 ## Asset tracking & Host Monitors
@@ -156,6 +199,13 @@ A CVE has no meaning without knowing **where** it lives. Shuffle links vulnerabi
 - **Code Repositories**: Track which git repos and container images contain vulnerable packages.
 
 Clicking on any asset reveals its complete security posture: open vulnerabilities, compliance check status, assigned incidents, and available response actions.
+
+<!-- TODO: Screenshot Needed: Asset-Centric Vulnerabilities Posture View
+- Route / UI Location: /vulnerabilities/assets
+- What to capture: The /vulnerabilities/assets view grouping detected flaws by host and cloud instance, showing device hostname, OS platform, total CVE counts, and severity distribution bar.
+- Recommended filename: assets/vulnerabilities-assets-view.png
+- Inject syntax: ![Asset Vulnerability Posture View](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/vulnerabilities-assets-view.png)
+-->
 
 ---
 

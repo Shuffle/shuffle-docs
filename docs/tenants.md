@@ -53,7 +53,7 @@ Starting from version 2.0.2, enterprise users can manage sub-tenant app run limi
 2. Scroll down to the *Utilization and Stats* section. There, you’ll find the *Child Tenant* tab, where you can manage sub-tenant app run limits.
 ![image](https://github.com/user-attachments/assets/11355085-daf1-4918-bd76-d8266d28dced)
 
-4. Click the edit icon next to the *App Execution Limit*. A pop-up will appear where you can assign the app execution run limit for each sub-tenant. You can follow the same process to assign workflow run execution limits.  
+4. Click Edit next to the *App Execution Limit*. A pop-up will appear where you can assign the app execution run limit for each sub-tenant. You can follow the same process to assign workflow run execution limits.  
 ![image](https://github.com/user-attachments/assets/90657b84-cc40-4049-8631-de193583df4f)
 
 
@@ -139,8 +139,7 @@ Shuffle supports the use of a KMS. [Please see the extension documentation for m
 **Groups was taken out of beta and was removed for the 2.0.0 release**
 
 ### Authentication Field overview 
-The fields of authentication
-* Icon 					- The App's icon. This is 
+The fields of authentication:
 * Label 				- The name of the authentication scheme. Make it helpful, e.g. "QRadar Datacenter Amsterdam" or similar. 
 * App Name 			- The name of the app it belongs to
 * Workflows 		- The amount of workflows it's being used in
@@ -387,7 +386,7 @@ They are organization-wide, meaning if you dismiss them, they get dismissed for 
 <img width="384" alt="image" src="https://github.com/user-attachments/assets/9be7e05f-3975-4a5f-9f49-4d7967b9bb8d">
 
 **Accessing Notifications:**
-- **Through the UI**: You can see a bell icon with a number next to it in the top right bar, when you are logged in. This indicates the amount of notifications you have. Clicking it will show you the notifications. If you see a number next to the notification, this is the amount of it that has occurred.
+- **Through the UI**: The notifications badge with a count number is displayed in the top right bar when you are logged in. This indicates the number of notifications you have. Clicking it opens your notification panel.
 - **Selecting a Notification Workflow**: If you go to `/admin?admin_tab=organization`, you can see a section called "Notification Workflow". Click on it to select an appropriate workflow. This workflow will be ran whenever a notification is created, except when bucketed. This can be used to automate opening tickets, sending emails, or whatever you want to do when there is an error in your notification.We use some sort of "bucketing" of notifications, to prevent you from getting spammed. This means, every time a notification is created 2 times under 2 minutes, we'll only send you one notification. This is to prevent you from getting spammed.
 
 If you are on the open-source side, you can change the bucketing timeout by changing the `SHUFFLE_NOTIFICATION_BUCKETING_MINUTES` environment variable. This is set to 2 minutes by default.

@@ -104,7 +104,7 @@ Extension triggers (not exhaustive): AWS Lambda, AWS S3, Elastalert, Kafka, Pub/
 ## Autocomplete
 The Autocomplete feature in the Workflow Editor allows you to dynamically reference and insert data from previous node executions into your current action or script.
 
-When you open a field (such as the body, arguments, or parameters) and type the $ symbol or click the autocomplete icon, Shuffle automatically lists all available runtime variables and datastore entries from earlier workflow steps.
+When you open a field (such as the body, arguments, or parameters) and type the `$` symbol or click the autocomplete button, Shuffle automatically lists all available runtime variables and datastore entries from earlier workflow steps.
 
 Each listed item represents data output from a previous node (for example, $phishing.value, $email_ids.value, or $testing.value). By selecting any of these variables, it automatically inserts the appropriate dynamic reference into your editor.
 

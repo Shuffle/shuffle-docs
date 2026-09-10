@@ -77,6 +77,8 @@ while true; do
     fi
     sleep 1
 done
+```
+
 ## How to get logs
 
 When debugging or reporting an issue, the first thing to check is logs from both the server (frontend, backend, database) and the runtime (Orborus, workers, and apps).
@@ -214,7 +216,7 @@ If you go to `/apps` and the page is empty, or you get errors when clicking "Dow
 
 ### Executions stay queued or never start
 
-If your workflows stay in `WAITING` status or the execution icon spins forever:
+If your workflows stay in `WAITING` status or execution never progresses:
 1. Check if Orborus is running. Orborus is what polls the backend and spawns workers:
    ```bash
    docker logs -f shuffle-orborus
@@ -630,7 +632,7 @@ Open `http://<your-server-ip>:5601` in your browser. Log in with your OpenSearch
 
 ### Using Dev Tools
 
-Go to **Dev Tools** (wrench icon in the left sidebar) to run queries directly against OpenSearch without needing curl. All the queries from the [Useful OpenSearch Queries](#useful-opensearch-queries) section work here.
+Go to **Dev Tools** in the left sidebar to run queries directly against OpenSearch without needing curl. All the queries from the [Useful OpenSearch Queries](#useful-opensearch-queries) section work here.
 
 List all Shuffle indexes:
 ```

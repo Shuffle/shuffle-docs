@@ -37,7 +37,7 @@ PS: In a future iteration, focus will move to an optional hybrid execution model
 ### Actions
 An app can perform more than one task based on predefined actions. These actions are defined by the developer, and are reusable and modifiable by the user of the app. An action should (for now) be a one-to-one representation of the function to run, and usually has arguments for authentication with the target application. Actions can contain multiple arguments.
 
-You can view an app's actions by selecting the app and clicking the edit icon. 
+You can view an app's actions by selecting the app and clicking the Edit button. 
 
 ![Apps view 2](https://github.com/Shuffle/shuffle-docs/blob/master/assets/app_edit_button.png?raw=true)
 
@@ -93,7 +93,7 @@ After you've found a public or private app on [https://shuffler.io](https://shuf
 ![Apps view search 16](https://github.com/Shuffle/shuffle-docs/blob/master/assets/searchengine_app.png?raw=true)
 
 ## Downloading apps 
-Apps can be downloaded or exported from your local instance or [https://shuffler.io](https://shuffler.io) as long as it's either your private app, or a public one AND is OpenAPI. If you find the "download" icon in any part of Shuffle, that means the item is exportable.
+Apps can be downloaded or exported from your local instance or [https://shuffler.io](https://shuffler.io) as long as it's either your private app, or a public one AND is OpenAPI. If you find the **Download** button in any part of Shuffle, that means the item is exportable.
 
 ![Apps view activation 18](https://github.com/Shuffle/shuffle-docs/blob/master/assets/download_app.png?raw=true)
 
@@ -749,7 +749,7 @@ For self-hosted Shuffle instances, you can use the hot reloading feature to quic
 2. Take the app folder (not the ZIP file) and place it inside the `shuffle-apps` directory in your Shuffle instance. For reference [shuffle-apps](https://github.com/Shuffle/Shuffle/tree/main/shuffle-apps).
 3. Make sure in env file the `SHUFFLE_APP_HOTLOAD_FOLDER` is set as `./shuffle-apps`
 4. Go to the Apps page in the Shuffle UI
-5. On the top right corner, you'll see a rotating double arrow icon. Click on it to hot reload your apps
+5. On the top right corner, click the **Reload** button to hot reload your apps
 
 ![Hot Reload Button](https://github.com/frikky/shuffle-docs/blob/master/assets/hotloading-app.png?raw=true)
 

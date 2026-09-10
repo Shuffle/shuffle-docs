@@ -54,11 +54,43 @@ This is where workflows actually get executed in real time:
 - `shuffle-worker`: Controls an individual workflow execution, figures out which node runs next, and starts up apps.
 - **App containers**: Ephemeral Docker containers that run the actual actions (like HTTP, Shuffle Tools, or any custom app).
 
+<!-- component:system-health title="Live Architecture & Service Status" -->
+
+The core services and their network boundaries:
+
+| Component | Layer | Default Port | Health / Probe Endpoint | Responsibility |
+| :--- | :--- | :--- | :--- | :--- |
+| **`shuffle-frontend`** | Server | `3001` | `GET /` | Core workflow builder, trigger console, reverse proxy. |
+| **`shuffle-security`** | Server | `3002` | `GET /` | Dedicated SecOps console: Incidents, Monitors, Vulnerabilities. |
+| **`shuffle-backend`** | Server | `5001` | `GET /api/v1/health` | Golang REST API, workflow validation, auth, datastore routing. |
+| **`shuffle-opensearch`** | Datastore | `9200` | `GET /_cluster/health` | Distributed document index for incidents, metrics, and workflows. |
+| **`shuffle-orborus`** | Runtime | Dynamic | Internal daemon loop | Job supervisor; provisions ephemeral workers via Docker or K8s. |
+| **`shuffle-worker`** | Runtime | Ephemeral | Ephemeral RPC | Executes workflow execution graphs and coordinates app containers. |
+
+> [!TIP]
+> **Manual Service Health Verification via CLI**  
+> You can verify the health of your local or clustered deployment using standard commands:  
+> ```bash
+> # 1. Check Go Backend API health and version
+> curl -s http://localhost:5001/api/v1/health | jq .
+> 
+> # 2. Check OpenSearch cluster health status
+> curl -s http://localhost:9200/_cluster/health | jq .
+> 
+> # 3. List all running Shuffle containers and their uptime
+> docker ps --filter "name=shuffle" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+> ```
+
 ### Runtime Orchestration
 
-How do workers and apps actually get deployed? We support two main models:
-- **Docker & Docker Swarm**: By default, Orborus uses the Docker socket to spin up worker and app containers. When running across multiple servers, Orborus sets up an overlay network (`shuffle_swarm_executions`) so containers can run on any node in the Swarm.
-- **Kubernetes**: If you run on Kubernetes, Orborus and workers use Kubernetes API permissions inside the `shuffle` namespace to spin up worker and app Deployments and Services on the fly.
+How do workers and apps actually get deployed? We support four primary deployment architectures:
+
+<!-- component:usecases category="architecture" -->
+
+1. **Single Server / Docker Compose**: Default deployment for labs, small teams, and quick setups. Server and Orborus live on the same physical host or virtual machine sharing `/var/run/docker.sock`.
+2. **Distributed Docker Swarm**: Orborus schedules worker and app containers across a multi-node Swarm overlay network (`shuffle_swarm_executions`).
+3. **Cloud Hybrid (Shuffle Cloud + Local Orborus)**: Run your control plane in Shuffle Cloud while deploying Orborus inside your private VPC or on-prem data center with zero inbound firewall ports required.
+4. **Kubernetes Cloud-Native**: Production-scale deployment using Helm charts. Orborus and workers leverage Kubernetes API tokens inside the `shuffle` namespace to provision isolated pods and services dynamically.
 
 ## Frameworks
 Shuffle uses and is built upon existing, well established frameworks to help the Security community move forward, rather than just increase complexity. 

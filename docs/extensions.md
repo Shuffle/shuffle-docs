@@ -92,7 +92,7 @@ After adding them, click "Save", saving the configuration. After saving, log out
 
 • Click Add app -> Add custom SAML app.
 
-• In the popup window, enter shuffle as the name of the app, you can upload the app icon here as well. Then click continue.
+• In the popup window, enter shuffle as the name of the app, you can upload the app logo here as well. Then click continue.
 
 • The next page will provide the IDP data. Download IdP metadata then click continue.
 
@@ -349,8 +349,8 @@ AI Agents are in active development as of April 2025. They take input(s) and aut
 CACAO is a standardization framework for playbooks. It is still lacking significantly in capabilities as compared to Shuffle's own workflow system, but may be a good way to handle interoperability. 
 
 The goals are as follows:
-1. ✅ Ensure [CACAO playbook imports work](https://github.com/shuffle/cacao)
-3. Ensure Shuffle Workflow -> CACAO playbook exports work well
+1. Ensure [CACAO playbook imports work](https://github.com/shuffle/cacao)
+2. Ensure Shuffle Workflow -> CACAO playbook exports work well
 
 Shuffle may in the future be based on CACAO playbooks to make workflow documentation work better. 
 
@@ -797,7 +797,7 @@ Copy the URL and keep it for the next steps
 ![Extend Shuffle with Wazuh 2](https://github.com/frikky/shuffle-docs/blob/master/assets/extensions_example_2.png?raw=true)
 
 **3. Configure Logz.io forwarding**
-After logging into app.logz.io, hover Settings Icon > Settings > click Notifications Endpoint. This will make all rules send alerts to the assigned webhook target.
+After logging into app.logz.io, navigate to Settings > Notifications Endpoint. This will make all rules send alerts to the assigned webhook target.
 
 ![Extend Shuffle with Logz.io](https://github.com/frikky/shuffle-docs/blob/master/assets/extensions_example_4.png?raw=true)
 

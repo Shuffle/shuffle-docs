@@ -1993,7 +1993,7 @@ curl https://shuffler.io/api/v1/apps/categories -H "Authorization: Bearer APIKEY
 
 As you can see, I triggered this Singul execution through the Singul app (not the SDK). However, even if you were using the SDK, you would find such executions.
 
-- Click on the icon below "Explore":
+- Click on the button below "Explore":
 
 <img src="https://github.com/frikky/shuffle-docs/blob/master/assets/explore-singul.png?raw=true">
 
