@@ -1,0 +1,48 @@
+name: Sync Documentation to Algolia
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "docs/**"
+      - "articles/**"
+      - "legal/**"
+      - ".github/scripts/sync_algolia_docs.py"
+      - ".github/workflows/algolia-sync.yml"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (test parsing without writing to Algolia)"
+        type: boolean
+        default: false
+
+jobs:
+  sync:
+    name: Sync Algolia Search Index
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install algoliasearch
+
+      - name: Run Algolia Sync
+        env:
+          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID || secrets.ALGOLIA_CLIENT }}
+          ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_ADMIN_KEY || secrets.ALGOLIA_SECRET }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python .github/scripts/sync_algolia_docs.py --dry-run --verbose
+          else
+            python .github/scripts/sync_algolia_docs.py
+          fi
