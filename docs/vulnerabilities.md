@@ -5,6 +5,7 @@ Documentation for vulnerability management, package advisory lookups via OSV.dev
 ## Table of contents
 * [Overview](#overview)
 * [Vulnerability categories](#vulnerability-categories)
+* [Datastore architecture & finding schema](#datastore-architecture--finding-schema)
 * [Ingestion: webhooks, scanners & OSV](#ingestion-webhooks-scanners--osv)
 * [Host & package correlation](#host--package-correlation)
 * [The Vulnerabilities dashboard](#the-vulnerabilities-dashboard)
@@ -40,6 +41,89 @@ Shuffle categorizes findings into four distinct types:
 | **User / Identity** | `user_identity` | IAM drift, missing MFA, stale credentials, and excessive privileges. |
 | **Cloud Misconfig** | `cloud_misconfig` | Open storage buckets, permissive firewall rules, and cloud infrastructure drift. |
 | **Code / Dependencies** | `code_dependency` | Third-party packages and libraries scanned from code repositories (`package.json`, `requirements.txt`, `Cargo.toml`, `go.mod`). |
+
+---
+
+## Datastore architecture & finding schema
+
+All vulnerability findings are stored inside Shuffle's Datastore under the **`shuffle-security_vulns`** category. Each entry is keyed by its primary advisory identifier (e.g. `CVE-2024-3094` or `GHSA-7867-xwm8-2v3q`) and stores a structured JSON document.
+
+<!-- component:datastore category="shuffle-security_vulns" -->
+
+You can inspect, query, and modify records in the Datastore console:
+- **Shuffle Security Datastore**: Navigate to [`/admin/datastore?category=shuffle-security_vulns`](/admin/datastore?category=shuffle-security_vulns). Automatically queries the local datastore if configured, and falls back to Shuffle Core if local storage is not initialized.
+- **Shuffle Core Datastore**: [Open in Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns) (`https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns`).
+- **Manual UI Navigation**: Go to **Admin** -> **Datastore** -> select category **`shuffle-security_vulns`**.
+
+### Vulnerability Record Schema
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `id` | String | Canonical advisory identifier (e.g. `CVE-2024-3094`, `GHSA-xxxx`). Serves as the primary datastore key. |
+| `title` | String | Descriptive title or headline of the vulnerability. |
+| `severity` | String | Severity rating: `critical`, `high`, `medium`, or `low`. |
+| `score` | Number | CVSS base numerical score (e.g. `10.0` or `7.4`). |
+| `category` | String | Classification: `software_cve`, `code_dependency`, `user_identity`, or `cloud_misconfig`. |
+| `status` | String | Workflow status: `open`, `in_progress`, `mitigated`, `accepted`, or `resolved`. |
+| `affected_package` | String | Name and version constraint of the affected component (e.g. `xz-utils 5.6.0`, `lodash <4.17.21`). |
+| `fixed_version` | String | Minimum version containing the remediation patch (e.g. `5.6.1`). |
+| `affected_hosts` | Array | Endpoints running the vulnerable software or dependency, including `hostname`, filesystem `path`, and per-host `resolution`. |
+
+### Writing Findings in Python Apps & Workflows
+
+```python
+# Upsert or update a vulnerability finding
+vuln_payload = {
+    "id": "CVE-2024-3094",
+    "title": "XZ Utils Backdoor (liblzma)",
+    "severity": "critical",
+    "score": 10.0,
+    "category": "software_cve",
+    "status": "open",
+    "affected_package": "xz-utils 5.6.0",
+    "fixed_version": "5.6.1",
+    "affected_hosts": [
+        {
+            "hostname": "srv-prod-db-01",
+            "path": "/usr/lib/x86_64-linux-gnu/liblzma.so.5.6.0",
+            "resolution": "open"
+        }
+    ]
+}
+
+# Write to Datastore
+self.set_cache(
+    key="CVE-2024-3094",
+    value=vuln_payload,
+    category="shuffle-security_vulns"
+)
+```
+
+### Key revisions, audit trail & rollback protection
+
+All vulnerability records stored in `shuffle-security_vulns` are automatically versioned with immutable revisions. Every scanner sweep, automated triage run, or manual status change preserves historical snapshots:
+
+- **Protection Against Ingestion Drift & Overwrites**: If an external vulnerability scanner runs an incomplete scan that accidentally drops existing CVE findings or marks active flaws as cleared, previous revisions remain accessible. Analysts can inspect historical snapshots and restore missing findings immediately.
+- **Audit Attribution**: Tracks which workflow execution or analyst changed the finding's severity, updated the CVSS score, marked a host as mitigated, or accepted risk, complete with timestamps and execution IDs.
+- **Rollback via API & Workflows**:
+  - Fetch all revisions for a vulnerability advisory:
+    ```bash
+    curl "https://shuffler.io/api/v2/datastore/category/shuffle-security_vulns/{cve_id}/revisions" \
+      -H "Authorization: Bearer <api_key>"
+    ```
+  - Roll back or restore in Python:
+    ```python
+    # Retrieve revision history
+    revisions = self.get_cache_revisions(key="CVE-2024-3094", category="shuffle-security_vulns")
+
+    # Revert to earlier verified snapshot if scan corrupted data
+    if len(revisions) > 1:
+        self.set_cache(
+            key="CVE-2024-3094",
+            value=revisions[1]["value"],
+            category="shuffle-security_vulns"
+        )
+    ```
 
 ---
 

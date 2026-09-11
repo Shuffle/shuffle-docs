@@ -5,6 +5,7 @@ Documentation for endpoint posture monitoring, disk encryption, screen lock enfo
 ## Table of contents
 * [Overview](#overview)
 * [Cross-platform architecture](#cross-platform-architecture)
+* [Datastore architecture: assets, software, packages & sensors](#datastore-architecture-assets-software-packages--sensors)
 * [Deploying a Host Monitor](#deploying-a-host-monitor)
 * [Posture checks](#posture-checks)
 * [Installed software inventory](#installed-software-inventory)
@@ -43,6 +44,142 @@ The monitor daemon is built into Orborus and runs across major operating systems
 | **macOS** | macOS 12 Monterey, 13 Ventura, 14 Sonoma, 15 Sequoia | FileVault 2 disk encryption, screen lock idle timeout, installed applications catalog, local repository manifests |
 | **Windows** | Windows 10, Windows 11, Windows Server 2016+ | BitLocker drive protection, screen lock inactivity policy, installed applications, local repository manifests |
 | **Linux** | Ubuntu, Debian, RHEL, CentOS, Fedora, Arch | LUKS volume encryption, screen lock idle timeout, system packages, local repository manifests |
+
+---
+
+## Datastore architecture: assets, software, packages & sensors
+
+Host Monitors organizes telemetry and endpoint state across four specialized datastore categories. Instead of bundling hardware specs, application inventories, manifest dependencies, and live heartbeats into a single monolithic document, Shuffle decouples them into distinct categories:
+
+1. **`shuffle-security_assets`**: Hardware inventory, system specifications, ownership, and network metadata.
+2. **`shuffle-security_software`**: Operating system applications, daemon versions, and installed binary catalogs across hosts.
+3. **`shuffle-security_packages`**: Code libraries and project manifest dependencies (`package.json`, `requirements.txt`, `Cargo.toml`, `go.mod`) scanned from developer repositories.
+4. **`shuffle-security_sensors`**: Monitor daemon runtime state, heartbeats, posture check baselines (`hd_encrypted`, `screenlock`), and response capabilities.
+
+<!-- component:datastore category="shuffle-security_assets" -->
+
+### Datastore Navigation
+
+Access these categories directly in the Datastore console:
+- **Assets Console**: [`/admin/datastore?category=shuffle-security_assets`](/admin/datastore?category=shuffle-security_assets) ([Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_assets))
+- **Software Inventory**: [`/admin/datastore?category=shuffle-security_software`](/admin/datastore?category=shuffle-security_software) ([Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_software))
+- **Scanned Packages**: [`/admin/datastore?category=shuffle-security_packages`](/admin/datastore?category=shuffle-security_packages) ([Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_packages))
+- **Sensor Telemetry**: [`/admin/datastore?category=shuffle-security_sensors`](/admin/datastore?category=shuffle-security_sensors) ([Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_sensors))
+- **Manual UI Navigation**: Go to **Admin** -> **Datastore** -> select desired category.
+
+---
+
+### Category Schemas
+
+#### 1. Hardware Assets (`shuffle-security_assets`)
+Keyed by hostname or asset identifier (e.g. `srv-prod-db-01` or `dev-macbook-pro-14`).
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `id` | String | Unique asset identifier (e.g. `asset-srv-prod-01`). |
+| `hostname` | String | Primary hostname reported by the endpoint. |
+| `os` | String | Operating system name and release (e.g. `Ubuntu 22.04.4 LTS`, `macOS 15.1 Sequoia`). |
+| `architecture` | String | CPU architecture (`x86_64`, `arm64`). |
+| `cpu_cores` | Number | Number of virtual or physical CPU cores. |
+| `ram_gb` | Number | Total physical memory in gigabytes. |
+| `disk_gb` | Number | Total system storage capacity in gigabytes. |
+| `ip` | String | Primary IPv4 address. |
+| `mac_address` | String | Network interface MAC address. |
+| `serial_number` | String | Hardware or hypervisor serial number. |
+| `environment` | String | Environment tier (`production`, `staging`, `workstation`). |
+| `tags` | Array | Organizational labels (e.g. `["database", "postgresql", "critical"]`). |
+| `owner` | String | Responsible email or team handle. |
+| `status` | String | Lifecycle status (`active`, `decommissioned`, `maintenance`). |
+
+#### 2. Installed Software (`shuffle-security_software`)
+Keyed by software identifier (e.g. `sw_docker_engine_26`, `sw_openssh_server_9`).
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `name` | String | Application or binary name (e.g. `Docker Engine`, `OpenSSH Server`). |
+| `version` | String | Detected software release version string. |
+| `publisher` | String | Vendor or software maintainer. |
+| `install_type` | String | Packaging format (`system_binary`, `deb_package`, `rpm_package`, `application_bundle`). |
+| `install_path` | String | Primary executable path (e.g. `/usr/bin/docker`, `/Applications/Google Chrome.app`). |
+| `hosts_count` | Number | Total count of fleet endpoints running this application. |
+| `associated_hosts` | Array | List of hostnames where this software version was detected. |
+| `last_scanned` | Number | Unix epoch timestamp of the most recent inventory sweep. |
+
+#### 3. Scanned Packages (`shuffle-security_packages`)
+Keyed by package identifier (e.g. `pkg_lodash_4_17_20`, `pkg_requests_2_31_0`).
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `name` | String | Package library name (e.g. `lodash`, `requests`, `xz-utils`). |
+| `version` | String | Exact installed version discovered in manifest. |
+| `ecosystem` | String | Package ecosystem (`npm`, `pip`, `cargo`, `go`, `deb`, `maven`). |
+| `manifest_file` | String | Source manifest filename (`package.json`, `requirements.txt`, `Cargo.toml`, `go.mod`). |
+| `repository_path` | String | Absolute directory path where the dependency manifest resides. |
+| `host` | String | Hostname of the machine running the code scanner. |
+| `has_vulnerability` | Boolean | True if the package version matches an active OSV/CVE advisory. |
+| `advisory_id` | String | Linked CVE or GHSA identifier (e.g. `GHSA-7867-xwm8-2v3q`), or null if clean. |
+| `fixed_version` | String | Recommended patched version if vulnerable. |
+
+#### 4. Sensor Telemetry & Posture (`shuffle-security_sensors`)
+Keyed by host sensor ID (e.g. `sensor_srv_prod_db_01`).
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `host_id` | String | Unique daemon runtime identifier. |
+| `hostname` | String | Hostname associated with the daemon instance. |
+| `platform` | String | Operating system family (`linux`, `macos`, `windows`). |
+| `agent_version` | String | Running Orborus sensor version. |
+| `sensor_group` | String | Configured Orborus queue group (e.g. `production-eu`). |
+| `status` | String | Daemon heartbeat status (`online`, `offline`). |
+| `last_heartbeat` | Number | Unix epoch timestamp of the latest ping. |
+| `compliance` | Object | Posture check results: `hd_encrypted`, `screenlock`, `filevault`, `firewall_active`. |
+| `capabilities` | Array | Enabled monitor features: `installed_software`, `code_scanner`, `remote_terminal`, `response_actions`. |
+
+### Accessing Host Data in Python Apps & Workflows
+
+```python
+# 1. Check endpoint posture baseline
+sensor = self.get_cache("sensor_srv_prod_db_01", category="shuffle-security_sensors")
+if sensor:
+    compliance = sensor.get("compliance", {})
+    if not compliance.get("hd_encrypted"):
+        print(f"Non-compliant host: {sensor.get('hostname')} lacks disk encryption")
+
+# 2. Correlate vulnerable packages with host assets
+package = self.get_cache("pkg_lodash_4_17_20", category="shuffle-security_packages")
+if package and package.get("has_vulnerability"):
+    target_host = package.get("host")
+    asset = self.get_cache(target_host, category="shuffle-security_assets")
+    print(f"Alert: {package.get('name')} {package.get('version')} is vulnerable on {target_host} (Owner: {asset.get('owner')})")
+```
+
+### Key revisions, audit trail & rollback protection
+
+Every key across all four monitor categories (`shuffle-security_assets`, `shuffle-security_software`, `shuffle-security_packages`, `shuffle-security_sensors`) is automatically stored with immutable revisions.
+
+- **Endpoint Configuration Drift & Overwrite Protection**: If a sensor re-registers, a network glitch reports empty installed software, or a package manifest scan is truncated mid-flight, previous software catalogs and asset configurations are never permanently lost. Historical states can be queried and restored at any time.
+- **Audit Trail of Host & Package Changes**:
+  - Provides a tamper-resistant historical log showing when software packages were upgraded, when new developer dependencies were introduced, and when posture compliance (`hd_encrypted`, `screenlock`) changed state.
+  - Links every state change to the specific Orborus execution ID, daemon ping, or administrative user session.
+- **Inspecting & Rolling Back Revisions**:
+  - Fetch revisions for any asset or package via REST API:
+    ```bash
+    # View asset revision history
+    curl "https://shuffler.io/api/v2/datastore/category/shuffle-security_assets/{hostname}/revisions" \
+      -H "Authorization: Bearer <api_key>"
+    ```
+  - Roll back state in Python:
+    ```python
+    # Fetch package revisions to see previous version or recover dropped data
+    pkg_revisions = self.get_cache_revisions(key="pkg_lodash_4_17_20", category="shuffle-security_packages")
+    if len(pkg_revisions) > 1:
+        # Revert to known-good baseline
+        self.set_cache(
+            key="pkg_lodash_4_17_20",
+            value=pkg_revisions[1]["value"],
+            category="shuffle-security_packages"
+        )
+    ```
 
 ---
 

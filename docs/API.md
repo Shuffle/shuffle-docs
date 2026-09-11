@@ -782,6 +782,50 @@ curl -XPOST https://shuffler.io/api/v2/{category}/{key} \
 }
 ```
 
+### Dynamic Category - Get record revisions
+Returns version history and immutable revision snapshots for a specific key within any Datastore category. All updates, script writes, and automated workflow runs append a new revision rather than destructively overwriting data. This ensures accidental deletions or invalid payloads can be rolled back immediately while maintaining an audit log of who made which change.
+
+Method: GET
+
+```bash
+curl https://shuffler.io/api/v2/datastore/category/{category}/{key}/revisions -H "Authorization: Bearer APIKEY"
+```
+
+**Success response**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "revision_id": "rev_01j7abc890def",
+      "key": "INC-1001",
+      "edited": 1773291600,
+      "user_id": "usr_9981",
+      "workflow_id": "",
+      "execution_id": "",
+      "value": {
+        "title": "Suspicious login detected",
+        "severity": "HIGH",
+        "status": "IN_PROGRESS"
+      }
+    },
+    {
+      "revision_id": "rev_01j7abc123xyz",
+      "key": "INC-1001",
+      "created": 1773291000,
+      "user_id": "",
+      "workflow_id": "wf_ingest_alerts",
+      "execution_id": "exec_5521",
+      "value": {
+        "title": "Suspicious login detected",
+        "severity": "HIGH",
+        "status": "NEW"
+      }
+    }
+  ]
+}
+```
+
 ### Correlations
 Correlates and cross-references records stored within Shuffle's Datastore to discover relationships between entities such as indicators, alerts, assets, and incidents.
 

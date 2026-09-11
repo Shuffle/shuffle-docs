@@ -84,6 +84,38 @@ Because incidents live in the native datastore:
 - AI Agents and custom Python scripts interact with incident timelines, observables, and tasks directly without external database drivers.
 - Self-hosted deployments require no secondary database.
 
+### Key revisions, audit trail & rollback protection
+
+Every key in `shuffle-security_incidents` is automatically stored with an immutable revision history. Whenever an analyst edits a case in the UI, an AI Agent enriches observables, an ingestion webhook posts updates, or a workflow triggers `self.set_cache(...)`, Shuffle creates a new revision instead of destructively replacing the previous record.
+
+- **Zero Data Loss on Overwrites or Deletion**: If an automated script or ingestion source accidentally overwrites an incident with a malformed payload or drops critical observables, no data is permanently lost. All prior snapshots remain stored in the datastore.
+- **Audit Trail & Attribution**: Every revision tracks:
+  - `revision_id`: Unique identifier for the snapshot.
+  - `edited` / `created`: Exact Unix epoch timestamp.
+  - Actor provenance: `user_id` (for manual analyst changes) or `workflow_id` and `execution_id` (for automated SOAR workflows).
+  - Field diffs: Added, removed, and modified properties between snapshots.
+- **Inspect & Roll Back Revisions**:
+  - **In the Web UI**: On any incident detail page, select the **Changes** (revisions) timeline tab to inspect visual diffs between revisions, preview historical states, and click **Rollback** to revert the incident.
+  - **Via REST API**: Query all historical revisions for an incident:
+    ```bash
+    curl "https://shuffler.io/api/v2/datastore/category/shuffle-security_incidents/{incident_id}/revisions" \
+      -H "Authorization: Bearer <api_key>"
+    ```
+  - **Via Python App**:
+    ```python
+    # Fetch historical revisions for an incident
+    revisions = self.get_cache_revisions(key="incident_2026_0942", category="shuffle-security_incidents")
+
+    # If an erroneous update occurred, rollback to previous revision
+    if len(revisions) > 1:
+        previous_snapshot = revisions[1]["value"]
+        self.set_cache(
+            key="incident_2026_0942",
+            value=previous_snapshot,
+            category="shuffle-security_incidents"
+        )
+    ```
+
 ---
 
 ## Ingest: Getting alerts into Shuffle
