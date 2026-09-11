@@ -1,8 +1,18 @@
 # AI at Shuffle
 
-With AI becoming a central pillar of cybersecurity and automation, Shuffle provides an enterprise AI framework built from the ground up to be deterministic, controllable, and secure. Whether you are generating workflows, running autonomous security investigations in [Shuffle Security](https://security.shuffler.io), or connecting your private tools to ChatGPT and Claude via the Model Context Protocol (MCP), Shuffle gives you full control over your models, prompts, data residency, and execution boundaries.
+With AI becoming a central pillar of cybersecurity and automation, Shuffle provides an enterprise AI framework built from the ground up to be controllable and transparent. Whether you are generating workflows, [running investigations](https://shuffle.security/incidents), or connecting your private tools to ChatGPT and Claude via the Model Context Protocol (MCP), Shuffle gives you full control over your models, prompts, data residency, and execution boundaries.
+
+Shuffle's AI buildout is primarily based on LLMs, and all LLM-related functionality passes through the [RunAiQuery() function, which you can look into here](https://github.com/Shuffle/shuffle-shared/blob/45a3e0a0018b767e9591d2f916ee004288bbd4a7/ai.go#L15631).
 
 ---
+
+## AI, LLMs and Agents
+
+These two subjects are often spoken about interchangeably, but the reality is that they differ by quite a bit. Short breakdown:
+
+- **AI**: General term for all artificial intelligence. LLM is just a part of this. 
+- **LLMs**: They generate text to answer you based on your input. That is it. 
+- **Agents**: When asked, LLMs return decisions to perform, which the agent in turn performs, one after another, until your goal is achieved.
 
 ## Using LLMs
 
