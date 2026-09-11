@@ -17,7 +17,7 @@ Documentation for vulnerability management, package advisory lookups via OSV.dev
 
 Shuffle Security ([shuffle.security/vulnerabilities](https://shuffle.security/vulnerabilities)) tracks vulnerabilities across your infrastructure, third-party software, and code dependencies.
 
-Instead of maintaining a passive spreadsheet of scanner outputs, Shuffle stores vulnerability findings inside Shuffle Core's Datastore (OpenSearch) under the **`shuffle-security_vulns`** category. Findings can be queried, filtered, enriched, and acted upon using standard Shuffle workflows.
+Instead of maintaining a passive spreadsheet of scanner outputs, Shuffle stores vulnerability findings inside Shuffle Core's Datastore under the **`shuffle-security_vulns`** category. Findings can be queried, filtered, enriched, and acted upon using standard Shuffle workflows.
 
 - **OSV.dev Integration**: Look up CVE and GHSA advisories across open-source ecosystems (npm, PyPI, Go, Cargo, Maven, Debian, Alpine, etc.) directly via the OSV.dev API.
 - **Host Package Correlation**: Monitored endpoints running [Host Monitors](/docs/monitors) inspect local project directories and installed software, linking detected CVEs to specific hostnames and filesystem paths.
@@ -52,10 +52,10 @@ Shuffle supports multiple paths to ingest and look up vulnerabilities:
 ### 1. Inbound Webhook
 You can push findings from CI/CD pipelines, container scanners, or external security tools directly into Shuffle:
 - Go to **`/vulnerabilities`** in the web app.
-- Click the **Webhook** button in the header bar to open the webhook configuration modal.
-- Point your external scanner or webhook sender to:
+- Click the **"Webhook"** button in the header bar to open the configuration modal.
+- The modal displays your dynamic inbound endpoint:
   ```
-  https://<your-shuffle-instance>/api/v1/hooks/webhook_<org_id>_vulnerabilities
+  https://<instance>/api/v1/hooks/webhook_<hook_id>
   ```
 - Payloads sent to this webhook trigger the `vulnerabilities_webhook` workflow, which normalizes findings and writes them to the datastore.
 
@@ -170,7 +170,14 @@ Shuffle Security checks whether your core vulnerability automation workflows are
 
 ## API & Datastore reference
 
-All vulnerability findings are stored directly in Shuffle Core's Datastore under the **`shuffle-security_vulns`** category. You can query, ingest, and update findings via the REST API or inside custom Shuffle Python apps.
+All vulnerability findings are stored directly in Shuffle's Datastore under the **`shuffle-security_vulns`** category. You can query, ingest, and update findings via the REST API, inspect them in the Datastore web console, or access them inside custom Shuffle Python apps.
+
+<!-- component:datastore-link category="shuffle-security_vulns" -->
+
+Inspect and manage vulnerability records in the Datastore console:
+- Shuffle Security Datastore: Navigate to [`/admin/datastore?category=shuffle-security_vulns`](/admin/datastore?category=shuffle-security_vulns). Uses the local datastore if available, and automatically redirects to Shuffle Core if local datastore is not configured.
+- Shuffle Core Datastore: [Open in Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns) (`https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns`).
+- Manual UI Navigation: Go to **Admin** -> **Datastore** -> select category **`shuffle-security_vulns`**.
 
 ### REST API Endpoints
 

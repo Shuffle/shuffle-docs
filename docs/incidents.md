@@ -31,7 +31,53 @@ Instead of managing alerts in a separate ticketing system disconnected from your
 
 ## Datastore architecture & OCSF schema
 
-All incidents, alerts, and cases are stored directly in Shuffle Core's Datastore (OpenSearch) under the **`shuffle-security_incidents`** category formatted according to the **OCSF 2005 (Incident Finding)** specification.
+All incidents, alerts, and cases are stored directly in Shuffle's Datastore under the **`shuffle-security_incidents`** category formatted according to the **OCSF 2005 (Incident Finding)** specification.
+
+<!-- component:datastore category="shuffle-security_incidents" -->
+
+<!-- component:datastore-link category="shuffle-security_incidents" -->
+
+Inspect and query raw incident records directly:
+- Shuffle Security Datastore: Navigate to [`/admin/datastore?category=shuffle-security_incidents`](/admin/datastore?category=shuffle-security_incidents) in Shuffle Security. If local datastore exists, it loads locally; otherwise, it automatically redirects to Shuffle Core.
+- Shuffle Core Datastore: [Open in Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_incidents) (`https://shuffler.io/admin?tab=datastore&category=shuffle-security_incidents` or `/admin?tab=datastore&category=shuffle-security_incidents` on self-hosted Core).
+- Manual UI Navigation: Go to **Admin** -> **Datastore** -> select category **`shuffle-security_incidents`**.
+
+### How Data is Added (OCSF 2005 Structure)
+
+When a detection workflow, ingestion webhook, or custom script records an incident into `shuffle-security_incidents`, it populates an OCSF 2005 JSON payload:
+
+| Field | Type | Description | Sample Value |
+| :--- | :--- | :--- | :--- |
+| `class_uid` | Integer | OCSF Class Identifier | `2005` (Incident Finding) |
+| `category_uid` | Integer | OCSF Category Identifier | `2` (Findings) |
+| `activity_id` | Integer | Action Identifier | `1` (Create) |
+| `severity_id` | Integer | Severity Scale (1 to 5) | `4` (High) |
+| `finding_info` | Object | Finding Title, Description, and Timestamps | `{"title": "Phishing detection with credential harvester URL"}` |
+| `observables` | Array | Indicators (IP, hash, process, domain, user) | `[{"name": "process.name", "value": "mimikatz.exe"}]` |
+
+```python
+# Write incident finding directly from Python worker or app
+self.set_cache(
+    key="incident_2026_0942",
+    value={
+        "class_uid": 2005,
+        "class_name": "Incident Finding",
+        "activity_id": 1,
+        "severity_id": 4,
+        "severity": "High",
+        "finding_info": {
+            "title": "Phishing detection with credential harvester URL",
+            "desc": "Inbound email flagged with credential harvesting link.",
+            "created_time": 1773291000,
+        },
+        "observables": [
+            {"name": "url.domain", "type": "domain", "value": "login-verify-account-update.xyz"},
+            {"name": "email.sender", "type": "email", "value": "security-alert@external-notice.com"},
+        ],
+    },
+    category="shuffle-security_incidents",
+)
+```
 
 Because incidents live in the native datastore:
 - Workflows read, update, or create incidents using standard datastore actions.
@@ -48,9 +94,9 @@ Because incidents live in the native datastore:
 Every organization gets a dedicated inbound webhook to receive alerts from detection systems (Splunk, Wazuh, Elastic, CrowdStrike, AWS GuardDuty, custom scripts):
 - Navigate to **`/incidents`** in Shuffle Security.
 - In the top header bar, click the **"Webhook"** button in the Ingest row.
-- The modal displays your inbound endpoint:
+- The modal displays your dynamic inbound endpoint:
   ```
-  https://<instance>/api/v1/hooks/webhook_<org_id>_cases
+  https://<instance>/api/v1/hooks/webhook_<hook_id>
   ```
 - Send JSON payloads to this webhook to trigger alert normalization and incident creation.
 
@@ -59,7 +105,7 @@ For alert sources that do not push webhooks or reside behind firewalls, use sche
 
 ### 3. The Incidents Dashboard (`/incidents`)
 
-<!-- component:incident-status title="Live Incident Queue & Health" subtitle="Real-time findings and queue telemetry from your active Shuffle incident pipeline." -->
+<!-- component:incident-dashboard -->
 
 Incidents progress through standardized lifecycle states:
 
@@ -101,6 +147,10 @@ Extracted indicators populate the incident's observables list and can be tagged 
 ---
 
 ## Automation for Incidents
+
+<!-- component:automation-for-incidents category="incidents" -->
+
+Use the interactive rocket button above, or navigate to **/incidents** and click the **Automation for Incidents** (rocket) button in the header bar to configure triggers, AI agents, and response workflows for your tenant.
 
 Incidents and workflows share the same execution engine:
 

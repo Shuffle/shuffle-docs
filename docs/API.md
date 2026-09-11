@@ -1,6 +1,8 @@
 # Shuffle API 
 Documentation for the Shuffle API. Change https://shuffler.io with your local domain/IP for on-premises usage.
 
+<!-- component:region-select -->
+
 - UK (London - default): https://uk.shuffler.io
 - Germany (Frankfurt): https://frankfurt.shuffler.io
 - US (California): https://california.shuffler.io
@@ -612,6 +614,13 @@ curl https://shuffler.io/api/v1/workflows/{workflow_id}/executions/{execution_id
 
 ## Datastore API
 Datastore (previously called `Org Cache` or `cache`) is Shuffle's persistent key-value and structured data storage mechanism. Workflows use the Datastore to share data across executions, persist state, and store entities like incidents, software inventories, and custom collections. Below are the endpoints related to datastore creation, querying, deletion, dynamic categories, and correlations. This API is available to Python apps by using self.set_cache("key", "value", category="category") and self.get_cache("key", category="category").
+
+### Datastore Web Console
+In addition to REST API calls, you can view, search, and manage datastore records directly in the web UI:
+- **Shuffle Security**: Navigate to [`/admin/datastore`](/admin/datastore) (or with a category filter, e.g. [`/admin/datastore?category=shuffle-security_incidents`](/admin/datastore?category=shuffle-security_incidents)). Uses the local datastore if available, and automatically redirects to Shuffle Core if the local datastore is not configured.
+- **Shuffle Core / Shuffler.io**: Navigate to [Admin Datastore](https://shuffler.io/admin?tab=datastore) (`/admin?tab=datastore&category=<category>`).
+
+<!-- component:datastore-link category="default" -->
 
 ### Set a key
 Add a key to the Shuffle Datastore (previously called `cache`). To add a key to a specific category, add `"category": "name"` to the JSON body. The `value` field can be anything, but preferrably JSON. You can add Enrichments using the `enrichments` field with the format `[{"type": "ip", "value": 1.2.3.4"}]` which is used heavily in Shuffle Security. `ignore_security_rules` is only relevant IF you have enabled security rules for the category you are in, which restricts who and what can write to a key.

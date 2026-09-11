@@ -484,7 +484,7 @@ The availability of these features depends on the **type and level of your licen
 > **Note:** The exact features and limits available to your organization depend on your Shuffle license tier.  
 > For more information or to upgrade your license, contact **[support@shuffler.io](mailto:support@shuffler.io)**.
 
-You can securely store your license key in the **Datastore** tab (`/admin?tab=datastore`) or save it in a text file and upload it via the **Files** tab (`/admin?tab=files`) in the Admin panel.  
+You can securely store your license key in the **Datastore** tab (`/admin/datastore` in Shuffle Security, or `/admin?tab=datastore` in Shuffle Core) or save it in a text file and upload it via the **Files** tab (`/admin?tab=files`) in the Admin panel.  
 
 Alternatively, you may store the key outside of Shuffle (e.g., in a secure local or cloud storage) to ensure it can be recovered if the key is lost.
 
