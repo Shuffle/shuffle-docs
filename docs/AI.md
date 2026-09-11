@@ -182,17 +182,223 @@ In Shuffle, **every app is an MCP tool**. This architecture makes creating custo
 3. **Lock Required Tools**: Mark critical tools as required so they remain locked to the skill during execution.
 4. **Deploy**: Once created, custom skills can be triggered manually in `/agents`, invoked automatically via incoming webhooks, or scheduled to run as background monitors.
 
-### Reasoning Effort, Approvals & Debugging
+## Debugging, Control & Transparency
+
+Control and transparency are the foundational pillars of Shuffle's AI architecture. In security operations and enterprise automation, opaque black-box AI is unacceptable. Analysts and engineers must know exactly what prompt was sent to the model, which tool schemas were injected, how the model reasoned through intermediate steps, and the unedited response payload returned by the provider.
+
+Shuffle records every single interaction with LLMs (whether cloud-hosted Gemini, OpenAI, Anthropic, or local inference engines like Ollama and vLLM) directly on the execution record under `llm_requests` and `llm_responses`.
+
+<!-- component:agent-activity title="Live AI Executions & Debugger" subtitle="Real-time execution list from your tenant. Click any run to inspect its decision timeline, tool parameters, and raw LLM request/response logs." limit="5" top="5" -->
+
+<!-- TODO: Screenshot Needed: Agent Execution Drawer with Raw Debug View
+- Route / UI Location: /agents -> Click any execution in the Agent Activity table -> Expand the "Debug" accordion at the bottom of the drawer.
+- What to capture: The open AgentExecutionDrawer showing the status header, decision timeline steps, and the expanded react18-json-view showing llm_requests, llm_responses, and decisions.
+- Recommended filename: assets/ai-agent-execution-drawer-debug.png
+- Inject syntax: ![Agent Execution Debugger](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/ai-agent-execution-drawer-debug.png)
+-->
+
+### The AI Executions List
+
+In the web interface at [`/agents`](/agents) (and in the interactive panel above), Shuffle displays the **AI Executions** activity feed. This view aggregates all past and ongoing agent tasks across your organization.
+
+#### Execution Trigger Sources
+
+Every execution row displays a badge indicating where the run originated:
+
+| Source | Trigger Origin | Description |
+|---|---|---|
+| `Manual` | `/agents` UI | Operator triggered the run directly from the prompt composer. |
+| `Workflow` | Workflow Canvas | An **AI Agent** workflow node executed the run as part of an automated playbook (`execution_mode: "direct"` or `"singul"`). |
+| `Datastore automation` | Datastore / Enrichments | Fired automatically by datastore triggers (e.g. new incident alert enrichment in `shuffle-security_incidents`). |
+| `Schedule` | Scheduled Trigger | Cron-based background agent monitoring or recurring threat hunts. |
+| `Webhook` | Inbound HTTP | Triggered by an external webhook or third-party alert ingestion. |
+| `Form` | Interactive Form | Triggered by a user form submission. |
+
+#### Execution Lifecycle States
+
+Agent executions progress through well-defined operational statuses:
+
+- `RUNNING` / `EXECUTING`: The agent is actively planning, querying LLMs, or executing tool actions.
+- `SUCCESS` / `FINISHED`: The agent completed its objective, emitted a final summary, and closed the run.
+- `FAILED`: Execution stopped due to an unrecoverable error (e.g. tool API failure or script error).
+- `ABORTED`: Run was manually stopped by an operator clicking the cancel button.
+- `WAITING`: The run is paused waiting for operator input (e.g. clarifying questions or human approval for sensitive actions).
+- `LIMIT_REACHED`: Synthetic status surfaced when the run terminated because an AI token or iteration ceiling was reached.
+
+### Inspecting Runs: The Agent Execution Drawer
+
+Clicking on any execution row opens the slide-out **Agent Execution Drawer** (`AgentExecutionDrawer`). The drawer provides two inspection modes:
+
+1. **Simple / Timeline View**:
+   - A sequential, human-readable timeline of every decision (`AgentDecision`) the agent made.
+   - Shows which app and action were invoked (e.g. `virustotal.get_ip_report`, `jira.create_issue`), the parameters passed, runtime duration, and the resulting response.
+   - Displays intelligent diagnosis banners if a run failed (e.g. authentication errors, missing permissions, rate limits, or malformed tool outputs).
+
+2. **Raw JSON Debugger**:
+   - At the bottom of the result panel, click **Debug** to expand the full JSON tree rendered via `react18-json-view`.
+   - Large payload arrays (`llm_requests`, `llm_responses`, `observables`) are collapsed by default to keep the interface fast and responsive, but can be expanded with one click for forensic audit.
+   - You can copy individual JSON branches or the complete raw execution payload directly to the clipboard.
+
+### Understanding `llm_requests` & `llm_responses`
+
+Shuffle attaches raw LLM payloads directly to the execution data returned by `/api/v1/streams/results`. This eliminates guesswork when prompt engineering or investigating unexpected model decisions.
+
+#### 1. What is in `llm_requests`?
+
+`llm_requests` contains an array of every outbound prompt sent to the inference endpoint. Each entry captures:
+
+- `model`: The model identifier used for this inference step (e.g. `gemini-2.5-flash`, `gpt-4o`, `ollama/llama3`).
+- `messages`: The complete message stack, including:
+  - System instructions defining the agent's identity and constraints.
+  - Context from previous turns and tool execution outputs.
+  - Multimodal image attachments (e.g. base64 data URIs or image URLs from uploaded flowcharts or endpoint screenshots).
+- `tools`: The full JSON schemas of every MCP app action exposed to the model for this step.
+- `temperature` & parameters: Generation parameters governing randomness and sampling.
+
+```json
+[
+  {
+    "model": "gemini-2.5-flash",
+    "temperature": 0.2,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a Shuffle Security Agent. Analyze the provided indicators and recommend containment steps."
+      },
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Investigate suspicious outbound communication to 198.51.100.23 reported on host-prod-04."
+          }
+        ]
+      }
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "virustotal_get_ip_report",
+          "description": "Retrieve reputation and threat report for an IP address",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "ip": { "type": "string", "description": "IPv4 or IPv6 address" }
+            },
+            "required": ["ip"]
+          }
+        }
+      }
+    ]
+  }
+]
+```
+
+#### 2. What is in `llm_responses`?
+
+`llm_responses` records the verbatim response from the model provider before Shuffle parses it into decisions:
+
+- `choices`: Array of generation candidates containing message roles and tool calls.
+- `message.tool_calls`: Structured function call invocations generated by the model with action names and arguments.
+- `finish_reason`: Indicates why the model stopped generating (`tool_calls`, `stop`, `length`, etc.).
+- `usage`: Exact token consumption statistics (`prompt_tokens`, `completion_tokens`, `total_tokens`), critical for cost monitoring and diagnosing context truncation.
+
+```json
+[
+  {
+    "id": "chatcmpl-9xL829",
+    "choices": [
+      {
+        "index": 0,
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_vt_01",
+              "type": "function",
+              "function": {
+                "name": "virustotal_get_ip_report",
+                "arguments": "{\"ip\": \"198.51.100.23\"}"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1240,
+      "completion_tokens": 38,
+      "total_tokens": 1278
+    }
+  }
+]
+```
+
+### Multimodal Attachments in Debugging
+
+When an agent processes screenshots, network diagrams, or image observables, the image is encoded and tracked inside `llm_requests`:
+
+- Any image sent to the model (as a `data:image/...;base64` URI or HTTP URL) is indexed.
+- The UI surfaces an image attachments control in the header bar of the execution view showing the thumbnail count.
+- Analysts can click the attachment badge to view thumbnails, expand full-resolution captures, and verify exactly what visual information the model evaluated.
+
+### Reasoning Effort & Approvals
+
+Shuffle gives operators granular governance over how agents deliberate and act:
 
 - **Reasoning Effort Levels**:
-  - `minimal`: Rapid single-step lookups (e.g. "Check hash in VirusTotal").
-  - `low`: 2-3 step sequential chaining.
-  - `medium`: The default balanced mode for multi-step investigations.
-  - `high`: Deep recursive planning, cross-referencing multiple intelligence sources, and verifying intermediate hypotheses.
-- **Clarifying Questions**: If the agent encounters ambiguity, it pauses in `WAITING` status and presents an interactive question prompt.
-- **Action Approvals**: Mark critical or destructive actions with `approval_required: true`. The agent will pause and present the proposed payload to an analyst before firing the request.
-- **Continuations**: After an agent finishes a task, you can ask follow-up questions or request modifications directly in the continuation box below the output.
-- **Monitoring & Debugging**: All historical and running agent executions can be monitored in real time at [`/workflows/debug`](/workflows/debug) under the **Agent Runs** tab.
+  - `minimal`: Rapid single-step lookups (e.g. single indicator reputation query).
+  - `low`: Short 2-3 step operational sequences.
+  - `medium`: Default balanced mode for incident triage and investigation.
+  - `high`: Deep recursive planning that cross-references multiple data sources and tests intermediate hypotheses.
+- **Clarifying Questions**: When input data is ambiguous or required parameters are missing, the agent emits an `ask` decision, pauses in `WAITING` status, and presents a structured question.
+- **Action Approvals**: Dangerous or state-changing actions (such as firewall rule blocks or endpoint isolation) can be flagged with `approval_required: true`. The agent pauses execution until an authorized analyst reviews the proposed payload and clicks approve.
+- **Continuations**: After an execution finishes, operators can type follow-up questions or corrective prompts in the continuation field to keep the conversation going without losing state.
+
+### Programmatic Debugging via API
+
+You can query agent activity and inspect raw `llm_requests` / `llm_responses` directly from terminal scripts, CI pipelines, or your SIEM.
+
+#### 1. List Recent Agent Executions
+
+Search for agent runs across your organization using the workflow search endpoint:
+
+```bash
+curl -X POST "https://shuffler.io/api/v1/workflows/search?top=10" \
+  -H "Authorization: Bearer $SHUFFLE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workflow_id": "AGENT",
+    "limit": 10,
+    "cursor": ""
+  }'
+```
+
+#### 2. Fetch Raw Execution Data & LLM Traces
+
+Retrieve the complete execution output, decision timeline, and raw LLM traces using the streams endpoint:
+
+```bash
+curl -s -X GET "https://shuffler.io/api/v1/streams/results?execution_id=c1a2b3d4-e5f6-7890-abcd-ef1234567890" \
+  -H "Authorization: Bearer $SHUFFLE_API_KEY"
+```
+
+To extract only the raw `llm_requests` and `llm_responses` using `jq`:
+
+```bash
+# Extract outbound LLM requests
+curl -s -X GET "https://shuffler.io/api/v1/streams/results?execution_id=c1a2b3d4-e5f6-7890-abcd-ef1234567890" \
+  -H "Authorization: Bearer $SHUFFLE_API_KEY" \
+  | jq '.results[] | select(.action.app_name=="AI Agent") | .result | fromjson | .llm_requests'
+
+# Extract inbound LLM responses & token usage
+curl -s -X GET "https://shuffler.io/api/v1/streams/results?execution_id=c1a2b3d4-e5f6-7890-abcd-ef1234567890" \
+  -H "Authorization: Bearer $SHUFFLE_API_KEY" \
+  | jq '.results[] | select(.action.app_name=="AI Agent") | .result | fromjson | .llm_responses'
+```
 
 ---
 
@@ -320,8 +526,10 @@ Click on the node to configure its parameters in the right-hand panel:
 ### 3. Consume Downstream Structured Output
 The AI Agent returns a structured JSON payload available to subsequent workflow nodes:
 - `$ai_agent.output` / `$ai_agent.message`: The final textual conclusion or executive summary.
-- `$ai_agent.decisions`: Full array of individual tool calls and results.
+- `$ai_agent.decisions`: Full array of individual tool calls, parameters, and action results.
 - `$ai_agent.execution_id`: The execution ID for streaming or auditing.
+- `$ai_agent.llm_requests`: Array of verbatim outbound inference prompts and tool schemas.
+- `$ai_agent.llm_responses`: Array of verbatim model responses, token counts, and reasoning traces.
 
 ### Building & Editing Workflows with AI
 
@@ -376,6 +584,8 @@ Key components of Shuffle's agentic decision engine, execution loop, and MCP pro
 All AI and Agent features in Shuffle can be accessed programmatically via REST and JSON-RPC APIs:
 
 - **[Run an Agent Action](/docs/API#run-an-agent-action)**: `POST /api/v1/agent` — Launches asynchronous agent tasks, returning an `execution_id` and stream authorization.
+- **[Search Agent Executions](/docs/API#search-agent-executions)**: `POST /api/v1/workflows/search?top={n}` — Lists agent workflow executions, trigger sources, and statuses across your organization.
+- **[Get Execution Results & LLM Traces](/docs/API#get-stream-results)**: `GET /api/v1/streams/results?execution_id={id}` — Streams real-time decision updates and returns complete `llm_requests` and `llm_responses` payloads.
 - **[Run an MCP Action](/docs/API#run-an-mcp-action)**: `POST /api/v1/mcp` — Executes tools synchronously via the standardized MCP `tools/call` method.
 - **[Single App MCP](/docs/API#single-app-mcp)**: `GET / POST /api/v1/apps/{app_id}/mcp` — Scopes MCP interactions to a single tool integration.
 - **[Listing Available Tools](/docs/API#listing-available-tools)**: `POST /api/v1/mcp` (method: `tools/list`) — Returns tool definitions and JSON schemas.

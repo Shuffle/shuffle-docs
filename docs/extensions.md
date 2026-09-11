@@ -16,8 +16,6 @@ This is documentation for integrating and sending data from third-party services
   * [Auto Provisioning](#auto-provisioning)
   * [Role Base Restriction](#role-based-restriction)
   * [Skip SSO for admin in suborgs](#skip-sso-for-admins-in-suborganizations)
-* [Singul](#singul)
-* [AI Agents](#ai-agents)
 * [CACAO](#cacao)
 * [Detection Manager](#detection-manager)
 * [KMS](#kms)
@@ -322,28 +320,6 @@ If you want to restrict login for users who do not receive a valid role from the
 In Shuffle, you can now allow parent organization admins to **skip SSO login** when switching to suborganizations.
 By default, all users are required to authenticate via SSO when switching to a suborganization if SSO is required for that suborg and the user's session has changed or expired.
 However, by enabling the **"Skip SSO for Admin"** option from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, users with an **admin role in the parent organization** can bypass the SSO login when switching to a suborganization, even if SSO is required there and user session is changed or expired.
-
-## Singul
-Singul are a new way Shuffle interacts with data, built brick by brick since introducing Shuffle's Integration Layer API in early 2023. The goal of Singul is to enable ourselves and others to be able to perform actions towards a specific API, without necessarily know how to do it specifically for that system. 
-
-As of early 2024, this system is in active development, and we will implement features with it and help third party platforms do the same throughout the next few years.
-
-**Example usecases:**
-- Listing assets from your asset management system/CMDB to make a list of assets, without needing to know the Assets' API
-- Blocking an Endpoint without knowing how to use the EDR API. Add this as a button to the list from the previous usecase
-- Shuffle Notification Workflow: Get notifications directly to your ticketing system with minimal configuration
-
-<img width="736" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/d9c5831c-af53-4bd2-9b34-7dd8c2daab32">
-
-The Singul system is based on [generative AI for automatic mapping of fields (Schemaless)](https://github.com/frikky/schemaless), uses Github to [store configurations (Standards)](https://github.com/shuffle/standards), and uses [Shuffle's Integration Layer API](https://shuffler.io/docs/API#integration-layer) to run the actions. 
-
-## AI Agents
-AI Agents are in active development as of April 2025. They take input(s) and automatically do the tasks for you, running in unison with [Singul](#singul) to perform tasks. This will be published to everyone as soon as it:
-1. Has an interface allowing interactivity
-2. Works with local models + Shuffle AI inference (for open sourcing)
-3. Has good reasoning capabilities to handle decisionmaking 
-
-<img width="850" alt="image" src="https://github.com/user-attachments/assets/3e23b4d9-fe6f-44f0-b595-59923f51b45a" />
 
 ## CACAO
 CACAO is a standardization framework for playbooks. It is still lacking significantly in capabilities as compared to Shuffle's own workflow system, but may be a good way to handle interoperability. 
