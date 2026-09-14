@@ -80,6 +80,60 @@ Agents in Shuffle are autonomous, goal-oriented systems that interact with the w
 - Inject syntax: ![AI Agents Workspace](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/ai-agents-workspace.png)
 -->
 
+### What the buttons do on /agents
+
+When you open [`/agents`](/agents) (or open an agent drawer on an alert or incident), you get a prompt box with a few buttons around it. Here is what they actually do:
+
+| Button | Where it is | What it does | Example |
+|---|---|---|---|
+| Skill | Floating chip above the prompt | Loads a pre-tuned system prompt and locks in the right tools for a discipline (like incident triage). | Pick `Incident Response` to triage an observable with `shuffle_incidents`. |
+| Tools | Bottom toolbar (`+ Tools` & chips) | Picks which apps the agent can call. Stops it from calling tools you do not want it to touch. | Pick `virustotal` and `jira` so it can only look up IPs and open tickets. |
+| LLM | Bottom toolbar (provider name) | Switches between Shuffle AI cloud credits, your own API key, or a local model (Ollama / LM Studio). | Switch to on-prem Ollama `llama3.3` if alert data cannot leave your network. |
+| Attachments | Paperclip | Attach up to 3 images or screenshots for vision models. | Paste an alert screenshot or network map to extract IOCs. |
+| Schedule | Calendar button | Runs the prompt on a recurring cron, or auto-detects a schedule from your text. | Type `check threat feed every day at 8am` and click Save schedule. |
+| Run / Stop | Right-hand button | Starts the run, or stops an agent mid-way through if it is going down the wrong path. | Stop an agent if it starts investigating an irrelevant IP. |
+
+<!-- TODO: Screenshot Needed: Agent UI Prompt Box and Toolbar
+- Route / UI Location: /agents -> Focus on prompt box and controls
+- What to capture: Prompt box showing active skill chip, tool chips, paperclip attach button, schedule button, and LLM selector.
+- Recommended filename: assets/ai-agent-composer-controls.png
+- Inject syntax: ![Agent Controls](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/ai-agent-composer-controls.png)
+-->
+
+#### Skills
+Pick a discipline (like `Incident Response`, `Build Workflow`, `Computer Use`, or `Vulnerability Management`):
+* It gives the agent a focused system prompt instead of a generic chat prompt.
+* It automatically locks in required apps (like `shuffle_incidents` for incident response) so they cannot be removed by accident.
+* It fills in a clean starter prompt for that task.
+
+#### Tools
+By default, the agent only gets the tools you attach to the prompt. This keeps context small, saves tokens, and stops the model from calling things you did not want it to touch (like firing off Slack messages or updating tickets when you only asked it to check VirusTotal).
+
+* **Add tools**: Click `+ Tools` to pick any app in your catalog.
+* **Credentials**: If an app needs an API key, the chip will show a warning. Click it to set up credentials in the side drawer without losing what you typed.
+* **Add a new tool on the spot**: If you need an API that is not in Shuffle yet, hit **Add App** and paste the documentation URL. Shuffle builds the OpenAPI spec and MCP tool on the spot in about 15 seconds (see [Adding new MCP tools](#adding-new-mcp-tools-and-generating-them-on-the-fly)).
+* **Remove tools**: Hover over any tool chip and click the remove mark.
+
+#### LLM
+You can switch the model running your agent at any time:
+* **Shuffle AI Cloud**: Uses built-in cloud credits (Gemini Flash and Claude). Ready out of the box with nothing to configure.
+* **Local & on-prem models**: Point the agent to an internal Ollama (`http://localhost:11434/v1`) or LM Studio instance. Essential if alert data or customer PII cannot leave your network.
+* **Bring your own keys**: Plug in your own API key for OpenAI, Anthropic, Mistral, Groq, or DeepSeek.
+* **Test connection**: Click the test button in the LLM drawer to check latency and make sure the model is actually responding before you kick off a run.
+
+#### Attachments
+Click the paperclip, drag and drop files into the prompt box, or paste a screenshot from your clipboard (up to 3 images):
+* Passed as base64 into vision-capable models (like Gemini Flash or Claude).
+* Handy for pasting an EDR window with an obfuscated PowerShell command, a network diagram, or an alert table from another tool to have the agent pull out the IOCs.
+
+#### Schedule
+If you want an agent prompt to run repeatedly instead of just once (like checking a threat feed every morning or cleaning up stale tickets every hour):
+
+* **Auto-detected schedule**: If you type something like `run every 15 minutes` or `check threat feed every day at 8am`, Shuffle spots the schedule in your text, highlights the schedule button, and pre-fills the cron for you.
+* **Presets or custom cron**: Click the schedule button to pick a preset (`Every 15 min`, `Hourly`, `Daily 9am`, `Weekdays 9am`, etc.) or write your own cron expression (`0 9 * * 1-5`).
+* **What happens under the hood**: When you click **Save schedule**, Shuffle builds a real background workflow (`workflow_type: "AGENT_SCHEDULE"`) with a Schedule trigger wired directly into an AI Agent node with your prompt, LLM, and tools, and registers it with the scheduler engine.
+* **Managing your schedules**: On the [`/agents`](/agents) page, open the workflow dropdown in the activity feed. Pick your scheduled workflow to see past runs, click **Edit** to tweak the prompt or tools, or click **Stop** to turn it off.
+
 ### How an Agent works under the hood
 
 When you run an agent in Shuffle (from [`/agents`](/agents), inside a workflow node, or via the API), it executes an autonomous decision loop implemented in Shuffle's open-source core:
@@ -423,6 +477,42 @@ The Model Context Protocol (MCP) standardizes how AI models discover and execute
 You can interact with Shuffle tools using the standard MCP specification:
 - **Global MCP Endpoint**: `POST /api/v1/mcp` allows calling any tool across your organization using the standard `tools/call` and `tools/list` JSON-RPC methods.
 - **Single App MCP Endpoint**: `GET / POST /api/v1/apps/{app_id}/mcp` scopes interactions exclusively to the actions of a single app.
+
+### Adding new MCP tools (and generating them on the fly)
+
+In Shuffle, every app is an MCP tool. If an integration exists in your tenant, it is already an MCP server that your agents (and external clients like Claude or ChatGPT) can use.
+
+When you need an integration that is not in Shuffle yet, you don't have to write Python wrappers, build Docker images, or wait for someone else to build it. You can add or generate them in three ways:
+
+#### 1. Generate from API documentation (on the fly)
+If a tool or service has web API documentation, you can generate an MCP tool on the spot without writing code:
+
+1. In [`/agents`](/agents), click `+ Tools` (or go to `/apps`) and click **Add App**.
+2. Paste the documentation URL (for example, `https://api.abuseipdb.com/api/v2/docs` or a Swagger UI page).
+3. Shuffle's `doc-to-openapi` engine reads the page, extracts the endpoints, parameters, request bodies, and auth methods, and generates a clean OpenAPI 3.0 spec.
+4. Shuffle validates the spec against `POST /api/v1/verify_openapi` and registers it directly on your tenant.
+
+This takes about 15 seconds. No Docker builds or service restarts required. Add your API key in the credentials card, and the tool is immediately usable in your prompt.
+
+#### 2. Import an OpenAPI or Swagger file
+If you already have an OpenAPI (v2/v3) or Swagger spec file:
+* Paste or upload the JSON or YAML spec directly in the **Add App** modal.
+* Or POST it to the API:
+  ```bash
+  curl -X POST "https://shuffler.io/api/v1/verify_openapi" \
+    -H "Authorization: Bearer $SHUFFLE_API_KEY" \
+    -H "Content-Type: application/json" \
+    -d @my-api-spec.json
+  ```
+Shuffle parses the paths and creates the MCP actions automatically.
+
+#### 3. Custom Python apps and scripts
+If you need to query an internal database, run an SSH command, or parse a proprietary format that does not have a REST API:
+1. Go to `/apps/new` to open the App Creator.
+2. Define your actions and write your Python code in the execution block.
+3. Save the app.
+
+Because every Shuffle app gets an MCP endpoint automatically, your Python code is immediately callable by agents on [`/agents`](/agents) and externally through `POST /api/v1/apps/{app_id}/mcp`.
 
 ### How OAuth2 Authentication Works
 
