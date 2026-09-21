@@ -141,7 +141,7 @@ Then pull and start the container:
 docker compose up -d shuffle-security
 ```
 
-Once running, access Shuffle Security at `http://<server-ip>:3002`. It uses the exact same backend API, user credentials, organizations, and OpenSearch database as Shuffle Core (`:3001`).
+Once running, access Shuffle Security at `http://<server-ip>:3002`. It uses the exact same backend API, user credentials, tenants, and OpenSearch database as Shuffle Core (`:3001`).
 
 **PS:** If you want to deploy the standalone Shuffle Security repository directly:
 ```bash
@@ -2094,13 +2094,13 @@ Example: If `SHUFFLE_OPENSEARCH_INDEX_PREFIX=prod`, the `workflow` index becomes
 
 | Index | Description |
 |-------|-------------|
-| `organizations` | Organization data and settings |
+| `organizations` | tenant data and settings |
 | `users` | User accounts and profiles |
 | `sessions` | User session tokens |
 | `apikey` | API key storage |
-| `partners` | Partner organization data |
-| `org_statistics` | Organization usage statistics |
-| `org_cache` | Organization cache data (KV store) |
+| `partners` | Partner tenant data |
+| `org_statistics` | tenant usage statistics |
+| `org_cache` | tenant cache data (KV store) |
 | `org_cache_revisions` | Cache version history |
 
 #### Files & Storage Indexes
