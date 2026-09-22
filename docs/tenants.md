@@ -378,7 +378,7 @@ They are organization-wide, meaning if you dismiss them, they get dismissed for 
 - Failed workflows (Status: ABORTED)
 - Workflows that take more than 10 minutes (without delays)
 - Actions where the result JSON contains `"success": false`
-- Actions where the result JSON contains `"status"` more than or equal to 300 (usually failed workflows)
+- Actions where the result JSON contains `"success": true` and a `"status"` of 300 or more (the action itself ran, but the call it made returned a bad status). A result with only `"status"` and no `"success"` key does not currently trigger this.
 - Failed Liquid formatting
 - When a returned app parameter starts with "shuffle" and contains "error". Example: "shuffle variable error" for when a variable is not found.
 - **We may add more without warning in the future. They are only added for things that represent typical things you want to see**
