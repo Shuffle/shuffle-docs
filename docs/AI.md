@@ -24,7 +24,7 @@ Shuffle offers a unified interface for language models across cloud, hybrid, and
 
 In Shuffle Cloud, LLM interactions, Agent reasoning loops, and workflow AI actions are powered by built-in **Shuffle AI credits**.
 - **Regional Routing & Data Residency**: AI requests are dynamically routed to Google Cloud Platform (Vertex AI / Gemini) endpoints within your deployment's geographic region based on `SHUFFLE_GCE_LOCATION` (e.g. EU or US regional boundaries). This ensures full compliance with strict data residency requirements.
-- **Quota & Credit Tracking**: Organization admins can view credit usage, remaining limits, and active allocations directly within the Shuffle AI drawer.
+- **Quota & Credit Tracking**: tenant admins can view credit usage, remaining limits, and active allocations directly within the Shuffle AI drawer.
 - **Programmatic LLM Access**: You can query your cloud model programmatically via Shuffle's OpenAI-compatible chat completions interface at [`POST /api/v1/chat/completions`](/docs/API#chat-completions).
 
 ### Using LLMs on-premises
@@ -43,7 +43,7 @@ For on-premises and private cloud installations, Shuffle provides two distinct a
 
 ### How choosing a local LLM works
 
-Shuffle enables organizations to configure or switch their active LLM provider directly through the user interface without editing configuration files or restarting backend containers:
+Shuffle enables tenants to configure or switch their active LLM provider directly through the user interface without editing configuration files or restarting backend containers:
 
 1. **Open the Provider Selector**: Click the active provider chip (e.g. **Shuffle AI** or the configured model badge) in the top bar of [`/agents`](/agents) or click the interactive button above.
 2. **Select a Provider Preset**: The right-hand sidebar opens with curated presets for:
@@ -55,8 +55,8 @@ Shuffle enables organizations to configure or switch their active LLM provider d
    - **API Key**: Enter your provider API token (leave blank or enter a placeholder for unauthenticated local servers).
 4. **Test Connection & Save**:
    - Click **Test Connection** to send a real-time health-check prompt. The sidebar displays latency and connectivity status.
-   - Click **Save**. The configuration is securely stored in your organization's App Authentication.
-   - All subsequent agent runs, workflow AI nodes, and Ask AI queries across your organization immediately route to the new model in real time.
+   - Click **Save**. The configuration is securely stored in your tenant's App Authentication.
+   - All subsequent agent runs, workflow AI nodes, and Ask AI queries across your tenants immediately route to the new model in real time.
 
 
 <img width="1916" height="1338" alt="Using and testing a local LLM" src="https://github.com/user-attachments/assets/1f0bd6e1-f477-4039-9f97-179638ee4a76" />
@@ -212,7 +212,7 @@ Shuffle records every single interaction with LLMs (whether cloud-hosted Gemini,
 
 ### The AI Executions List
 
-In the web interface at [`/agents`](/agents) (and in the interactive panel above), Shuffle displays the **AI Executions** activity feed. This view aggregates all past and ongoing agent tasks across your organization.
+In the web interface at [`/agents`](/agents) (and in the interactive panel above), Shuffle displays the **AI Executions** activity feed. This view aggregates all past and ongoing agent tasks across your tenant.
 
 #### Execution Trigger Sources
 
@@ -377,7 +377,7 @@ You can query agent activity and inspect raw `llm_requests` / `llm_responses` di
 
 #### 1. List Recent Agent Executions
 
-Search for agent runs across your organization using the workflow search endpoint:
+Search for agent runs across your tenant using the workflow search endpoint:
 
 ```bash
 curl -X POST "https://shuffler.io/api/v1/workflows/search?top=10" \
@@ -424,7 +424,7 @@ The Model Context Protocol (MCP) standardizes how AI models discover and execute
 ### Every App is an MCP Endpoint
 
 You can interact with Shuffle tools using the standard MCP specification:
-- **Global MCP Endpoint**: `POST /api/v1/mcp` allows calling any tool across your organization using the standard `tools/call` and `tools/list` JSON-RPC methods.
+- **Global MCP Endpoint**: `POST /api/v1/mcp` allows calling any tool across your tenant using the standard `tools/call` and `tools/list` JSON-RPC methods.
 - **Single App MCP Endpoint**: `GET / POST /api/v1/apps/{app_id}/mcp` scopes interactions exclusively to the actions of a single app.
 
 ### Adding new MCP tools (and generating them on the fly)
@@ -596,7 +596,7 @@ Shuffle's AI architecture is designed for enterprise scalability, regulatory com
 ### Cloud Architecture
 
 In Shuffle Cloud, the architecture separates control plane orchestration from model execution:
-- **Regional Model Routing**: When an agent or workflow makes an AI call, Shuffle checks the organization's regional setting (`SHUFFLE_GCE_LOCATION`). Requests are routed to regional Google Cloud Platform (Vertex AI / Gemini) clusters within your legal jurisdiction (e.g. EU or US data boundaries).
+- **Regional Model Routing**: When an agent or workflow makes an AI call, Shuffle checks the tenant's regional setting (`SHUFFLE_GCE_LOCATION`). Requests are routed to regional Google Cloud Platform (Vertex AI / Gemini) clusters within your legal jurisdiction (e.g. EU or US data boundaries).
 - **Tenant Isolation**: Model contexts and conversation memories are strictly isolated per tenant. No data from your prompts or tools is ever used to train foundational models.
 
 <!-- ARCHITECTURE_DIAGRAM_CLOUD: High-level cloud architecture showing regional GCP Vertex AI routing and tenant boundaries -->
@@ -633,7 +633,7 @@ Key components of Shuffle's agentic decision engine, execution loop, and MCP pro
 All AI and Agent features in Shuffle can be accessed programmatically via REST and JSON-RPC APIs:
 
 - **[Run an Agent Action](/docs/API#run-an-agent-action)**: `POST /api/v1/agent` — Launches asynchronous agent tasks, returning an `execution_id` and stream authorization.
-- **[Search Agent Executions](/docs/API#search-agent-executions)**: `POST /api/v1/workflows/search?top={n}` — Lists agent workflow executions, trigger sources, and statuses across your organization.
+- **[Search Agent Executions](/docs/API#search-agent-executions)**: `POST /api/v1/workflows/search?top={n}` — Lists agent workflow executions, trigger sources, and statuses across your tenant.
 - **[Get Execution Results & LLM Traces](/docs/API#get-stream-results)**: `GET /api/v1/streams/results?execution_id={id}` — Streams real-time decision updates and returns complete `llm_requests` and `llm_responses` payloads.
 - **[Run an MCP Action](/docs/API#run-an-mcp-action)**: `POST /api/v1/mcp` — Executes tools synchronously via the standardized MCP `tools/call` method.
 - **[Single App MCP](/docs/API#single-app-mcp)**: `GET / POST /api/v1/apps/{app_id}/mcp` — Scopes MCP interactions to a single tool integration.
