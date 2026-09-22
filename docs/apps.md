@@ -113,7 +113,7 @@ The options for importing are:
 
 
 ## Activating apps 
-Any public app can be activated, giving you access to a copy of the original app. This app is editable, meaning you can change the configuration of the app in it's entirety in your own Organization. Activation can be done by first [Finding the app](#finding-apps), then clicking the "Activate App" in the top right corner. If successful, you should se a notification that it's been activated.
+Any public app can be activated, giving you access to a copy of the original app. This app is editable, meaning you can change the configuration of the app in it's entirety in your own Tenant. Activation can be done by first [Finding the app](#finding-apps), then clicking the "Activate App" in the top right corner. If successful, you should se a notification that it's been activated.
 
 Once an app is activated, you can use it within any Workflow, and find it under /apps. If you can already see the app under the /apps view, it means the app is already enabled. You need to be logged in. 
 
@@ -372,7 +372,7 @@ You can add a file upload parameter to POST requests
 ![Apps view 15](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-15.png?raw=true)
 
 ### Building 
-Building the app is as straight forward as clicking the "Save" button. This builds the Docker image, and makes the app available in the App and Workflow UI for your organization to use. We recommend building often to ensure you avoid losing any progress. 
+Building the app is as straight forward as clicking the "Save" button. This builds the Docker image, and makes the app available in the App and Workflow UI for your tenant to use. We recommend building often to ensure you avoid losing any progress. 
 
 **PS: The first time you build an app, it may take up to a few minutes. Do NOT update the app while it's building, as your progress will may be lost.**
 
@@ -732,7 +732,7 @@ I have the function below, as specified in my api.yaml, that accepts the args I 
 Uploading and testing an app can be done in multiple ways. When the necessary files and directory structure is set up, you may continue to upload the app.
 
 **Cloud Only:**
-To use a custom app in your instance, you can to use the [Upload App API](https://shuffler.io/docs/API#upload-a-python-app).  When this has been ran, the app is available in your organisation in Shuffle. To test the app, run a workflow.
+To use a custom app in your instance, you can to use the [Upload App API](https://shuffler.io/docs/API#upload-a-python-app).  When this has been ran, the app is available in your tenant in Shuffle. To test the app, run a workflow.
 
 After it has been uploaded once, we suggest you run the app on a local environment, and run the docker build command instead of the full upload to make testing easier. To do this: 
 1. Make sure the app is initially uploaded and ran in your environment once
@@ -789,7 +789,7 @@ After making an app in Python, here's the steps to get it to everyone
 3. Copy your new app to the folder
 4. Make a pull request to the [original repo](https://github.com/frikky/shuffle-apps)!
 
-Both of these methods makes your app highlighted on https://shuffler.io to be used by hundreds if not thousands of organizations.
+Both of these methods makes your app highlighted on https://shuffler.io to be used by hundreds if not thousands of tenants.
 
 ## Debugging Apps
 As Shuffle has a lot of individual parts, debugging can be quite tricky. To get started, here's a list of the different parts, with the latter three being modular / location-independent.
