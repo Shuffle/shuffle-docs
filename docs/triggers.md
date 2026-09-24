@@ -45,10 +45,10 @@ ALL triggers are available EVERYWHERE if you have a Shuffle subscription. This f
 **Example:**
 Say you want to get messages from a service like a SIEM, but it's in a different data center. How do you get that request all the way to your instance? This can be done by setting up cloud synchronization allowing for:
 1. Remote SIEM -> Send Webhook to https://shuffler.io as a "proxy"
-2. Your local instance looks for jobs from an organization you own on https://shuffler.io
+2. Your local instance looks for jobs from an tenant you own on https://shuffler.io
 3. When a webhook job is found on https://shuffler.io - it will execute in your local instance.
 
-Read more about cloud synchronization in the [organization documentation](/docs/tenants#cloud-synchronization).
+Read more about cloud synchronization in the [tenant documentation](/docs/tenants#cloud-synchronization).
 
 ### Finding executions
 When a trigger runs, you will NOT be notified about it anywhere. It will instead run behind the scenes. You can however discover their data and executions by going to the specific workflow's UI, then clicking "See all executions" on the bottom (the running person).
