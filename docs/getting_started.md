@@ -85,7 +85,7 @@ If you want some practice, check out our [default intro to Workflow development]
 Here's a training session we did on Shuffle.
 
 - **00:00 - 00:30**: Introduction to Shuffle and what we're building
-- **00:30 - 02:00**: Feature walkthrough of organizations, app creator, and workflows
+- **00:30 - 02:00**: Feature walkthrough of tenants, app creator, and workflows
 - **02:00 - end**: Real-time demo, creating use-cases for attendees
 
 [![Shuffle the SOC walkthrough](https://img.youtube.com/vi/PNuXCixYwDc/0.jpg)](https://www.youtube.com/watch?v=PNuXCixYwDc)
