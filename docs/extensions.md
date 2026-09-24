@@ -12,10 +12,10 @@ This is documentation for integrating and sending data from third-party services
   * [Azure AD - OpenID](#azure-ad)
   * [Other SSO providers](#other-platforms)
   * [Testing SSO](#testing-sso)
-  * [SSO Required for Org](#sso-required-for-org)
+  * [SSO Required for tenant](#sso-required-for-tenant)
   * [Auto Provisioning](#auto-provisioning)
   * [Role Base Restriction](#role-based-restriction)
-  * [Skip SSO for admin in suborgs](#skip-sso-for-admins-in-suborganizations)
+  * [Skip SSO for admin in subtenants](#skip-sso-for-admins-in-subtenants)
 * [CACAO](#cacao)
 * [Detection Manager](#detection-manager)
 * [KMS](#kms)
@@ -43,8 +43,8 @@ Shuffle added Single Signon (SAML v1.0) from Shuffle version 0.9.16 & OpenID in 
 
 Note: This feature will be depreciated on cloud by 10th December 2025. Please migrate to OAuth2/OpenID Connect as soon as possible.
 
-### Org Swapping behavior
-If an Organization requires SSO, it will FORCE you through the SSO login unless your session already has been through SSO for that organization. This may feel counter-intuitive at first, but is a required system as each organization is controlled for SSO individually, and there is no limit to how many organizations a user can have.
+### Tenant Swapping behavior
+If an tenant requires SSO, it will FORCE you through the SSO login unless your session already has been through SSO for that tenant. This may feel counter-intuitive at first, but is a required system as each tenant is controlled for SSO individually, and there is no limit to how many tenant a user can have.
 
 ### Using ANY SSO platform 
 **ONPREM ONLY:** You will have to change the SSO_REDIRECT_URL variable in the .env file to match your front end server link i.e `SSO_REDIRECT_URL=http://<URL>:<PORT>` 
@@ -72,7 +72,7 @@ Once an application is made, it's time to find the required information. Go to t
 * Identity Provider Single Sign-On URL 	-> SSO Entrypoint (IdP)
 * X.509 																-> SSO Certificate (X509)
 
-After adding them, click "Save", saving the configuration. After saving, log out of your user to verify the SSO configuration. If you don't see a button for "Use SSO", you most likely configured the wrong organization.
+After adding them, click "Save", saving the configuration. After saving, log out of your user to verify the SSO configuration. If you don't see a button for "Use SSO", you most likely configured the wrong tenant.
 
 ### Okta OpenID
 To use Okta OpenID with Shuffle, first make an app in Okta.
@@ -131,7 +131,7 @@ After the app is made, click "Addons" > "SAML2 Web App".
 
 Open the Certificate file in a text editor, and copy it's contents.
 
-After adding them, click "Save", saving the configuration. After saving, log out of your user to verify the SSO configuration. If you don't see a button for "Use SSO", you most likely configured the wrong organization.
+After adding them, click "Save", saving the configuration. After saving, log out of your user to verify the SSO configuration. If you don't see a button for "Use SSO", you most likely configured the wrong tenant.
 
 ### PingIdentity
 To use PingID SSO with Shuffle, first make an app on [https://console.pingone.eu/](https://docs.pingidentity.com/bundle/pingoneforenterprise/page/xsh1564020480660-1.html). Documentation can be found [here](https://docs.pingidentity.com/bundle/pingoneforenterprise/page/xsh1564020480660-1.html).
@@ -145,7 +145,7 @@ After the app is made, click the dropdown for it on the right side > Configurati
 
 Open the Certificate file in a text editor, and copy it's contents in the field.
 
-After adding them, click "Save", saving the configuration. After saving, log out of your user to verify the SSO configuration. If you don't see a button for "Use SSO", you most likely configured the wrong organization.
+After adding them, click "Save", saving the configuration. After saving, log out of your user to verify the SSO configuration. If you don't see a button for "Use SSO", you most likely configured the wrong tenant.
 
 ### Keycloak
 Open ID SSO setup with Keycloak:
@@ -178,7 +178,7 @@ Valid Request URIs https://shuffler.io/login?autologin=true
 
 Once this is done head over to your shuffle instance.
 1. Click on Admin button
-2. Scroll down and click on the downward facing arrow beneath Organization overview
+2. Scroll down and click on the downward facing arrow beneath tenant overview
 3. Scroll down again to OpenID connect
 4. Fill in the client ID (It should be the same as what you entered in Keycloak)
 5. Authorization URL http://<Your_Keycloak_URL>:<port>/auth/realms/openid/protocol/openid-connect/auth
@@ -201,7 +201,7 @@ Finally go back to shuffle and use SSO button to login.
 
 ### Assigning a Role from Keycloak to Shuffle for a New User
 
-If you want to assign a Shuffle organization role (`admin`, `user`, `org-reader`) from your Keycloak client, you can achieve this using the following method:
+If you want to assign a Shuffle tenant role (`admin`, `user`, `org-reader`) from your Keycloak client, you can achieve this using the following method:
 
 Steps to Assign Roles
 
@@ -255,7 +255,7 @@ The URL is as such: `https://login.microsoftonline.com/TENANT_ID/oauth2/v2.0/aut
 	
 7. Done! Click save and log out. Try your new login based on your Azure AD configuration. 
 	
-PS: When a user signs in, they are granted the access rights of a "user" within the designated organization. The username will be derived from the email address listed in the Azure users list. Therefore, when creating or adding a new user in Azure, ensure that the email field in their profile is populated. If this email field is empty, the user will not be able to log in to the organization.
+PS: When a user signs in, they are granted the access rights of a "user" within the designated tenant. The username will be derived from the email address listed in the Azure users list. Therefore, when creating or adding a new user in Azure, ensure that the email field in their profile is populated. If this email field is empty, the user will not be able to log in to the tenant.
 	
 ### Other Platforms
 As long as you can create an identity and acquire an Entrypoint (IdP) and X509, paste them into the Shuffle fields, and it should work with any SAML/SSO provider.
@@ -264,7 +264,7 @@ As long as you can create an identity and acquire an Entrypoint (IdP) and X509, 
 
 Testing Single Sign-On (SSO) ensures that your SSO setup is functioning correctly. When you click the "Test SSO" button, you will be redirected to your SSO authentication page. After authentication, you will be redirected to `https://shuffler.io/workflows` if you are using the cloud version, or `https://frontend-url/workflows` if you are using the on-premises version. There are two test cases to verify the SSO feature:
 
-1. **User Change During Authentication**: If you log into your Shuffle account with username "A" and authenticate with username "B", your user will change to "B". If user "B" does not exist in the organization, they will be added. The video below demonstrates logging into Shuffle with "lalitdeore12@gmail.com" and authenticating with Azure username "lalitdeoretest@lalitdeore12gmail.onmicrosoft.com" (which has the email "lalit@shuffler.io"). After authentication, the user changes from "lalitdeore12@gmail.com" to "lalit@shuffler.io".
+1. **User Change During Authentication**: If you log into your Shuffle account with username "A" and authenticate with username "B", your user will change to "B". If user "B" does not exist in the tenant, they will be added. The video below demonstrates logging into Shuffle with "lalitdeore12@gmail.com" and authenticating with Azure username "lalitdeoretest@lalitdeore12gmail.onmicrosoft.com" (which has the email "lalit@shuffler.io"). After authentication, the user changes from "lalitdeore12@gmail.com" to "lalit@shuffler.io".
 
 https://github.com/user-attachments/assets/8c3474a5-bfdd-4c68-bd59-0b7b1ddb2b0c
 
@@ -301,25 +301,25 @@ Important Notes
 If you have any questions or need further assistance, please feel free to reach out to us at **[support@shuffler.io](mailto:support@shuffler.io)**.
 
 
-### SSO Required for Org
-In Shuffle, user can configure whether Single Sign-On (SSO) is **required** or **optional** for an organization.
-By default, SSO is optional. However, when the **"Require SSO"** option is enabled from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, all users within that organization must log in through SSO.
-If SSO is required for an organization and a user logs in using their username and password (not SSO), then switches to a non-SSO organization, they can access it without SSO. However, if they later switch back to the SSO-required organization and the session has changed or expired, they will be required to authenticate via SSO again.
+### SSO Required for Tenant
+In Shuffle, user can configure whether Single Sign-On (SSO) is **required** or **optional** for a tenant.
+By default, SSO is optional. However, when the **"Require SSO"** option is enabled from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, all users within that tenant must log in through SSO.
+If SSO is required for an tenant and a user logs in using their username and password (not SSO), then switches to a non-SSO tenant, they can access it without SSO. However, if they later switch back to the SSO-required tenant and the session has changed or expired, they will be required to authenticate via SSO again.
 
 ### Auto Provisioning
-In Shuffle, users can configure whether **auto-provisioning** is enabled or disabled for an organization.
-By default, auto-provisioning is **enabled**, meaning that if SSO is configured for the organization, a new user account will be automatically created using the email address provided by the SSO provider—even if the user does not already exist in the organization.
-However, when the **"Disable Auto Provisioning"** option is enabled from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, new user accounts will **not** be created automatically. In this case, only users who already exist in the organization will be allowed to log in through SSO.
+In Shuffle, users can configure whether **auto-provisioning** is enabled or disabled for a tenant.
+By default, auto-provisioning is **enabled**, meaning that if SSO is configured for the tenant, a new user account will be automatically created using the email address provided by the SSO provider—even if the user does not already exist in the tenant.
+However, when the **"Disable Auto Provisioning"** option is enabled from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, new user accounts will **not** be created automatically. In this case, only users who already exist in the tenant will be allowed to log in through SSO.
 
 ### Role-Based Restriction
 In Shuffle, you can now [assign roles to users](https://shuffler.io/docs/extensions#how-to-assign-a-role-to-a-new-user-from-an-sso-provider-(openid-connect)-in-shuffle) directly from the SSO provider. This functionality is currently supported **only** for SSO providers using **OpenID Connect**.
 By default, if no valid role is passed from the SSO provider during login, the user is automatically assigned the **user** role.
 If you want to restrict login for users who do not receive a valid role from the SSO provider, you can enable the **"Restrict user login if no valid role is assigned"** option from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel. When this option is enabled, only users with a valid role received from the SSO provider will be allowed to log in. 
 
-### Skip SSO for Admins in Suborganizations
-In Shuffle, you can now allow parent organization admins to **skip SSO login** when switching to suborganizations.
-By default, all users are required to authenticate via SSO when switching to a suborganization if SSO is required for that suborg and the user's session has changed or expired.
-However, by enabling the **"Skip SSO for Admin"** option from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, users with an **admin role in the parent organization** can bypass the SSO login when switching to a suborganization, even if SSO is required there and user session is changed or expired.
+### Skip SSO for Admins in Subtenants
+In Shuffle, you can now allow parent tenant admins to **skip SSO login** when switching to subtenants.
+By default, all users are required to authenticate via SSO when switching to a subtenant if SSO is required for that subtenant and the user's session has changed or expired.
+However, by enabling the **"Skip SSO for Admin"** option from the [SSO tab](https://shuffler.io/admin?admin_tab=sso) in the admin panel, users with an **admin role in the parent tenant** can bypass the SSO login when switching to a subtenant, even if SSO is required there and user session is changed or expired.
 
 ## CACAO
 CACAO is a standardization framework for playbooks. It is still lacking significantly in capabilities as compared to Shuffle's own workflow system, but may be a good way to handle interoperability. 
@@ -334,7 +334,7 @@ Shuffle may in the future be based on CACAO playbooks to make workflow documenta
 The Shuffle Detection Manager is a system introduced in beta in December 2024, allowing Shuffle to work with platforms like Tenzir and other systems to help with Detection Engineering. The goal of the system is not to replace actual detection systems themselves, but to offer a centralized way to control Detection rules across tenants and different tools. As an example, **below is a focus on Sigma rules with Tenzir**. The system is tested with Yara rules, Email detection rules and custom rule systems.  
 
 ### Testing Tenzir + Sigma
-1. **Rule Manager:**      At least One Shuffle org
+1. **Rule Manager:**      At least One Shuffle tenant
 2. **Job Handler:**       An Orborus instance running
 3. **Detection Handler:** A Tenzir instance running on the same server as Orborus **(no setup needed)**
 4. **Log Forwarder:**     Any system that can forward logs to Tenzir
@@ -741,7 +741,7 @@ systemctl restart THeHive
 
 3. Activate the webhook
 Run this curl command (change the URL, username and password), which activates TheHive forwarding to Shuffle. 
-**PS: Make sure you have access to the organization you want the Webhook for**
+**PS: Make sure you have access to the tenant you want the Webhook for**
 ```
 curl -XPUT -u thehive_user:thehive_password -H 'Content-type: application/json' thehive_url/api/config/organisation/notification -d '
 {
@@ -807,7 +807,7 @@ $exec.alert_event_samples
 ![Extend Shuffle with Logz.io 3](https://github.com/frikky/shuffle-docs/blob/master/assets/extensions_example_6.png?raw=true)
 
 ### MISP
-MISP, short for Malware Information Sharing Platform, is one of the best Open Source alternatives for Threat Intelligence. For that reason, a lot of our users have wanted a way to handle data in realtime from MISP. What kind of data? Event updates, indicator updates, IDS flag edits, Organization edit etc.
+MISP, short for Malware Information Sharing Platform, is one of the best Open Source alternatives for Threat Intelligence. For that reason, a lot of our users have wanted a way to handle data in realtime from MISP. What kind of data? Event updates, indicator updates, IDS flag edits, tenant edit etc.
 
 That's why we released an extension for Shuffle which can read ZMQ messages from MISP in realtime and send them to a webhook.
 
