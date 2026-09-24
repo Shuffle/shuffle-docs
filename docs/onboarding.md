@@ -22,7 +22,7 @@ The server layer handles the UI, API, authentication, workflow storage, app meta
 
 - `shuffle-frontend`: serves the web UI and routes browser/API traffic.
 - `shuffle-backend`: runs the REST API, workflow validation, app metadata loading, file handling, and OpenSearch communication.
-- `shuffle-opensearch`: stores users, organizations, workflows, executions, apps, files metadata, health data, and other platform state.
+- `shuffle-opensearch`: stores users, tenants, workflows, executions, apps, files metadata, health data, and other platform state.
 
 The runtime layer executes workflows. In the default Docker deployment this is:
 
@@ -217,7 +217,7 @@ Production planning:
 Important Kubernetes/Helm values:
 
 - `shuffle.baseUrl`: external URL where users access Shuffle.
-- `shuffle.org`: default organization, usually `Shuffle`.
+- `shuffle.org`: default tenant, usually `Shuffle`.
 - `backend.replicaCount`: number of backend replicas.
 - `frontend.replicaCount`: number of frontend replicas.
 - `orborus.replicaCount`: number of Orborus replicas.
