@@ -123,7 +123,7 @@ Every key in `shuffle-security_incidents` is automatically stored with an immuta
 <!-- component:ingest workflow="Ingest Tickets" category="cases" -->
 
 ### 1. Ingestion Webhook (Push)
-Every organization gets a dedicated inbound webhook to receive alerts from detection systems (Splunk, Wazuh, Elastic, CrowdStrike, AWS GuardDuty, custom scripts):
+Every tenant gets a dedicated inbound webhook to receive alerts from detection systems (Splunk, Wazuh, Elastic, CrowdStrike, AWS GuardDuty, custom scripts):
 - Navigate to **`/incidents`** in Shuffle Security.
 - In the top header bar, click the **"Webhook"** button in the Ingest row.
 - The modal displays your dynamic inbound endpoint:
@@ -271,7 +271,7 @@ Clicking an incident opens the investigation canvas (`/incidents/:id`):
 - **Automated Execution**: Associate workflows with tasks so analysts can execute containment steps with one click.
 
 ### Observables & Threat Intelligence
-- **Observables Repository**: View and filter indicators organization-wide at `/incidents/observables`.
+- **Observables Repository**: View and filter indicators tenant-wide at `/incidents/observables`.
 - **Threat Feeds**: Configure IOC blocklists and threat feeds at `/incidents/threat-feeds` (e.g. Feodo Tracker, MalwareBazaar, AlienVault IP reputation, Blocklist.de, Emerging Threats, OpenPhish). Extracted observables are checked against active feeds for indicator matches.
 - **External Lookups**: Observables in the UI provide direct external lookup links to VirusTotal and other analysis services.
 - **Correlations**: Search across all incidents sharing an identical observable using `GET /api/v2/correlations?key=<obs>&value=<v>`.
