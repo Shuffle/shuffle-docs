@@ -180,7 +180,7 @@ Because a vulnerability may exist across multiple servers or laptops, you can tr
 | :--- | :--- |
 | **Patched** | The dependency or software package has been upgraded to a non-vulnerable version. |
 | **Mitigated** | Compensating controls (e.g. network ACLs or disabled features) neutralize the flaw. |
-| **Accepted** | Risk is formally accepted by the organization. |
+| **Accepted** | Risk is formally accepted by the tenant. |
 | **False Positive** | The detected package is not exploitable in this specific environment. |
 | **Not Applicable** | The vulnerable function or subcomponent is not utilized. |
 
@@ -190,7 +190,7 @@ Because a vulnerability may exist across multiple servers or laptops, you can tr
 
 The dashboard at **`/vulnerabilities`** provides an operational overview of all recorded findings:
 
-<!-- component:vulnerabilities-status title="Vulnerabilities Posture" subtitle="Active vulnerability findings tracked across your organization." -->
+<!-- component:vulnerabilities-status title="Vulnerabilities Posture" subtitle="Active vulnerability findings tracked across your tenant." -->
 
 ### Navigation & Filtering
 - **Category Tabs**: Switch between `All`, `Software / CVE`, `User / Identity`, `Cloud Misconfig`, and `Code / Deps`.
