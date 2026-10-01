@@ -42,6 +42,22 @@ Inspect and query raw incident records directly:
 - Shuffle Core Datastore: [Open in Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_incidents) (`https://shuffler.io/admin?tab=datastore&category=shuffle-security_incidents` or `/admin?tab=datastore&category=shuffle-security_incidents` on self-hosted Core).
 - Manual UI Navigation: Go to **Admin** -> **Datastore** -> select category **`shuffle-security_incidents`**.
 
+### Deleting Erroneously Ingested Incidents (Admin Only)
+
+Ever accidentally fired off a test webhook or had a noisy detection rule dump 500 bogus alerts into your queue? We've definitely been there.
+
+When you're looking at [`/incidents`](/incidents) or working inside a specific incident, you won't find a delete button. We deliberately leave hard deletion out of the main operational views so nobody accidentally nukes an active investigation or destroys audit history. In normal operations, you'll just mark cases as **Resolved** or **False Positive**.
+
+If you ingested test alerts or corrupted data that really shouldn't exist, an admin can permanently purge it from the Datastore:
+
+1. Head to **Admin** in the top navigation bar.
+2. Click the **Datastore** tab, or go straight to [`/admin/datastore?category=shuffle-security_incidents`](/admin/datastore?category=shuffle-security_incidents) (or on self-hosted Shuffle Core: `/admin?tab=datastore&category=shuffle-security_incidents`).
+3. Search for the incident ID or key (e.g. `incident_2026_0942`).
+4. **Delete a single incident**: Click the trash button on that row and confirm the prompt.
+5. **Bulk cleanup**: Check the boxes next to the records you want to wipe, and click **Delete** in the top action bar.
+
+Note on permissions: In the Shuffle Security UI, `/admin/datastore` is restricted to users with the admin role (`isAdmin`). If you're an analyst without admin privileges, you'll see a notice letting you know to have a tenant admin clear them out for you.
+
 ### How Data is Added (OCSF 2005 Structure)
 
 When a detection workflow, ingestion webhook, or custom script records an incident into `shuffle-security_incidents`, it populates an OCSF 2005 JSON payload:
@@ -261,41 +277,123 @@ Shuffle Security includes templates for common operational workflows in [`/useca
 
 ---
 
-## Investigation workspace & tools
+## Investigation workspace & incident tabs
 
-Clicking an incident opens the investigation canvas (`/incidents/:id`):
+When you click on an incident from the queue, you land on the investigation canvas at `/incidents/:id`. We built this page to give you everything you need during an active investigation—whether you prefer a fast, conversational triage view or need to dig deep into raw JSON payloads.
 
-### Tasks & Kanban Board
-- **Status Lanes**: Organize response tasks across **To Do**, **In Progress**, and **Done** lanes.
-- **Checklists**: Break response workflows into discrete steps.
-- **Automated Execution**: Associate workflows with tasks so analysts can execute containment steps with one click.
+You'll notice the tabs are split into two groups: your everyday **Operational Tabs** on the left, and **Data Translation Tabs** on the right.
 
-### Observables & Threat Intelligence
-- **Observables Repository**: View and filter indicators organization-wide at `/incidents/observables`.
-- **Threat Feeds**: Configure IOC blocklists and threat feeds at `/incidents/threat-feeds` (e.g. Feodo Tracker, MalwareBazaar, AlienVault IP reputation, Blocklist.de, Emerging Threats, OpenPhish). Extracted observables are checked against active feeds for indicator matches.
-- **External Lookups**: Observables in the UI provide direct external lookup links to VirusTotal and other analysis services.
-- **Correlations**: Search across all incidents sharing an identical observable using `GET /api/v2/correlations?key=<obs>&value=<v>`.
+### Primary Operational Tabs
 
-### Email Threads & Deduplication
-- **Conversation Threading**: Groups related alert emails into unified conversation threads using Message-ID headers and subjects.
-- **Deduplication**: Clusters repetitive alerts into parent cases to minimize analyst fatigue.
+- **Simple**: A minimalist, chat-style view built for fast triage. If you just want to read the incident description, check recent analyst notes, and type quick commands or questions to `@AIAgent`, start here. The feed reads bottom-to-top like a standard chat window.
+- **Detailed**: The full investigation workspace. Here you can edit the title and Markdown description, update severity and status, adjust TLP/PAP flags, assign stakeholders, and manage custom metadata fields while keeping an eye on the vertical timeline.
+- **Tasks**: An interactive checklist and Kanban board (`To Do`, `In Progress`, `Done`). When an incident requires multiple steps—like isolating a machine, resetting a password, and notifying a user—break them down into tasks here. You can assign tasks to teammates, or assign them to `AI Agent` to let Shuffle handle them automatically.
+- **Observables**: A clean table of every indicator pulled from the alert—IP addresses, domains, file hashes, URLs, usernames, and command lines. Each observable shows its type, TLP level, detection source, and threat feed matches. You can also click any indicator to run on-demand lookups (like VirusTotal or AlienVault) right from the table.
+- **Correlations**: Shuffle automatically checks if any observables in this incident have shown up in other cases across your organization or sub-tenants. If three other alerts hit the same malicious IP this morning, they'll show up here with a one-click **Merge Into** button so you can roll them into a single investigation instead of working multiple duplicate tickets.
+- **Events**: The raw security telemetry and alert events linked to the incident finding. Useful when you need to inspect the original SIEM or EDR event stream that triggered the alert in the first place.
 
-<!-- TODO: Screenshot Needed: Incident Investigation Workspace Canvas
-- Route / UI Location: /incidents/:id
-- What to capture: Investigation workspace showing header, task lanes, observables list, and timeline.
-- Target path: assets/incidents-investigation-workspace.png -->
+### Data Transformation & Translation Tabs
+
+Over on the right side of the tab bar, you'll see tabs that show you exactly how Shuffle handled your data from start to finish:
+- **Original**: The raw, unmapped JSON payload exactly as your SIEM, EDR, or cloud provider sent it to us before any normalization happened.
+- **Translation**: The translation schema or Liquid script Shuffle used to map that source data into standard OCSF fields. Great for debugging when an alert field didn't land where you expected.
+- **OCSF**: The final, normalized OCSF 2005 Incident Finding record. It includes a live JSON viewer and editor so you can verify the exact structure stored in the datastore or make quick inline corrections.
+
+### Filtering the Activity Timeline
+
+Along the right side (or inline in Detailed view) is the incident timeline. Real investigations get noisy quickly, so you can toggle filters to see only what you care about:
+- **Changes**: Revision history showing what changed on the incident over time, with diffs and a one-click **Rollback** button if someone made a mistake.
+- **AI Agents**: Every background run, thought process, and tool execution from your AI agents.
+- **Workflow runs**: Automatic playbooks and workflow executions tied to this incident.
+- **Comments**: Human analyst discussion, uploaded attachments, and threaded replies.
+- **Threading**: History of merged cases and parent-child ticket relationships.
+- **Tasks**: Updates on task progress, completions, and state changes.
+- **Observables**: When new IOCs were added or updated with threat intel tags.
+- **Correlations**: When new matching cases were linked.
+
+---
+
+## How enrichment works
+
+Nobody likes staring at a bare IP address or an obscure file hash trying to figure out if it's evil. Shuffle enriches your observables automatically so you have context ready the moment you open the ticket.
+
+Here is how enrichment fits together behind the scenes:
+
+### 1. Automatic IOC Extraction
+When alerts hit Shuffle (via webhook or scheduled polling workflows), we automatically parse through the raw logs, email headers, and alert descriptions using regex and heuristic extractors. We look for:
+- IPv4 and IPv6 addresses
+- Hostnames and domains
+- File hashes (MD5, SHA1, SHA256)
+- URLs and email addresses
+- User accounts and process names
+
+These get parsed out, assigned their proper observable types, tagged with default TLP levels, and stored directly in the incident's `observables` list.
+
+### 2. Threat Feed Matching
+Shuffle continuously runs two background workflows: `Enable Threat feeds` and `Realtime IOC extraction`. These pull fresh threat intelligence from popular community and open-source feeds—like Feodo Tracker, MalwareBazaar, AlienVault OTX, Blocklist.de, Emerging Threats, and OpenPhish—into the `shuffle-security_threat_feeds` datastore category.
+
+Whenever observables are added to an incident, Shuffle checks them against these feeds in real time. If an IP or hash matches, we tag the reputation, confidence score, and threat category directly onto the observable so you can see it at a glance.
+
+### 3. Automated Enrichment Workflows
+If you have API keys for external intelligence services (like VirusTotal, Shodan, AbuseIPDB, or URLScan), you can configure an `enrich` category automation on `shuffle-security_incidents`. 
+
+When a new incident is saved, Shuffle runs your enrichment workflow (such as `threat_intel_case_management_1`), queries your threat intel apps, and appends the results into the incident's `enrichments` array:
+
+```json
+"enrichments": [
+  {
+    "type": "virustotal",
+    "value": "198.51.100.42",
+    "data": "14/72 engines flagged as malicious",
+    "first_seen": 1714560000,
+    "last_seen": 1714563600
+  }
+]
+```
+
+### 4. On-Demand Lookups
+Need to pivot on an indicator right now? In the **Observables** tab, you can click on any indicator row to see its sighting history, or use the context menu to trigger instant lookups against any configured threat intel integration without leaving the page.
 
 ---
 
 ## AI Agents in Incidents
 
-Shuffle Security connects with **Shuffle AI** through the `shuffle_incidents` MCP tool:
+We designed AI in Shuffle Security not as a separate chatbot you copy-paste data into, but as an active teammate that works alongside you directly inside your cases. Shuffle AI agents can read the incident context, analyze evidence, recommend containment plans, and execute real actions through your connected apps.
 
-<!-- component:ask-ai label="Ask AI about Incidents" input="Analyze this incident and suggest an automated containment plan" -->
+Here is how you can use agents in your day-to-day workflow:
 
-- **Context-Aware Assistance**: Clicking **"Ask about this Incident"** loads the current incident's title, description, severity, observables, and timeline into the AI session context.
-- **Summary Generation**: Generate executive incident summaries and Post-Incident Reviews (PIR) in Markdown.
-- **Action Recommendations**: Ask the agent to recommend next investigation steps or propose remediation playbooks for analyst review.
+### 1. In-Line Chat with `@AIAgent`
+You can chat with an agent right inside the incident comments or the Simple triage feed. Just mention `@AIAgent` (or `@agent`) followed by what you need:
+
+```
+@AIAgent summarize this incident and check if the source IP matches any recent phishing campaigns.
+```
+
+The agent automatically reads the incident finding, observables, tasks, threat feed matches, and past comments, then posts its analysis straight into your timeline. You can see its reasoning steps, tool calls, and execution status right in the stream.
+
+### 2. Handing Off Tasks to the AI Agent
+In the **Tasks** tab, you don't have to do everything manually. When you create or edit a task, you can set its assignee to **AI Agent**.
+
+Once assigned, the agent picks up the task objective, chooses the right tools from your connected apps (like querying Active Directory, pulling endpoint logs from CrowdStrike, checking an Okta user, or posting to Slack), performs the work, updates the checklist steps, and marks the task Done when finished.
+
+### 3. Human-in-the-Loop Approvals
+Security automation is great, but giving an LLM free rein to isolate executive laptops or nuke user accounts is a bad idea. We built safety controls into the core agent loop.
+
+Whenever an agent decides it needs to take a high-impact or destructive action (like blocking an IP on your perimeter firewall, revoking a session, or isolating a host):
+- The agent pauses and enters a `WAITING` state.
+- An **Approval Required** banner appears at the top of the incident page and in the timeline feed.
+- You see exactly what action the agent wants to take and with what parameters.
+- Click **Approve** to let it proceed, or **Reject** to stop it. The action will never execute without your explicit sign-off.
+
+If an agent ever hits a tool failure or runs into an unhandled error, you'll see an **Agent Failed — Manual Action Needed** alert so you can jump in and handle the step manually without guessing what went wrong.
+
+### 4. Automated Triage with Routing Rules
+If you want agents to work cases before an analyst even opens them, you can set up routing rules under **Admin** -> **Routing** (or using category automations on `shuffle-security_incidents`).
+
+For example, you can tell Shuffle: "Whenever a Critical alert comes in from CrowdStrike, run an agent with the prompt 'Triage this host, check running processes against observables, and suggest an initial severity'." The agent will run immediately upon ingestion, leaving structured notes and suggested next steps ready for your team.
+
+### 5. Interactive Copilot & Post-Incident Reviews
+Clicking the **Ask AI** button or opening the AI side drawer lets you have a full conversational session scoped to the case. It's especially useful for generating executive Post-Incident Reviews (PIR), creating shift handoff summaries in clean Markdown, or drafting custom containment scripts on the fly.
 
 ---
 

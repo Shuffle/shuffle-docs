@@ -52,8 +52,22 @@ All vulnerability findings are stored inside Shuffle's Datastore under the **`sh
 
 You can inspect, query, and modify records in the Datastore console:
 - **Shuffle Security Datastore**: Navigate to [`/admin/datastore?category=shuffle-security_vulns`](/admin/datastore?category=shuffle-security_vulns). Automatically queries the local datastore if configured, and falls back to Shuffle Core if local storage is not initialized.
-- **Shuffle Core Datastore**: [Open in Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns) (`https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns`).
+- **Shuffle Core Datastore**: [Open in Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns) (`https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns` or `/admin?tab=datastore&category=shuffle-security_vulns` on self-hosted Core).
 - **Manual UI Navigation**: Go to **Admin** -> **Datastore** -> select category **`shuffle-security_vulns`**.
+
+### Deleting Erroneously Ingested Vulnerabilities (Admin Only)
+
+We've all had a scanner misbehave, an API misfire, or a test script accidentally dump dummy CVEs into production. When that happens, you might notice that the main queue at [`/vulnerabilities`](/vulnerabilities) doesn't have a big red "Delete" button. That's intentional—in day-to-day triage you usually want to resolve, mitigate, or accept findings rather than deleting historical records.
+
+If you ingested bad data and need to wipe it out completely, an admin can do that directly in the Datastore:
+
+1. Head over to **Admin** in the top navigation bar.
+2. Click the **Datastore** tab, or jump straight to [`/admin/datastore?category=shuffle-security_vulns`](/admin/datastore?category=shuffle-security_vulns) (if you're on self-hosted Shuffle Core, that's `/admin?tab=datastore&category=shuffle-security_vulns`).
+3. Search for the vulnerability key you want to remove (like `CVE-2024-3094`).
+4. **Delete one finding**: Click the trash button on the right side of the row and confirm.
+5. **Bulk cleanup**: Check the boxes next to the ones you want gone, and click **Delete** up in the table header.
+
+A quick heads-up: inside the Shuffle Security UI, `/admin/datastore` is restricted to admins (`isAdmin`). If you don't have admin permissions, you'll see a notice asking you to reach out to an admin on your team to clear it out.
 
 ### Vulnerability Record Schema
 
