@@ -634,10 +634,10 @@ ALL triggers are available everywhere if you have a Shuffle subscription. This a
 **Example:**
 Say you want to get messages from a service like a SIEM, but it's in a different network or data center. How do you get that request all the way to your instance? This can be done by setting up cloud synchronization:
 1. Remote SIEM -> Sends Webhook to `https://shuffler.io` as a secure proxy.
-2. Your local instance looks for jobs from an organization you own on `https://shuffler.io`.
+2. Your local instance looks for jobs from a tenant you own on `https://shuffler.io`.
 3. When a webhook job is found on `https://shuffler.io` — it will execute locally inside your on-prem instance.
 
-Read more about cloud synchronization in the [organization documentation](/docs/tenants#cloud-synchronization).
+Read more about cloud synchronization in the [tenant documentation](/docs/tenants#cloud-synchronization).
 
 ### Finding Trigger Executions
 

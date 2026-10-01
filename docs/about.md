@@ -24,7 +24,7 @@ The Roadmap is our high level guide to the future, and may be reorganized withou
 * 1.0 - Launch: Categorized apps, proper use-cases, and a real tutorial mapped to use-cases. Enterprise-ready (SSO/SAML, MFA, Reporting, Statistics, Replayability)
 * 0.9 - Features: Search engine for apps, workflows, executions etc. GCP (Storage & Functions) integration usage for cloud.
 * 0.8 - Integrate: Hybrid cloud features and file control/cross-workflow data management
-* 0.7 - Improve: First larger release of Shuffle. Focus on organizations, users, schedules, app authentication and a better overview in general through the admin view.
+* 0.7 - Improve: First larger release of Shuffle. Focus on tenants, users, schedules, app authentication and a better overview in general through the admin view.
 * 0.6 - Usability: High focus on the workflow and api editor, as well as bugfixing after open sourcing. 
 * 0.1 - 0.5: Created basic features for automation, as well as use cases and frontend. This was before the project was open sourced.
 

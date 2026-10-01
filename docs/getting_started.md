@@ -20,11 +20,10 @@ Shuffle is an open-source automation platform designed specifically for the secu
   Download and install Shuffle in your infrastructure.
 
 - [Cloud Signup (SaaS)](https://shuffler.io/register)  
-  Sign up for Shuffle's cloud-based service and get started quickly. Allows for Multi-Tenant and  
-  [stores data in a location near you](https://shuffler.io/legal/privacy_policy#data-location).
+  Sign up for Shuffle's cloud-based service and get started quickly. Multi-Tenant [data-residency in a near you](https://shuffler.io/legal/privacy_policy#data-location).
 
 - [Hybrid Cloud](https://shuffler.io)  
-  Use Local Shuffle Agents connected to your Shuffle Cloud Organizations.
+  Local automation runner (Orborus) connected to your Shuffle Cloud or Self-hosted setup.
 
 
 **Need help? Check out these resources:**
@@ -86,7 +85,7 @@ If you want some practice, check out our [default intro to Workflow development]
 Here's a training session we did on Shuffle.
 
 - **00:00 - 00:30**: Introduction to Shuffle and what we're building
-- **00:30 - 02:00**: Feature walkthrough of organizations, app creator, and workflows
+- **00:30 - 02:00**: Feature walkthrough of tenants, app creator, and workflows
 - **02:00 - end**: Real-time demo, creating use-cases for attendees
 
 [![Shuffle the SOC walkthrough](https://img.youtube.com/vi/PNuXCixYwDc/0.jpg)](https://www.youtube.com/watch?v=PNuXCixYwDc)

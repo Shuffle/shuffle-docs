@@ -1,8 +1,6 @@
 # Shuffle API 
 Documentation for the Shuffle API. Change https://shuffler.io with your local domain/IP for on-premises usage.
 
-<!-- component:region-select -->
-
 - UK (London - default): https://uk.shuffler.io
 - Germany (Frankfurt): https://frankfurt.shuffler.io
 - US (California): https://california.shuffler.io
@@ -26,7 +24,7 @@ Check your current location on the [/admin page](https://shuffler.io). Use the d
 * [App Authentication](#app-authentication)
 * [Users](#user-api)
 * [Files](#file-api)
-* [Organizations & Tenants](#organizations)
+* [Tenants](#tenants)
 * [Datastore](#datastore-api)
 * [Notifications](#notifications)
 * [Environments](#environments)
@@ -44,7 +42,7 @@ Shuffle is a platform to build and execute automation [workflows](/docs/workflow
 **Onprem:** https://<endpoint>:<port>/api/v1
 
 ## Authentication
-Shuffle uses [Bearer auth](https://swagger.io/docs/specification/authentication/bearer-authentication/) for authentication. This means that every request you send to the API, you need to send it with the header "Authorization: Bearer <APIKEY>". If Shuffle is multi-tenancy configured, you may have multiple organizations. If you want to specify the organization to use, you may add the header "Org-Id: <ORGID>". It will otherwise use the current active organization.
+Shuffle uses [Bearer auth](https://swagger.io/docs/specification/authentication/bearer-authentication/) for authentication. This means that every request you send to the API, you need to send it with the header "Authorization: Bearer <APIKEY>". If Shuffle is multi-tenancy configured, you may have multiple tenants. If you want to specify the tenant to use, you may add the header "Org-Id: <ORGID>". It will otherwise use the current active tenant.
 
 While logged in, you can go to https://shuffler.io/settings or /settings in your local instance to get your APIkey. Keep this safe. 
 
@@ -343,7 +341,7 @@ curl https://shuffler.io/api/v2/workflows/{workflow_id}/executions -H "Authoriza
 ```
 
 ### Search workflow executions
-Search workflow execution runs across single workflows, all workflows, or sub-organizations.
+Search workflow execution runs across single workflows, all workflows, or sub-tenants.
 
 Supported body parameters:
 - `workflow_id`: Workflow ID to filter by (optional; omit or leave empty to search all workflows).
@@ -352,8 +350,8 @@ Supported body parameters:
 - `end_time`: Unix epoch timestamp to filter runs completed before this time.
 - `limit`: Maximum number of execution records to return.
 - `cursor`: Pagination cursor for fetching subsequent pages.
-- `suborg_runs`: Set to `true` to search executions across sub-organizations in multi-tenant environments.
-- `ignore_org`: Set to `true` to bypass organization restriction if authorized.
+- `suborg_runs`: Set to `true` to search executions across sub-tenants in multi-tenant environments.
+- `ignore_org`: Set to `true` to bypass tenant restriction if authorized.
 
 Method: POST
 
@@ -435,9 +433,9 @@ curl https://shuffler.io/api/v1/workflows/{workflow_id} -H "Authorization: Beare
 To download a single workflow, provide the full repository path to the specific workflow file.  
 To download all workflows from a repository, provide the repository base URL.
 
-The `Org-Id` header is optional. If specified, the workflow(s) will be downloaded and imported into the given organization. If Org-Id not provided then they will be imported into the user’s currently active organization.
+The `Org-Id` header is optional. If specified, the workflow(s) will be downloaded and imported into the given tenant. If Org-Id not provided then they will be imported into the user’s currently active tenant.
 
-If the Git provider is already configured at the organization, `username` and `password` is optional in the body. In such cases, the Shuffle will use the credentials configured for that organization.
+If the Git provider is already configured at the tenant, `username` and `password` is optional in the body. In such cases, the Shuffle will use the credentials configured for that tenant.
 
 Currently, the following Git providers are supported:
 - GitHub  
@@ -531,7 +529,7 @@ curl https://shuffler.io/api/v1/workflows/{workflow_id}/revisions?count=5 -H "Au
 ```
 
 ### Get child workflows
-Returns all child workflows distributed to or created in sub-organizations from a parent workflow in multi-tenancy setups, including configuration differences (diffs).
+Returns all child workflows distributed to or created in sub-tenants from a parent workflow in multi-tenancy setups, including configuration differences (diffs).
 
 Method: GET
 
@@ -879,7 +877,7 @@ curl -XDELETE https://shuffler.io/api/v1/apps/{app_id} -H "Authorization: Bearer
 ```
 
 ### Upload a python app 
-Uploads a python app. You should upload a zip file with the following like file structure. This has to be done for each individual version of the app. The app uploaded is available to everyone in the organization.
+Uploads a python app. You should upload a zip file with the following like file structure. This has to be done for each individual version of the app. The app uploaded is available to everyone in the tenant.
 
 If you need help with this section, [look into the Shuffle CLI utility as well](https://github.com/Shuffle/shufflecli). 
 
@@ -913,18 +911,18 @@ The ID returned is based on these fields being unique:
 - App Name
 - App ID
 
-After an app is uploaded, the App cache for your Organization is cleared, meaning your apps will be loaded from the database directly. 
+After an app is uploaded, the App cache for your tenant is cleared, meaning your apps will be loaded from the database directly. 
 If you want to see whether your app was uploaded or not, you can always check the app directly here (swap appid): https://shuffler.io/apps/{appid}
 
 ## Stats and Timelines
-Stats and Timelines are a system built to help track changes to something over time. This is used both by internal systems in Shuffle, and is an option for you to use in Workflows or elsewhere to make timelines. Adding statistics was added in versions >1.4.3, and graphing of ANY value will be available soon. Graphs for default tracked information like App and Workflow utilisation is on the [statistics admin page for your Organisation](https://shuffler.io/admin?admin_tab=billing). 
+Stats and Timelines are a system built to help track changes to something over time. This is used both by internal systems in Shuffle, and is an option for you to use in Workflows or elsewhere to make timelines. Adding statistics was added in versions >1.4.3, and graphing of ANY value will be available soon. Graphs for default tracked information like App and Workflow utilisation is on the [statistics admin page for your tenant](https://shuffler.io/admin?admin_tab=billing). 
 
 The [new dashboard page allows for customisation of a bar graph](/new-dashboard). You may view your custom stats here. We will introduce custom dashboard controls in future versions of Shuffle.
 
 <img width="1398" height="423" alt="image" src="https://github.com/user-attachments/assets/97212387-d376-4211-9321-157f6817b272" />
 
 ### Get Stats
-Returns the statistics for an organisation
+Returns the statistics for an tenant
 
 Method: GET
 
@@ -1078,7 +1076,7 @@ Here is a brief video that you can watch to learn more about it:
 
 	
 ### List App Authentication
-Get a list of all app authentication. These are all the authentication currently available to YOUR organization. These can be distributed from Parent org to Child org.
+Get a list of all app authentication. These are all the authentication currently available to YOUR tenant. These can be distributed from Parent tenant to Child tenant.
 
 Methods: GET
 
@@ -1106,8 +1104,8 @@ curl -XPOST https://shuffler.io/api/v1/apps/authentication/{authentication_id}/c
 {"success": true}
 ```
 
-### Allow suborgs to use auth
-Parent organizations have the option to allow child orgs to use the same auth. The suborgs can not modify the auth they get access to. Intended for use where you e.g. have one ticketing system as an MSSP which you want to create tickets in from your child orgs (customers).
+### Allow subtenant to use auth
+Parent tenants have the option to allow child tenants to use the same auth. The subtenants can not modify the auth they get access to. Intended for use where you e.g. have one ticketing system as an MSSP which you want to create tickets in from your child tenants (customers).
 
 Methods: POST
 
@@ -1143,7 +1141,7 @@ You can find the fields following these steps:
 2. Find a sample Action (doesn't matter which)
 3. Loop through the Action's parameter's and find fields tagged with `"configuration": true`
 
-**If you want it auto distributed to all existing workflows in your org, add `"auto_distribute": true` to the JSON body**
+**If you want it auto distributed to all existing workflows in your tenant, add `"auto_distribute": true` to the JSON body**
 
 Method: PUT
 
@@ -1271,7 +1269,7 @@ curl https://shuffler.io/api/v1/users/generateapikey -H "Authorization: Bearer A
 Below are the endpoints related to file creation, uploading, downloading, listing and more. This API is available to Python apps by using self.set_files(files) and self.get_file(file_id)
 
 ### Create a file
-Creating a file is necessary before uploading one. This is to prepare the file location which is always per-organization only. Use "global" for the workflow_id if it's not associated with one.
+Creating a file is necessary before uploading one. This is to prepare the file location which is always per-tenant only. Use "global" for the workflow_id if it's not associated with one.
 
 Methods: POST 
 
@@ -1518,7 +1516,7 @@ curl -XPOST https://shuffler.io/api/v1/notifications -H "Authorization: Bearer A
 
 
 ### Get all notifications
-Get all notifications assigned to your user from your organizations. 
+Get all notifications assigned to your user from your tenants. 
 
 Methods: GET 
 
@@ -1573,7 +1571,7 @@ curl https://shuffler.io/api/v1/notifications/{notificationId}/markasread -H "Au
 Below are the endpoints related to **Runtime Locations** (previously environments)
 
 ### Get environments
-Get user's active Organization's environments.
+Get user's active tenant's environments.
 
 Methods: GET 
 
@@ -1581,7 +1579,7 @@ Methods: GET
 curl https://shuffler.io/api/v1/getenvironments -H "Authorization: Bearer APIKEY" 
 ```
 
-Ps: If you want to get the environments of another org, Please add in the Org-Id: {Org-Id} header.
+Ps: If you want to get the environments of another tenant, Please add in the Org-Id: {Org-Id} header.
 
 It would return something like this:
 ```bash
@@ -1610,7 +1608,7 @@ It would return something like this:
 }]
 ```
 
-## Organizations
+## Tenants
 Below are the endpoints related to organization/tenant creation, editing, listing and more.
 
 ### Get an Organization

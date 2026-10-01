@@ -43,7 +43,7 @@ The tenant overview gives access to these things:
 This view outlines the basic details of your tenants, which any Admin can change at any time. It can tell you about new updates, features and more that we have in store. The view is slightly different from the cloud version to the on-premises version. Here's how:
 * The **cloud** version shows you an API-key. This can be used in the open source version.
 * The **open source** version gives you an API-key field. This can be used in the cloud version.
-![Organization view](https://github.com/user-attachments/assets/733e02ed-1f06-4064-b645-de37eb27478a)
+![Tenant view](https://github.com/user-attachments/assets/733e02ed-1f06-4064-b645-de37eb27478a)
 
 ### App Runs Management for Sub-tenants (Enterprise)
 Starting from version 2.0.2, enterprise users can manage sub-tenant app run limits from the parent tenant. The maximum limit that can be assigned to a sub-tenant is equal to the app run limit of the parent tenant. For example, if the parent tenant has an app run limit of 300k, the maximum limit that can be assigned to each sub-tenant is also 300k.
@@ -156,10 +156,10 @@ Once it's in, click the node, and you'll see a view like this. We've outlined th
 By clicking either of these, a popup window will show. In this one, type in a DESCRIPTIVE name (to remember), before passing credentials. **PS: Never use localhost in an URL. Everything runs in a container, which has its own IP. Always use the system's IP/domain within the URL.**
 ![Authentication workflow popup](https://github.com/user-attachments/assets/df60210a-21d9-4a1a-a3cf-410f4f12b6ae)
 
-By clicking "submit", the authentication is now saved for your organization. This removes clutter in the UI, by having less required fields, and is also reusable. You can now make multiple nodes that use the same authentication.
+By clicking "submit", the authentication is now saved for your tenant. This removes clutter in the UI, by having less required fields, and is also reusable. You can now make multiple nodes that use the same authentication.
 ![Authentication view after submit](https://github.com/user-attachments/assets/8865be9d-27d8-4b83-8841-d7ca412536b0)
 
-Last, but not least, this can now be controlled on an organizational level. 
+Last, but not least, this can now be controlled on a tenant level. 
 
 ![The same authentication on](https://github.com/user-attachments/assets/dbcf3e5d-65b5-469c-9622-cc6ff453d9d6)
 
@@ -372,7 +372,7 @@ For the time being, this health check automatically runs every 15 minutes by def
 ### Notifications
 
 Notifications are a way for Shuffle to inform you of a potential error in your workflows. We recommend you investigate them to see if the issue is an actual issue or not. 
-They are organization-wide, meaning if you dismiss them, they get dismissed for everyone. A dismissed notification will show back up if it happens again. 
+They are tenant-wide, meaning if you dismiss them, they get dismissed for everyone. A dismissed notification will show back up if it happens again. 
 
 **Notification sources:**
 - Failed workflows (Status: ABORTED)
@@ -400,17 +400,17 @@ You can ignore/disable a notification by clicking the "Disable" button next to a
 ## Billing
 
 ### Onprem Licensing
-Shuffle’s licensing system enables organizations to unlock advanced capabilities designed for production deployments and enterprise grade scalability.
+Shuffle’s licensing system enables tenants to unlock advanced capabilities designed for production deployments and enterprise grade scalability.
 
 While the open-source version of Shuffle includes all core workflow automation functionality, running Shuffle in production environments or at scale (including multi-tenant or multi-environment setups) requires a valid on-premise license.
 
-Licensing ensures access to premium features such as high-performance scaling, multi-tenant management, multi-environment configurations, and full platform branding empowering organizations to customize, optimize, and securely manage their automation infrastructure.
+Licensing ensures access to premium features such as high-performance scaling, multi-tenant management, multi-environment configurations, and full platform branding empowering tenants to customize, optimize, and securely manage their automation infrastructure.
 
 ### Default Limits
 By default, Shuffle onprem instance includes the following limits:
 
 - **App Runs Executions:** 25,000 per month
-- **Sub-Organizations:** Up to 3  
+- **Sub-Tenants:** Up to 3  
 - **Environments:** 1
 - **Branding** not Enabled
 
@@ -458,7 +458,7 @@ With a valid license, connecting your instance to the cloud allows you to access
 
 For air-gapped or offline environments where **Cloud Synchronization** cannot be used, Shuffle supports activating enterprise features through an **on-premise license key**.
 
-The license key allows organizations to unlock capabilities for **scaling**, **multi-tenancy**, **multi-environment setups**, and **branding** enabling full production use of Shuffle on-premises.
+The license key allows tenants to unlock capabilities for **scaling**, **multi-tenancy**, **multi-environment setups**, and **branding** enabling full production use of Shuffle on-premises.
 
 #### Applying a License Key
 
@@ -477,11 +477,11 @@ The availability of these features depends on the **type and level of your licen
 | Feature | Description |
 |----------|-------------|
 | **Workflow Scaling** | Increase monthly workflow execution limits to support larger workloads. |
-| **Multi-Tenant Management** | Add and manage more sub-organizations within a single deployment. |
+| **Multi-Tenant Management** | Add and manage more sub-tenants within a single deployment. |
 | **Multi-Environment Support** | Create and operate multiple isolated environments. |
 | **Branding Customization** | Enable full white-label branding, including logo, colors, and support links. |
 
-> **Note:** The exact features and limits available to your organization depend on your Shuffle license tier.  
+> **Note:** The exact features and limits available to your tenant depend on your Shuffle license tier.  
 > For more information or to upgrade your license, contact **[support@shuffler.io](mailto:support@shuffler.io)**.
 
 You can securely store your license key in the **Datastore** tab (`/admin/datastore` in Shuffle Security, or `/admin?tab=datastore` in Shuffle Core) or save it in a text file and upload it via the **Files** tab (`/admin?tab=files`) in the Admin panel.  

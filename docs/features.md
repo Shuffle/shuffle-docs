@@ -9,7 +9,7 @@
 * [The workflow designer](#the-workflow-designer)
 * [Default use-cases](#standard-workflows-and-apps)
 * [Cloud and Open Source](#local-hosted-cloud-and-hybrid)
-* [Multi-Org for free](#multi-tenancy-and-multi-org)
+* [Multi-tenant for free](#multi-tenancy)
 * [File analysis](#file-storage)
 * [Key Value Store](#key-value-store)
 * [Encrypted Authentication Storage](#encrypted-authentication-storage)
@@ -57,15 +57,15 @@ Shuffle's focus has and will always be on Open Source and collaboration. With th
 - [The local and hosted](https://github.com/frikky/shuffle) version of Shuffle is the one hosted on Github, and comes out of the box with no limitations.
 - [Shuffle Hybrid](/docs/tenants#hybrid-features) is another variant, allow for the local and cloud version to work together. This will further allow for connections between Shuffle instances in the future.
 
-![Cloud organizations](https://github.com/user-attachments/assets/0c6c0b5d-953a-4461-8470-bf8bddd04c72)
+![Cloud tenants](https://github.com/user-attachments/assets/0c6c0b5d-953a-4461-8470-bf8bddd04c72)
 
-## Multi-tenancy and Multi-org
-Shuffle allows for a user to have multiple Organizations associated with a User and vice versa. Organizations have logical barriers, making users able to easily swap between them. Shuffle is further extended for MSSP's needs, allowing for Sub-organizations to be controlled from a Parent-organization.
+## Multi-tenancy
+Shuffle allows for a user to have multiple tenants associated with a User and vice versa. Tenants have logical barriers, making users able to easily swap between them. Shuffle is further extended for MSSP's needs, allowing for Sub-tenants to be controlled from a Parent-tenant.
 
-![Shuffle Organization change](https://github.com/user-attachments/assets/250b58e7-4a1d-4f8f-b517-2d02cc2fbb64)
+![Shuffle Tenant change](https://github.com/user-attachments/assets/250b58e7-4a1d-4f8f-b517-2d02cc2fbb64)
 
 ## Multiple environments
-Have multiple datacenters with physical barriers for connections? No problem - we've built a way for a single workflow to run scripts in multiple locations. Environments are divided by Organization, but still allowing for resource sharing if necessary.
+Have multiple datacenters with physical barriers for connections? No problem - we've built a way for a single workflow to run scripts in multiple locations. Environments are divided by Tenant, but still allowing for resource sharing if necessary.
 
 ## File storage 
 What is a security system that can't handle files? Not very useful. The good news? We can. If you want to connect Shuffle to your favorite sandbox, or upload and analyze an email with Yara - we can do it all.

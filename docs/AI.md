@@ -1,6 +1,6 @@
 # AI at Shuffle
 
-With AI becoming a central pillar of cybersecurity and automation, Shuffle provides an enterprise AI framework built from the ground up to be controllable and transparent. Whether you are generating workflows, [running investigations](https://shuffle.security/incidents), or connecting your private tools to ChatGPT and Claude via the Model Context Protocol (MCP), Shuffle gives you full control over your models, prompts, data residency, and execution boundaries.
+With AI becoming increasingly cheap and useful, Shuffle provides an AI framework built from the ground up to be controllable and transparent. Whether you are generating workflows, [running investigations](https://shuffle.security/incidents), or connecting your private tools to ChatGPT and Claude via the Model Context Protocol (MCP), Shuffle gives you full control over your models, prompts, data residency, and execution boundaries.
 
 Shuffle's AI buildout is primarily based on LLMs, and all LLM-related functionality passes through the [RunAiQuery() function, which you can look into here](https://github.com/Shuffle/shuffle-shared/blob/45a3e0a0018b767e9591d2f916ee004288bbd4a7/ai.go#L15631).
 
@@ -24,7 +24,7 @@ Shuffle offers a unified interface for language models across cloud, hybrid, and
 
 In Shuffle Cloud, LLM interactions, Agent reasoning loops, and workflow AI actions are powered by built-in **Shuffle AI credits**.
 - **Regional Routing & Data Residency**: AI requests are dynamically routed to Google Cloud Platform (Vertex AI / Gemini) endpoints within your deployment's geographic region based on `SHUFFLE_GCE_LOCATION` (e.g. EU or US regional boundaries). This ensures full compliance with strict data residency requirements.
-- **Quota & Credit Tracking**: Organization admins can view credit usage, remaining limits, and active allocations directly within the Shuffle AI drawer.
+- **Quota & Credit Tracking**: tenant admins can view credit usage, remaining limits, and active allocations directly within the Shuffle AI drawer.
 - **Programmatic LLM Access**: You can query your cloud model programmatically via Shuffle's OpenAI-compatible chat completions interface at [`POST /api/v1/chat/completions`](/docs/API#chat-completions).
 
 ### Using LLMs on-premises
@@ -43,7 +43,7 @@ For on-premises and private cloud installations, Shuffle provides two distinct a
 
 ### How choosing a local LLM works
 
-Shuffle enables organizations to configure or switch their active LLM provider directly through the user interface without editing configuration files or restarting backend containers:
+Shuffle enables tenants to configure or switch their active LLM provider directly through the user interface without editing configuration files or restarting backend containers:
 
 1. **Open the Provider Selector**: Click the active provider chip (e.g. **Shuffle AI** or the configured model badge) in the top bar of [`/agents`](/agents) or click the interactive button above.
 2. **Select a Provider Preset**: The right-hand sidebar opens with curated presets for:
@@ -55,15 +55,11 @@ Shuffle enables organizations to configure or switch their active LLM provider d
    - **API Key**: Enter your provider API token (leave blank or enter a placeholder for unauthenticated local servers).
 4. **Test Connection & Save**:
    - Click **Test Connection** to send a real-time health-check prompt. The sidebar displays latency and connectivity status.
-   - Click **Save**. The configuration is securely stored in your organization's App Authentication.
-   - All subsequent agent runs, workflow AI nodes, and Ask AI queries across your organization immediately route to the new model in real time.
+   - Click **Save**. The configuration is securely stored in your tenant's App Authentication.
+   - All subsequent agent runs, workflow AI nodes, and Ask AI queries across your tenants immediately route to the new model in real time.
 
-<!-- TODO: Screenshot Needed: LLM Provider Selector Drawer
-- Route / UI Location: /agents -> Click the active LLM provider chip (e.g. "Shuffle AI" or model badge) in the top header bar.
-- What to capture: The open provider sidebar showing presets for Local (Ollama, LM Studio) and Cloud models (Gemini, OpenAI, Anthropic), endpoint URL, Model dropdown, and the "Test Connection" button.
-- Recommended filename: assets/ai-provider-selector-drawer.png
-- Inject syntax: ![AI Provider Selector Drawer](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/ai-provider-selector-drawer.png)
--->
+
+<img width="1916" height="1338" alt="Using and testing a local LLM" src="https://github.com/user-attachments/assets/1f0bd6e1-f477-4039-9f97-179638ee4a76" />
 
 ---
 
@@ -72,13 +68,6 @@ Shuffle enables organizations to configure or switch their active LLM provider d
 Agents in Shuffle are autonomous, goal-oriented systems that interact with the world using tools (playbooks, MCP apps, and custom scripts) to achieve specific operational outcomes.
 
 <!-- component:agent-ui placeholder="Analyze an alert or investigate an IP..." -->
-
-<!-- TODO: Screenshot Needed: AI Agents Workspace & Autonomous Execution
-- Route / UI Location: /agents
-- What to capture: The active Agents console showing an agent execution with prompt input, thought/planning loop, tool executions (calling Shuffle apps), and structured output.
-- Recommended filename: assets/ai-agents-workspace.png
-- Inject syntax: ![AI Agents Workspace](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/ai-agents-workspace.png)
--->
 
 ### What the buttons do on /agents
 
@@ -93,12 +82,7 @@ When you open [`/agents`](/agents) (or open an agent drawer on an alert or incid
 | Schedule | Calendar button | Runs the prompt on a recurring cron, or auto-detects a schedule from your text. | Type `check threat feed every day at 8am` and click Save schedule. |
 | Run / Stop | Right-hand button | Starts the run, or stops an agent mid-way through if it is going down the wrong path. | Stop an agent if it starts investigating an irrelevant IP. |
 
-<!-- TODO: Screenshot Needed: Agent UI Prompt Box and Toolbar
-- Route / UI Location: /agents -> Focus on prompt box and controls
-- What to capture: Prompt box showing active skill chip, tool chips, paperclip attach button, schedule button, and LLM selector.
-- Recommended filename: assets/ai-agent-composer-controls.png
-- Inject syntax: ![Agent Controls](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/ai-agent-composer-controls.png)
--->
+<img width="720" height="856" alt="Using skills with Shuffle agents" src="https://github.com/user-attachments/assets/808c48f4-65da-4b49-b842-227f32232162" />
 
 #### Skills
 Pick a discipline (like `Incident Response`, `Build Workflow`, `Computer Use`, or `Vulnerability Management`):
@@ -136,35 +120,7 @@ If you want an agent prompt to run repeatedly instead of just once (like checkin
 
 ### How an Agent works under the hood
 
-When you run an agent in Shuffle (from [`/agents`](/agents), inside a workflow node, or via the API), it executes an autonomous decision loop implemented in Shuffle's open-source core:
-
-```
-Goal / Prompt
-      │
-      ▼
-┌──────────────┐      ┌────────────────────────┐
-│ Tool         │ ───> │ Planning & Decisions   │
-│ Discovery    │      │ (Generates Decisions)  │
-└──────────────┘      └────────────────────────┘
-                                │
-                                ▼
-                      ┌────────────────────────┐
-                      │ Execution Engine       │
-                      │ (Direct or Schemaless) │
-                      └────────────────────────┘
-                                │
-                                ▼
-                      ┌────────────────────────┐
-                      │ Context Update         │
-                      │ (Memory & Results)     │
-                      └────────────────────────┘
-                                │
-                                ▼
-                      ┌────────────────────────┐
-                      │ Finish / Pause         │
-                      │ (Output or Question)   │
-                      └────────────────────────┘
-```
+When you run an agent in Shuffle (from [`/agents`](/agents), inside a workflow node, or via the API), it executes an autonomous decision loop implemented in Shuffle's [open source execution engine (HandleAiAgentExecutionStart)](https://github.com/Shuffle/shuffle-shared/blob/b025888532cdc1b621ff78d9c5d417b0121582e9/ai.go#L8340).
 
 1. **Tool Discovery**: Shuffle inspects the permitted apps and translates them into standardized MCP tool definitions with schemas and parameter validations.
 2. **Planning & Decisions**: The agent breaks your objective into an ordered array of **Decisions** (`AgentDecision`). Each decision encapsulates:
@@ -254,16 +210,9 @@ Shuffle records every single interaction with LLMs (whether cloud-hosted Gemini,
 
 <!-- component:agent-activity title="Live AI Executions & Debugger" subtitle="Real-time execution list from your tenant. Click any run to inspect its decision timeline, tool parameters, and raw LLM request/response logs." limit="5" top="5" -->
 
-<!-- TODO: Screenshot Needed: Agent Execution Drawer with Raw Debug View
-- Route / UI Location: /agents -> Click any execution in the Agent Activity table -> Expand the "Debug" accordion at the bottom of the drawer.
-- What to capture: The open AgentExecutionDrawer showing the status header, decision timeline steps, and the expanded react18-json-view showing llm_requests, llm_responses, and decisions.
-- Recommended filename: assets/ai-agent-execution-drawer-debug.png
-- Inject syntax: ![Agent Execution Debugger](https://raw.githubusercontent.com/Shuffle/Shuffle-docs/master/assets/ai-agent-execution-drawer-debug.png)
--->
-
 ### The AI Executions List
 
-In the web interface at [`/agents`](/agents) (and in the interactive panel above), Shuffle displays the **AI Executions** activity feed. This view aggregates all past and ongoing agent tasks across your organization.
+In the web interface at [`/agents`](/agents) (and in the interactive panel above), Shuffle displays the **AI Executions** activity feed. This view aggregates all past and ongoing agent tasks across your tenant.
 
 #### Execution Trigger Sources
 
@@ -428,7 +377,7 @@ You can query agent activity and inspect raw `llm_requests` / `llm_responses` di
 
 #### 1. List Recent Agent Executions
 
-Search for agent runs across your organization using the workflow search endpoint:
+Search for agent runs across your tenant using the workflow search endpoint:
 
 ```bash
 curl -X POST "https://shuffler.io/api/v1/workflows/search?top=10" \
@@ -475,7 +424,7 @@ The Model Context Protocol (MCP) standardizes how AI models discover and execute
 ### Every App is an MCP Endpoint
 
 You can interact with Shuffle tools using the standard MCP specification:
-- **Global MCP Endpoint**: `POST /api/v1/mcp` allows calling any tool across your organization using the standard `tools/call` and `tools/list` JSON-RPC methods.
+- **Global MCP Endpoint**: `POST /api/v1/mcp` allows calling any tool across your tenant using the standard `tools/call` and `tools/list` JSON-RPC methods.
 - **Single App MCP Endpoint**: `GET / POST /api/v1/apps/{app_id}/mcp` scopes interactions exclusively to the actions of a single app.
 
 ### Adding new MCP tools (and generating them on the fly)
@@ -551,7 +500,7 @@ External AI (ChatGPT / Claude)             Shuffle OAuth Server                Y
 
 You can connect custom GPTs and ChatGPT Actions directly to Shuffle:
 1. In ChatGPT, create a new Custom GPT or Action.
-2. Provide Shuffle's OpenAPI schema for your selected app or use the global MCP manifest at `https://shuffler.io/api/v1/mcp`.
+2. Provide Shuffle's OpenAPI schema for a selected app, such as `https://shuffler.io/api/v1/wazuh,iris/mcp`.
 3. Set the Authentication method to **OAuth2**.
 4. Configure the Authorization URL (`https://shuffler.io/oauth/authorize`) and Token URL (`https://shuffler.io/oauth/token`).
 5. Authorize with your Shuffle account. ChatGPT can now search your apps, trigger actions, and query security data directly inside your chat conversations.
@@ -587,10 +536,10 @@ One of the largest hurdles in security automation is data fragmentation: an IP r
 ### How Schemaless Works
 
 ```
-Heterogeneous Raw Alerts                  Schemaless Normalization            Standardized OCSF Output
+Raw Alerts of any format                  Schemaless Normalization            Standardized OCSF Output
 ┌───────────────────────┐                 ┌──────────────────────┐            ┌────────────────────────┐
 │ Splunk / Elastic SIEM │ ──┐             │                      │            │ OCSF Class 2001:       │
-├───────────────────────┤   ├───────────> │ LLM Context Mapping │ ─────────> │ Security Incident /    │
+├───────────────────────┤   ├───────────> │    Context Mapping   │ ─────────> │ Security Incident /    │
 │ CrowdStrike / Defender│ ──┤             │   + Deterministic    │            │ Finding                │
 ├───────────────────────┤   │             │   OCSF Translation   │            │ (Uniform Observables)  │
 │ Jira / TheHive Alerts │ ──┘             │                      │            └────────────────────────┘
@@ -647,7 +596,7 @@ Shuffle's AI architecture is designed for enterprise scalability, regulatory com
 ### Cloud Architecture
 
 In Shuffle Cloud, the architecture separates control plane orchestration from model execution:
-- **Regional Model Routing**: When an agent or workflow makes an AI call, Shuffle checks the organization's regional setting (`SHUFFLE_GCE_LOCATION`). Requests are routed to regional Google Cloud Platform (Vertex AI / Gemini) clusters within your legal jurisdiction (e.g. EU or US data boundaries).
+- **Regional Model Routing**: When an agent or workflow makes an AI call, Shuffle checks the tenant's regional setting (`SHUFFLE_GCE_LOCATION`). Requests are routed to regional Google Cloud Platform (Vertex AI / Gemini) clusters within your legal jurisdiction (e.g. EU or US data boundaries).
 - **Tenant Isolation**: Model contexts and conversation memories are strictly isolated per tenant. No data from your prompts or tools is ever used to train foundational models.
 
 <!-- ARCHITECTURE_DIAGRAM_CLOUD: High-level cloud architecture showing regional GCP Vertex AI routing and tenant boundaries -->
@@ -684,7 +633,7 @@ Key components of Shuffle's agentic decision engine, execution loop, and MCP pro
 All AI and Agent features in Shuffle can be accessed programmatically via REST and JSON-RPC APIs:
 
 - **[Run an Agent Action](/docs/API#run-an-agent-action)**: `POST /api/v1/agent` — Launches asynchronous agent tasks, returning an `execution_id` and stream authorization.
-- **[Search Agent Executions](/docs/API#search-agent-executions)**: `POST /api/v1/workflows/search?top={n}` — Lists agent workflow executions, trigger sources, and statuses across your organization.
+- **[Search Agent Executions](/docs/API#search-agent-executions)**: `POST /api/v1/workflows/search?top={n}` — Lists agent workflow executions, trigger sources, and statuses across your tenant.
 - **[Get Execution Results & LLM Traces](/docs/API#get-stream-results)**: `GET /api/v1/streams/results?execution_id={id}` — Streams real-time decision updates and returns complete `llm_requests` and `llm_responses` payloads.
 - **[Run an MCP Action](/docs/API#run-an-mcp-action)**: `POST /api/v1/mcp` — Executes tools synchronously via the standardized MCP `tools/call` method.
 - **[Single App MCP](/docs/API#single-app-mcp)**: `GET / POST /api/v1/apps/{app_id}/mcp` — Scopes MCP interactions to a single tool integration.

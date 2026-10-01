@@ -1,5 +1,5 @@
 # Shuffle Architecture
-Documentation to understand the Shuffle architecture and thoughts behind our choices. Important to understand if you want to contribute or decide whether it works for your organization.
+Documentation to understand the Shuffle architecture and thoughts behind our choices. Important to understand if you want to contribute or decide whether it works for your Tenant.
 
 ## Table of contents
 * [Introduction](#introduction)
@@ -46,7 +46,7 @@ This handles the web UIs, our REST APIs, authentication, and database access:
 - `shuffle-frontend`: React frontend for Shuffle Core (Workflows, Triggers, Apps) and reverse proxy on port `3001`.
 - `shuffle-security`: React frontend for [Shuffle Security](/docs/incidents) (Incidents, Alerts, Observables, Host Monitors) on port `3002`.
 - `shuffle-backend`: The core Go API on port `5001`. Handles workflow validation, app metadata, file storage, and talks to OpenSearch.
-- `shuffle-opensearch`: Our document database. Stores your users, workflows, organizations, execution results, apps, and platform health.
+- `shuffle-opensearch`: Our document database. Stores your users, workflows, tenant, execution results, apps, and platform health.
 
 2. **The Runtime Layer**
 This is where workflows actually get executed in real time:
@@ -148,16 +148,16 @@ Shuffle is a quite complex platform, with lots of different [features](/docs/fea
 There are two types of authentication tokens in Shuffle: API/Session access, and App authentication. 
 
 ### Data access model
-Accessing data is done **PER ORGANIZATION**, based on which one your user is in. This means that you need to be a part of the organization you're using the API for, and it will by default use this one [unless you use Org-Id header in your request](https://shuffler.io/docs/API#Authentication). If you are an Org admin, you have access to all information within an Organization, while Org-Users has access to read and modify Workflows, Apps, Files, Datastore and Trigger management. If you are a Org-Reader, you can READ the same data the Org User can read and modify.
+Accessing data is done **PER TENANT**, based on which one your user is in. This means that you need to be a part of the tenant you're using the API for, and it will by default use this one [unless you use tenant-Id header in your request](https://shuffler.io/docs/API#Authentication). If you are an tenant admin, you have access to all information within an tenant, while tenant-Users has access to read and modify Workflows, Apps, Files, Datastore and Trigger management. If you are a tenant-Reader, you can READ the same data the tenant User can read and modify.
 
 ### Encryption and hashing
 Hashed (bcrypt):
 - User passwords.
 
 Encrypted (AES-256):
-- [App authentication](/docs/tenants#app-authentication), [Protected Datastore Keys](/docs/API#datastore-api) and [Files](/docs/API#file-api) are being encrypted. The seed used for hashing is random for each organization, and can be set with the environment variable SHUFFLE_ENCRYPTION_MODIFIER in the local version of Shuffle. This is automatically handled in our SaaS offering. How it works: 
+- [App authentication](/docs/tenants#app-authentication), [Protected Datastore Keys](/docs/API#datastore-api) and [Files](/docs/API#file-api) are being encrypted. The seed used for hashing is random for each tenant, and can be set with the environment variable SHUFFLE_ENCRYPTION_MODIFIER in the local version of Shuffle. This is automatically handled in our SaaS offering. How it works: 
 
-	1. Create md5 hash from Org ID + Workflow_id + Auth timestamp + SHUFFLE_ENCRYPTION_MODIFIER
+	1. Create md5 hash from tenant ID + Workflow_id + Auth timestamp + SHUFFLE_ENCRYPTION_MODIFIER
 	2. Encrypt the authentication value with [aes.NewCipher](https://cs.opensource.google/go/go/+/go1.17.1:src/crypto/aes/cipher.go;l=32)
 	3. Base64 encode the encrypted value (because bytes and strings aren't friends)
 	4. Store the value in the database.
@@ -182,7 +182,7 @@ If you try to log in too many times in a short amount of time, you will be locke
 In local instances of Shuffle, password policies are minimal (8 characters).
 
 ### MFA and SSO
-SAML/SSO and MFA is fully available and can be controlled from an organisation perspective. Users can be a part of multiple organisations, but if even one organisation the user is in enables "MFA Required", it will now be required for the users. 
+SAML/SSO and MFA is fully available and can be controlled from an tenant perspective. Users can be a part of multiple tenants, but if even one tenant the user is in enables "MFA Required", it will now be required for the users. 
 
 **MFA:** [https://shuffler.io/admin?tab=users](https://shuffler.io/admin?tab=users)
 

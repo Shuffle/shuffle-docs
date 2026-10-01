@@ -38,7 +38,7 @@ Documentation for troubleshooting and debugging known issues in Shuffle.
 * [Tenants/Suborgs seem to be lost](#tenantssuborgs-seem-to-be-lost)
 * [Find top index items opensearch](#find-top-index-items-opensearch)
 * [Resetting MFA code](#resetting-mfa)
-* [Re-add user to lost organization](#add-user-to-lost-org)
+* [Re-add user to lost tenant](#add-user-to-lost-tenant)
 * [No module named 'xyz' in 'execute python' (Shuffle Tools)](#no-module-named-xyz-in-execute-python-shuffle-tools)
 
 ## Debugging Executions
@@ -341,7 +341,7 @@ echo "Kubernetes log bundle created: shuffle-k8s-debug.tar.gz"
 ---
 
 ## Resetting MFA
-MFA can be enabled for your account on the settings User page of an organization, or on your [settings page](https://shuffler.io/settings). If you have lost access to your account due to this however, follow these steps:
+MFA can be enabled for your account on the settings User page of a tenant, or on your [settings page](https://shuffler.io/settings). If you have lost access to your account due to this however, follow these steps:
 
 **Cloud (shuffler.io):** Send an email to support@shuffler.io using the email you want MFA removed for.
 **Onprem:** It's a bit more tricky onprem, as we'll need to modify the Opensearch database. Here is how:
@@ -551,7 +551,7 @@ If you find yourself in a situation where you have forgotten your passowrd and n
 
 4. I jumped onto another server within the same vlan as my Shuffle server but these could be ran on local host too. We will create a new user and update the user's role to admin with the Shuffle API.
 
-5. (Optional step): If you have multiple organizations, Change active org like this and repeat for each org:
+5. (Optional step): If you have multiple tenants, Change active tenant like this and repeat for each tenant:
 
    ```
    curl 'https://ip of shuffle server/api/v1/orgs/{org_id}/change' \ -H ' "Authorization: Bearer {API_KEY}' --data-raw '{"org_id":"{org_id}"}'
@@ -574,19 +574,19 @@ If you find yourself in a situation where you have forgotten your passowrd and n
 
 ## Useful OpenSearch Queries
 
-### Find a user and their Orgs
+### Find a user and their Tenants
 
 ```
 curl -X GET "https://localhost:9200/users/_search?pretty"  -u <opensearch_user>:<opensearch_password> --insecure -H 'Content-Type: application/json' -d' { "query": { "match": {"username": "myuser"} } }
 ```
 
-### Find all org
+### Find all tenant
 
 ```
 curl -X GET "https://localhost:9200/organizations/_search?pretty"  -u <opensearch_user>:<opensearch_password> --insecure -H 'Content-Type: application/json' -d' { "size": 10000, "query": { "match_all": {}}}'
 ```
 
-Find all org IDs
+Find all tenant IDs
 
 ```
 curl -X GET "https://localhost:9200/organizations/_search?pretty"  -u <opensearch_user>:<opensearch_password> --insecure -H 'Content-Type: application/json' -d' { "size": 10000, "query": { "match_all": {}}}' | grep "\"id\" : \"" | sed 's/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' | uniq -u
@@ -756,7 +756,7 @@ This is the more direct migration path.
    - workflows are present
    - uploaded files are available
    - app execution works
-   - authentication and organizations are intact
+   - authentication and tenants are intact
 
 **Storage note:** `shuffle-database` in Docker is a local volume or bind mount for OpenSearch data. Kubernetes does not reuse the Docker volume name directly. Instead, it uses Persistent Volumes / Persistent Volume Claims.
 
@@ -805,7 +805,7 @@ If you lost an index due to corruption or other causes, there is no easy way to 
    ```
    curl -XDELETE http://localhost:9200/environments
    ```
-1. Start refilling the index with info. For environments, make sure the "org_id" is correct according to the ID you can find in the /admin UI or the org index.
+1. Start refilling the index with info. For environments, make sure the "org_id" is correct according to the ID you can find in the /admin UI or the tenant index.
    ```
    curl -XPOST -H "Content-Type: application/json" "https://localhost:9200/environments/_doc"  -u <opensearch_user>:<opensearch_password> --insecure -d '{"Name" : "Shuffle","Type" : "onprem","Registered" : false,"default" : true,"archived" : false,"id" : "26ae5c79-a6f3-4225-be18-39fa6018cdba","org_id" : "49eeb866-c8b4-4ea0-bc19-9e650e3bba9e"}'
    ```
@@ -837,7 +837,7 @@ To fix this, You will have to move towards setting up shuffle for [production re
 
 
 ## Disclaimer
-If you are doing this in a production server you will have to comb through the indices and delete them manually with respect to you organisations priorities, old executions and such.
+If you are doing this in a production server you will have to comb through the indices and delete them manually with respect to you tenants priorities, old executions and such.
 
 4. You should notice a reduction in memory  consumption check this by running top. Do a docker-compose down then a docker-compose up -d for good measure and you are good to go. 
 
@@ -1213,12 +1213,12 @@ Copy everything indented under this function and sent to support@shuffler.io for
 
 If you loose your tenants/suborgs for any reason at all and you need to reinstate them then you will need to do the following;
 
-1. Get the org id's from your backend logs. It's a UUID in the format `550e8400-e29b-41d4-a716-446655440000`. 
+1. Get the tenant id's from your backend logs. It's a UUID in the format `550e8400-e29b-41d4-a716-446655440000`. 
 ```
 docker logs shuffle-backend 
 ```
 
-2. After you've identified the org id's for the orgs you want to reinstate, docker exec to get bash session into OpenSearch container or any other container so long as the said container can communicate to the Opensearch container 
+2. After you've identified the tenant id's for the tenants you want to reinstate, docker exec to get bash session into OpenSearch container or any other container so long as the said container can communicate to the Opensearch container 
 ```
 docker exec -it shuffle-opensearch bash 
 ```
@@ -1235,7 +1235,7 @@ curl -k -u admin:StrongShufflePassword321! -H 'Content-Type: application/json' '
 $docker-compose down
 $docker-compose up -d
 ```
-Go back to your shuffle instance and you should see the org in question reinstated in the tenants tab. 
+Go back to your shuffle instance and you should see the tenant in question reinstated in the tenants tab. 
 
 ## Find top index items opensearch
 As the Opensearch index may fill up over time, it is important to be able to debug the the available indexes. One particular issue we have had has been that it takes >60 seconds to load apps onprem at times. Here is how to resolve them.
@@ -1260,10 +1260,10 @@ Delete an index if it's too large (normal ones to delete if problems: workflowex
 curl -XDELETE https://localhost:9200/workflowqueue-shuffle -u admin:StrongShufflePassword321! -k
 ```
 
-## Add user to lost org
-If you have lost access to Shuffle, it usually due to an unforeseen disconnect to the Database during startup, leading to more Organizations being added. To fix this, your user needs to be re-added to the original Organization
+## Add user to lost tenant
+If you have lost access to Shuffle, it usually due to an unforeseen disconnect to the Database during startup, leading to more Tenants being added. To fix this, your user needs to be re-added to the original Tenant
 
-Find the Organization and User Id of your account. They are in the UUID format `550e8400-e29b-41d4-a716-446655440000`
+Find the Tenant and User Id of your account. They are in the UUID format `550e8400-e29b-41d4-a716-446655440000`
 ```
 docker logs -f shuffle-backend
 ```
@@ -1275,7 +1275,7 @@ docker exec -u0 -it shuffle-opensearch bash
 
 
 
-Update the USERID and ORGID, ORGNAME fields, then run this command to re-add your account to the right org
+Update the USERID and ORGID, ORGNAME fields, then run this command to re-add your account to the right tenant
 ```
 curl -k -u admin:StrongShufflePassword321! https://localhost:9200/users/_update/USERID -d '{"doc": {"active_org.id": "ORGID", "active_org.name": "ORGNAME", "orgs": ["ORGID"]}}' -H "Content-Type: application/json"
 ```

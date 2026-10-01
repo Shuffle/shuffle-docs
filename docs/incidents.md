@@ -139,7 +139,7 @@ Every key in `shuffle-security_incidents` is automatically stored with an immuta
 <!-- component:ingest workflow="Ingest Tickets" category="cases" -->
 
 ### 1. Ingestion Webhook (Push)
-Every organization gets a dedicated inbound webhook to receive alerts from detection systems (Splunk, Wazuh, Elastic, CrowdStrike, AWS GuardDuty, custom scripts):
+Every tenant gets a dedicated inbound webhook to receive alerts from detection systems (Splunk, Wazuh, Elastic, CrowdStrike, AWS GuardDuty, custom scripts):
 - Navigate to **`/incidents`** in Shuffle Security.
 - In the top header bar, click the **"Webhook"** button in the Ingest row.
 - The modal displays your dynamic inbound endpoint:
@@ -283,7 +283,11 @@ When you click on an incident from the queue, you land on the investigation canv
 
 You'll notice the tabs are split into two groups: your everyday **Operational Tabs** on the left, and **Data Translation Tabs** on the right.
 
-### Primary Operational Tabs
+### Observables & Threat Intelligence
+- **Observables Repository**: View and filter indicators tenant-wide at `/incidents/observables`.
+- **Threat Feeds**: Configure IOC blocklists and threat feeds at `/incidents/threat-feeds` (e.g. Feodo Tracker, MalwareBazaar, AlienVault IP reputation, Blocklist.de, Emerging Threats, OpenPhish). Extracted observables are checked against active feeds for indicator matches.
+- **External Lookups**: Observables in the UI provide direct external lookup links to VirusTotal and other analysis services.
+- **Correlations**: Search across all incidents sharing an identical observable using `GET /api/v2/correlations?key=<obs>&value=<v>`.
 
 - **Simple**: A minimalist, chat-style view built for fast triage. If you just want to read the incident description, check recent analyst notes, and type quick commands or questions to `@AIAgent`, start here. The feed reads bottom-to-top like a standard chat window.
 - **Detailed**: The full investigation workspace. Here you can edit the title and Markdown description, update severity and status, adjust TLP/PAP flags, assign stakeholders, and manage custom metadata fields while keeping an eye on the vertical timeline.
