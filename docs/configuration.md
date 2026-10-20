@@ -315,7 +315,7 @@ The private registry is the shared image store. The sidecar's `/var/lib/docker` 
 
 ##### Configure the cluster
 
-The following Helm values select the Cloud Hybrid runtime. Replace the placeholders and choose a registry address that both Worker and nodes can reach. `shuffle.appRegistry` is a host and optional port, without `http://` or `https://`.
+The following Helm values select the Cloud Hybrid runtime. Replace the placeholders and choose a registry address that both Worker and nodes can reach. `shuffle.appRegistry` is a host, optional port, and optional repository prefix, without `http://` or `https://`. For Google Artifact Registry, include the project and repository: `REGION-docker.pkg.dev/PROJECT/REPOSITORY`.
 
 ```yaml
 opensearch:
@@ -332,8 +332,6 @@ security:
 
 persistence:
   enabled: false
-  appBuilder:
-    storageClass: standard
 
 shuffle:
   hybrid: true
@@ -370,7 +368,7 @@ app:
       memory: 768Mi
 ```
 
-Save this as `shuffle-hybrid-values.yaml`. Select a valid `persistence.appBuilder.storageClass` for your cluster; the current chart creates the app-builder claim even when the local backend and general persistence are disabled. Set app resources for your workload: the chart's default `nano` preset limits memory to 192 MiB, which is insufficient for some Python apps.
+Save this as `shuffle-hybrid-values.yaml`. Charts containing the Hybrid PVC fix omit the app-builder claim when `shuffle.hybrid=true`, `backend.replicaCount=0`, and backend HPA is disabled. Older chart versions can still create this unused claim; upgrade the chart to obtain the fix. Deployments with a local backend still need a valid `persistence.appBuilder.storageClass`. Set app resources for your workload: the chart's default `nano` preset limits memory to 192 MiB, which is insufficient for some Python apps.
 
 The image manager requires all of `shuffle.hybrid: true`, `worker.enableHelmDeployment: true`, `orborus.manageWorkerDeployments: false`, `worker.manageAppDeployments: true`, and a private `shuffle.appRegistry`. The chart rejects an incompatible combination.
 
@@ -386,7 +384,7 @@ kubectl -n shuffle create secret generic shuffle-hybrid-credentials \
 unset SHUFFLE_HYBRID_AUTH SHUFFLE_HYBRID_ORG
 ```
 
-For a registry that needs authentication, the Worker needs push credentials and app Pods need pull credentials. Create both Secrets in the `shuffle` namespace:
+For a registry that needs username/password authentication, the Worker needs push credentials and app Pods need pull credentials. Create both Secrets in the `shuffle` namespace. For GKE with Artifact Registry, use the keyless setup below instead:
 
 ```bash
 kubectl -n shuffle create secret generic shuffle-app-registry-credentials \
@@ -412,7 +410,253 @@ app:
       - shuffle-app-registry-pull
 ```
 
-Use credentials that will remain valid across future app deployments. The Worker push Secret and Kubernetes pull Secret serve different clients; configuring only one will not work.
+Use credentials that will remain valid across future app deployments. The Worker push Secret and Kubernetes pull Secret serve different clients; both clients need access, either through Secrets or their platform identities.
+
+##### GKE: keyless Artifact Registry access
+
+Use Shuffle **2.3.0 or newer**, with a Worker build that includes Google application-default credential (ADC) support. Older Worker images that only support registry Secrets must be upgraded; IAM changes alone do not add this capability. The example uses `nightly`; for production, pin a tested image digest. This setup uses **GKE Standard**: the Docker image-manager sidecar requires privileged containers, which your cluster's admission policies must allow.
+
+There are two separate identities:
+
+| Client | Identity | Repository permission |
+| --- | --- | --- |
+| Worker image manager, for registry checks and pushes | Worker Kubernetes ServiceAccount linked to a dedicated Google service account | Artifact Registry Writer |
+| GKE nodes, for starting app pods | Node pool's Google service account | Artifact Registry Reader |
+
+No service-account JSON key, registry password Secret, or manual Docker login is needed. Shuffle's environment `AUTH` remains a separate credential for Orborus to communicate with Shuffle Cloud; it is not a Google credential.
+
+**1. Set your project and cluster details**
+
+Run the following commands in a shell with `gcloud` access to manage the cluster, service accounts, and repository IAM. Replace the placeholders first. The example creates the writer service account in the cluster project; the repository can be in another project. The namespace and Kubernetes ServiceAccount name must match the Helm values below.
+
+```bash
+SHUFFLE_GKE_PROJECT="<cluster-project>"
+SHUFFLE_GKE_CLUSTER="<cluster-name>"
+SHUFFLE_GKE_LOCATION="<cluster-region-or-zone>"
+SHUFFLE_GKE_NODE_POOL="<worker-node-pool>"
+SHUFFLE_REGISTRY_PROJECT="<registry-project>"
+SHUFFLE_REGISTRY_REGION="<registry-region>"
+SHUFFLE_REGISTRY_REPOSITORY="<repository>"
+SHUFFLE_WRITER_NAME="shuffle-image-writer"
+SHUFFLE_WRITER_EMAIL="${SHUFFLE_WRITER_NAME}@${SHUFFLE_GKE_PROJECT}.iam.gserviceaccount.com"
+
+gcloud container clusters get-credentials "$SHUFFLE_GKE_CLUSTER" \
+  --project="$SHUFFLE_GKE_PROJECT" --location="$SHUFFLE_GKE_LOCATION"
+```
+
+**2. Enable and verify Workload Identity**
+
+Check the cluster and the node pool used by the Worker:
+
+```bash
+gcloud container clusters describe "$SHUFFLE_GKE_CLUSTER" \
+  --project="$SHUFFLE_GKE_PROJECT" --location="$SHUFFLE_GKE_LOCATION" \
+  --format='value(workloadIdentityConfig.workloadPool)'
+
+gcloud container node-pools describe "$SHUFFLE_GKE_NODE_POOL" \
+  --cluster="$SHUFFLE_GKE_CLUSTER" \
+  --project="$SHUFFLE_GKE_PROJECT" --location="$SHUFFLE_GKE_LOCATION" \
+  --format='value(config.workloadMetadataConfig.mode)'
+```
+
+Expected values are `<cluster-project>.svc.id.goog` and `GKE_METADATA`. If not enabled, apply the following during an approved change window. Updating an existing node pool changes credential access for its other workloads too; review [Google's Workload Identity migration guidance](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) first.
+
+```bash
+gcloud services enable iamcredentials.googleapis.com \
+  --project="$SHUFFLE_GKE_PROJECT"
+
+gcloud container clusters update "$SHUFFLE_GKE_CLUSTER" \
+  --project="$SHUFFLE_GKE_PROJECT" --location="$SHUFFLE_GKE_LOCATION" \
+  --workload-pool="${SHUFFLE_GKE_PROJECT}.svc.id.goog"
+
+gcloud container node-pools update "$SHUFFLE_GKE_NODE_POOL" \
+  --cluster="$SHUFFLE_GKE_CLUSTER" \
+  --project="$SHUFFLE_GKE_PROJECT" --location="$SHUFFLE_GKE_LOCATION" \
+  --workload-metadata=GKE_METADATA
+```
+
+Enable the IAM Service Account Credentials API even if Workload Identity was already configured.
+
+**3. Configure the writer identity and repository**
+
+Use an existing Docker repository or create one. Only run the repository and service-account creation commands if those resources do not already exist:
+
+```bash
+gcloud services enable artifactregistry.googleapis.com \
+  --project="$SHUFFLE_REGISTRY_PROJECT"
+
+gcloud artifacts repositories create "$SHUFFLE_REGISTRY_REPOSITORY" \
+  --project="$SHUFFLE_REGISTRY_PROJECT" --location="$SHUFFLE_REGISTRY_REGION" \
+  --repository-format=docker
+
+gcloud iam service-accounts create "$SHUFFLE_WRITER_NAME" \
+  --project="$SHUFFLE_GKE_PROJECT" \
+  --display-name="Shuffle image manager"
+```
+
+Grant Writer access **on the repository**, then allow only the Worker's Kubernetes ServiceAccount to use that Google service account:
+
+```bash
+gcloud artifacts repositories add-iam-policy-binding "$SHUFFLE_REGISTRY_REPOSITORY" \
+  --project="$SHUFFLE_REGISTRY_PROJECT" --location="$SHUFFLE_REGISTRY_REGION" \
+  --member="serviceAccount:${SHUFFLE_WRITER_EMAIL}" \
+  --role=roles/artifactregistry.writer
+
+gcloud iam service-accounts add-iam-policy-binding "$SHUFFLE_WRITER_EMAIL" \
+  --project="$SHUFFLE_GKE_PROJECT" \
+  --member="serviceAccount:${SHUFFLE_GKE_PROJECT}.svc.id.goog[shuffle/shuffle-worker]" \
+  --role=roles/iam.workloadIdentityUser
+```
+
+**4. Allow nodes to pull the app images**
+
+Find the node service account for every node pool on which app pods can run:
+
+```bash
+gcloud container node-pools describe "$SHUFFLE_GKE_NODE_POOL" \
+  --cluster="$SHUFFLE_GKE_CLUSTER" \
+  --project="$SHUFFLE_GKE_PROJECT" --location="$SHUFFLE_GKE_LOCATION" \
+  --format='value(config.serviceAccount)'
+```
+
+Set the returned email below. If the output is `default`, use the cluster project's default Compute Engine service account, `<project-number>-compute@developer.gserviceaccount.com`. Find the project number with `gcloud projects describe "$SHUFFLE_GKE_PROJECT" --format='value(projectNumber)'`.
+
+```bash
+SHUFFLE_NODE_EMAIL="<node-service-account-email>"
+
+gcloud artifacts repositories add-iam-policy-binding "$SHUFFLE_REGISTRY_REPOSITORY" \
+  --project="$SHUFFLE_REGISTRY_PROJECT" --location="$SHUFFLE_REGISTRY_REGION" \
+  --member="serviceAccount:${SHUFFLE_NODE_EMAIL}" \
+  --role=roles/artifactregistry.reader
+```
+
+Repeat for other app node pools as needed. Nodes also need suitable OAuth access scopes and network access to the registry; see [Artifact Registry access from GKE](https://cloud.google.com/artifact-registry/docs/integrate-gke). Worker push permissions do not replace node pull permissions. Do not attach the writer identity to app pods or Orborus.
+
+**5. Merge the keyless Helm values**
+
+Merge this into `shuffle-hybrid-values.yaml` from the base Hybrid example above; this is not a standalone replacement for that file. Replace the YAML placeholders manually: Helm does not substitute the shell variables from the earlier commands.
+
+```yaml
+shuffle:
+  appRegistry: <registry-region>-docker.pkg.dev/<registry-project>/<repository>
+  appBaseImageName: frikky/shuffle
+  appRegistryInsecure: false
+
+worker:
+  image:
+    tag: nightly
+    pullPolicy: Always
+  imageManager:
+    enabled: true
+    registryAuthSecret: ""
+    storageSizeLimit: 20Gi
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  nodeSelector:
+    iam.gke.io/gke-metadata-server-enabled: "true"
+  serviceAccount:
+    create: true
+    name: shuffle-worker
+    annotations:
+      iam.gke.io/gcp-service-account: <writer-service-account-email>
+```
+
+Use the writer email from step 1 for `iam.gke.io/gcp-service-account`. Helm creates the `shuffle-worker` Kubernetes ServiceAccount, so do not create it separately unless you set `worker.serviceAccount.create: false` and manage its annotation yourself. The node selector keeps this Worker on Standard nodes with the GKE metadata server enabled; preserve any additional scheduling constraints your deployment needs. Resource limits above are a starting point, not a maximum image size; tune them for your apps and node capacity.
+
+The Worker obtains a short-lived access token through ADC, supplies it to Docker for registry checks and pushes, and refreshes its in-memory token before expiry. Remove old `SHUFFLE_REGISTRY_USERNAME`, `SHUFFLE_REGISTRY_PASSWORD`, and `SHUFFLE_REGISTRY_IDENTITY_TOKEN` overrides: explicit credentials take precedence over ADC. Also remove stale `GOOGLE_APPLICATION_CREDENTIALS` overrides if you want to use the GKE identity. Leave `worker.imageManager.registryAuthSecret` empty.
+
+Network policies must allow the Worker to reach the GKE metadata server, DNS, Shuffle Cloud, and Artifact Registry. See [Google's metadata-server network-policy requirements](https://cloud.google.com/kubernetes-engine/docs/concepts/workload-identity#metadata_server). Do not expose the Docker sidecar API outside its pod.
+
+For the repository prefix above, the generated GitHub image is `<registry-region>-docker.pkg.dev/<registry-project>/<repository>/frikky/shuffle:github_1.1.0`. Artifact Registry creates the image on push, but the **Docker repository must already exist**. Follow the image-preservation and Helm render/install steps below before deploying, especially if existing Helm-managed apps must keep their current image paths.
+
+**6. Verify keyless access after deployment**
+
+Check that the deployed Worker uses the intended Kubernetes ServiceAccount and that its Google service-account annotation is present:
+
+```bash
+kubectl -n shuffle get deploy shuffle-workers \
+  -o jsonpath='{.spec.template.spec.serviceAccountName}{"\n"}'
+
+kubectl -n shuffle get serviceaccount shuffle-worker \
+  -o jsonpath='{.metadata.annotations.iam\.gke\.io/gcp-service-account}{"\n"}'
+
+kubectl -n shuffle rollout status deploy/shuffle-workers --timeout=5m
+```
+
+Run a workflow in the configured Hybrid environment using an app that is not already deployed. No manual image pull or load is needed. Then check the **`worker` container**, not the Docker sidecar, for the token and image-verification messages:
+
+```bash
+kubectl -n shuffle logs deploy/shuffle-workers -c worker --since=15m \
+  | grep -E 'Obtained Artifact Registry access token|Verified hybrid image|Failed ensuring image'
+
+gcloud artifacts docker images list \
+  "${SHUFFLE_REGISTRY_REGION}-docker.pkg.dev/${SHUFFLE_REGISTRY_PROJECT}/${SHUFFLE_REGISTRY_REPOSITORY}" \
+  --project="$SHUFFLE_REGISTRY_PROJECT" --include-tags
+
+kubectl -n shuffle get pods
+```
+
+The token message appears when a token is acquired or refreshed, not on every request. A successful push should be followed by image verification and a running app pod. Adjust Deployment names if you have overridden chart naming. IAM changes can take time to propagate; allow propagation before retrying.
+
+| Symptom | What to check |
+| --- | --- |
+| ADC cannot obtain a token, or `iam.serviceAccounts.getAccessToken` is denied | Worker build includes ADC support; cluster/node pool use Workload Identity; KSA name, namespace, annotation, and `roles/iam.workloadIdentityUser` binding match; metadata access is allowed. |
+| Push reports `uploadArtifacts` denied | Writer role is granted to the linked Google service account on the correct repository. Explicit old registry credentials are not overriding ADC. |
+| App pod reports `ImagePullBackOff` or `downloadArtifacts` denied | The image was pushed; the app node pool's service account has Reader access and suitable scopes; node networking can reach the registry. |
+| Repository or image path is incorrect | `shuffle.appRegistry` includes host/project/repository, `shuffle.appBaseImageName` is `frikky/shuffle`, and duplicate environment overrides are removed. |
+| Worker remains Pending | A metadata-enabled node satisfies the node selector, resources, and cluster admission policies; the privileged sidecar is permitted. |
+
+##### Preserve existing Helm and custom app images
+
+The Worker's image name is `<shuffle.appRegistry>/<shuffle.appBaseImageName>:<appName>_<appVersion>`. With the GKE example, GitHub becomes `<registry-region>-docker.pkg.dev/<registry-project>/<repository>/frikky/shuffle:github_1.1.0`. These global settings apply to all Worker-managed apps; they do not automatically preserve a custom app's unrelated image path.
+
+Helm-managed apps also inherit `shuffle.appRegistry` when their `image.registry` is empty. To keep stock apps on Docker Hub and custom apps at their existing paths, explicitly pin those Helm app images. For example, merge these entries into your existing `apps` map:
+
+```yaml
+apps:
+  enabled: true
+  http:
+    image:
+      registry: docker.io
+      repository: frikky/shuffle
+      tag: http_1.4.0
+  shuffleTools:
+    image:
+      registry: docker.io
+      repository: frikky/shuffle
+      tag: shuffle-tools_1.2.0
+  myCustomApp:
+    enabled: true
+    name: my-custom-app
+    version: 1.0.0
+    image:
+      registry: <registry-region>-docker.pkg.dev
+      repository: <registry-project>/<repository>/my-custom-app
+      tag: 1.0.0
+```
+
+Pin every enabled app whose existing image path must stay the same. Keep `global.imageRegistry` empty for mixed registries, since it overrides Helm image registry selections. A running app Deployment is reused by the Worker, but that does not guarantee its image will be preserved after deletion and recreation. Keep custom paths declared in Helm if Helm owns those apps. Avoid duplicate `REGISTRY_URL` and `SHUFFLE_BASE_IMAGE_NAME` overrides in extra environment variables; use the chart's `shuffle` values for the Helm-managed Worker.
+
+Before syncing, render the chart using the same chart version and all the values files used by your deployment, then check every Deployment's image and the Worker's `REGISTRY_URL`, `SHUFFLE_BASE_IMAGE_NAME`, and `serviceAccountName`:
+
+```bash
+helm template shuffle-orborus oci://ghcr.io/shuffle/charts/shuffle \
+  --version 2.3.0-rc1 \
+  --namespace shuffle \
+  --values shuffle-hybrid-values.yaml
+```
 
 Install or upgrade the release:
 
