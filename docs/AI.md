@@ -2,6 +2,8 @@
 
 With AI becoming increasingly cheap and useful, Shuffle provides an AI framework built from the ground up to be controllable and transparent. Whether you are generating workflows, [running investigations](https://shuffle.security/incidents), or connecting your private tools to ChatGPT and Claude via the Model Context Protocol (MCP), Shuffle gives you full control over your models, prompts, data residency, and execution boundaries.
 
+<!-- component:mcp-setup -->
+
 Shuffle's AI buildout is primarily based on LLMs, and all LLM-related functionality passes through the [RunAiQuery() function, which you can look into here](https://github.com/Shuffle/shuffle-shared/blob/45a3e0a0018b767e9591d2f916ee004288bbd4a7/ai.go#L15631).
 
 ---
@@ -498,16 +500,24 @@ External AI (ChatGPT / Claude)             Shuffle OAuth Server                Y
 
 ### Using Shuffle from ChatGPT
 
-You can connect custom GPTs and ChatGPT Actions directly to Shuffle:
-1. In ChatGPT, create a new Custom GPT or Action.
-2. Provide Shuffle's OpenAPI schema for a selected app, such as `https://shuffler.io/api/v1/wazuh,iris/mcp`.
-3. Set the Authentication method to **OAuth2**.
-4. Configure the Authorization URL (`https://shuffler.io/oauth/authorize`) and Token URL (`https://shuffler.io/oauth/token`).
-5. Authorize with your Shuffle account. ChatGPT can now search your apps, trigger actions, and query security data directly inside your chat conversations.
+You can connect ChatGPT directly to any Shuffle MCP server or workflow agent:
+1. Go to [https://chatgpt.com/plugins](https://chatgpt.com/plugins).
+2. Click **Add > Add custom MCP server** in the top-right corner.
+3. Enter a **Name** (e.g. `Shuffle Workflow Builder` or `Shuffle Wazuh`) and the **MCP server URL** (e.g. `https://shuffler.io/api/v1/agent/workflow-edit` or `https://shuffler.io/api/v1/apps/Wazuh/mcp`).
+4. Click **Create as plugin**.
+5. Log in with Shuffle and start using it in your chats.
 
 ### Using Shuffle from Claude
 
-Anthropic's Claude Desktop and Claude.ai can execute Shuffle tools via the MCP protocol:
+You can connect Claude.ai directly to Shuffle via custom MCP connectors, or configure Claude Desktop locally:
+
+**Claude.ai (Web & Desktop Connector):**
+1. Go to [https://claude.ai/new#customize/connectors](https://claude.ai/new#customize/connectors).
+2. Click **Add** in the top-right corner and select **Add custom connector**.
+3. Enter a **Name** (e.g. `Shuffle Workflow Builder` or `Shuffle Wazuh`) and the **MCP server URL** (e.g. `https://shuffler.io/api/v1/agent/workflow-edit` or `https://shuffler.io/api/v1/apps/Wazuh/mcp`).
+4. Click **Continue**, log in with Shuffle, and start using it in your chats.
+
+**Claude Desktop (`claude_desktop_config.json`):**
 1. Open your Claude Desktop configuration file (`claude_desktop_config.json`).
 2. Add Shuffle as an MCP server with your API key or OAuth credentials:
    ```json

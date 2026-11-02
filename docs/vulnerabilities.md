@@ -1,39 +1,112 @@
 # Vulnerabilities in Shuffle Security
 
-Documentation for vulnerability management, package advisory lookups via OSV.dev, host dependency tracking, and automated remediation workflows in Shuffle Security.
+Documentation for triaging vulnerabilities, looking up CVE/GHSA advisories, tracking affected hosts and packages, and automating remediation workflows in Shuffle Security.
 
 ## Table of contents
 * [Overview](#overview)
+* [Using the Vulnerabilities dashboard](#using-the-vulnerabilities-dashboard)
+* [Looking up & ingesting vulnerabilities](#looking-up--ingesting-vulnerabilities)
 * [Vulnerability categories](#vulnerability-categories)
-* [Datastore architecture & finding schema](#datastore-architecture--finding-schema)
-* [Ingestion: webhooks, scanners & OSV](#ingestion-webhooks-scanners--osv)
 * [Host & package correlation](#host--package-correlation)
-* [The Vulnerabilities dashboard](#the-vulnerabilities-dashboard)
-* [Automation readiness](#automation-readiness)
+* [Automating vulnerability management](#automating-vulnerability-management)
+* [Datastore architecture & finding schema](#datastore-architecture--finding-schema)
 * [API & Datastore reference](#api--datastore-reference)
 
 ---
 
 ## Overview
 
-Shuffle Security ([shuffle.security/vulnerabilities](https://shuffle.security/vulnerabilities)) tracks vulnerabilities across your infrastructure, third-party software, and code dependencies.
+Shuffle Security ([shuffle.security/vulnerabilities](https://shuffle.security/vulnerabilities)) helps you discover, prioritize, and remediate vulnerabilities across your endpoints, cloud infrastructure, user identities, and code dependencies.
 
-Instead of maintaining a passive spreadsheet of scanner outputs, Shuffle stores vulnerability findings inside Shuffle Core's Datastore under the **`shuffle-security_vulns`** category. Findings can be queried, filtered, enriched, and acted upon using standard Shuffle workflows.
+Instead of tracking scanner exports in static spreadsheets, you can see exactly which hosts and file paths are affected by a CVE, track per-host patching status, look up live advisories, and trigger automated remediation playbooks.
 
-- **OSV.dev Integration**: Look up CVE and GHSA advisories across open-source ecosystems (npm, PyPI, Go, Cargo, Maven, Debian, Alpine, etc.) directly via the OSV.dev API.
-- **Host Package Correlation**: Monitored endpoints running [Host Monitors](/docs/monitors) inspect local project directories and installed software, linking detected CVEs to specific hostnames and filesystem paths.
-- **Per-Host Resolution**: Mark vulnerabilities per host as Patched, Mitigated, Accepted, False Positive, or Not Applicable.
-- **Workflow Automation**: Build SOAR workflows to automatically ingest scan reports, alert development teams in Slack/Teams, create Jira issues, or escalate unpatched critical flaws into formal [Incidents](/docs/incidents).
+- **Unified Vulnerability Queue**: Filter findings by category (`Software / CVE`, `User / Identity`, `Cloud Misconfig`, `Code / Deps`), severity, and remediation status at `/vulnerabilities`.
+- **Live OSV.dev Advisory Lookup**: Search any CVE, GHSA, or open-source package name (npm, PyPI, Go, Cargo, Maven, Debian, Alpine) to inspect affected versions and published fixes immediately.
+- **Host & Package Correlation**: Endpoints running [Host Monitors](/docs/monitors) scan installed software and local code manifests (`package.json`, `requirements.txt`, `Cargo.toml`, `go.mod`), linking advisories to exact hostnames and filesystem paths.
+- **Per-Host Resolution Tracking**: Mark vulnerabilities individually per host as `Patched`, `Mitigated`, `Accepted`, `False Positive`, or `Not Applicable`.
+- **Workflow Automation**: Automatically ingest scanner results, notify engineering teams in Slack/Teams, open Jira tickets, or escalate critical unpatched flaws into [Incidents](/docs/incidents).
 
 > [!NOTE]
 > **Zero License Paywalls**  
-> Vulnerabilities is a native feature available on both Shuffle Cloud and self-hosted open-source instances. Findings and host telemetry are stored directly in your datastore and do not incur extra license fees. App runs only execute when your workflows trigger.
+> Vulnerabilities is included in both Shuffle Cloud and self-hosted open-source instances with no per-seat or per-asset license fees. App runs only execute when your automation workflows trigger.
+
+---
+
+## Using the Vulnerabilities dashboard
+
+Navigate to **`/vulnerabilities`** to view and triage findings across your organization:
+
+<!-- component:vulnerabilities-status title="Vulnerabilities Posture" subtitle="Active vulnerability findings tracked across your tenant." -->
+
+### Navigation & Filtering
+- **Category Tabs**: Switch between `All`, `Software / CVE`, `User / Identity`, `Cloud Misconfig`, and `Code / Deps`.
+- **Severity Filter**: Filter by `Critical`, `High`, `Medium`, `Low`, or `Info`.
+- **Status Filter**: View `Open`, `In Progress`, `Resolved`, or `Accepted` findings.
+- **Search Bar**: Search by CVE/GHSA identifier, affected package name, hostname, or keyword.
+
+### Table Columns
+- **Severity**: Normalized severity rating (`Critical`, `High`, `Medium`, `Low`, `Info`) and CVSS score.
+- **Identifier / Title**: Advisory identifier (e.g. `CVE-2024-3094`) with a summary headline.
+- **Category**: Classification badge (`software_cve`, `code_dependency`, `user_identity`, `cloud_misconfig`).
+- **Source**: Discovery origin (e.g. `osv:npm`, `osv:pypi`, host monitor, or external scanner).
+- **Status**: Current lifecycle state (`Open`, `In Progress`, `Resolved`, `Accepted`).
+- **First Seen**: Timestamp when the finding was first detected.
+
+### Vulnerability Detail View (`/vulnerabilities/:id`)
+Clicking any finding opens its detail page at `/vulnerabilities/:id`, where you can:
+- Read the full advisory description, CVSS score, published/modified dates, and upstream references.
+- Inspect affected package ecosystems, vulnerable version ranges, and the minimum fixed version.
+- View every affected host along with the exact filesystem path where the package was found.
+- Update the overall status or set a per-host resolution status.
+- Ask the inline AI assistant questions about exploitability, remediation steps, or upgrade impact.
+
+<!-- TODO: Screenshot Needed: Vulnerabilities Dashboard Table & Filters
+- Route / UI Location: /vulnerabilities
+- What to capture: Full view of the /vulnerabilities table showing category tabs, search input, and severity breakdown.
+- Target path: assets/vulnerabilities-dashboard-overview.png -->
+
+---
+
+## Looking up & ingesting vulnerabilities
+
+Shuffle provides multiple ways to look up advisories and bring vulnerability findings into your queue:
+
+<!-- component:cve-lookup title="Live OSV Advisory Lookup" placeholder="e.g. CVE-2024-3094, GHSA-xxxx, or package name" -->
+
+### 1. Live OSV.dev Advisory Lookup
+Use the lookup bar above, or enter any CVE ID (e.g. `CVE-2024-3094`), GitHub Security Advisory ID (e.g. `GHSA-xxxx-xxxx-xxxx`), or package name into the search bar at **`/vulnerabilities`**:
+- Shuffle queries OSV.dev (`https://api.osv.dev/v1/vulns/<id>`) in real time to display advisory details, severity, affected version ranges, and fixed versions—even if the CVE has not been ingested into your tenant yet.
+
+### 2. Host Monitor Code & Software Scanner
+When endpoints run Shuffle [Host Monitors](/docs/monitors) with **Installed Software** or **Code Package Scanner** enabled:
+- The monitor agent catalogs installed OS applications and scans local project directories for manifest files (`package.json`, `requirements.txt`, `Cargo.toml`, `go.mod`).
+- Discovered packages and versions are evaluated against OSV.dev and synced directly into `/vulnerabilities` with the affected hostname and file path.
+- You can also browse any discovered package at `/packages/<name>` or software binary at `/software/<name>` and click **Sync to Vulnerabilities** to persist affected advisories.
+
+### 3. Inbound Webhook (Push from CI/CD & Scanners)
+Push findings from CI/CD pipelines, container scanners (Trivy, Grype), or external vulnerability tools directly into Shuffle:
+- Navigate to **`/vulnerabilities`** and click the **Webhook** button in the top header bar.
+- Copy your inbound webhook endpoint:
+  ```
+  https://<instance>/api/v1/hooks/webhook_<hook_id>
+  ```
+- Send scanner JSON payloads to this URL to trigger the `vulnerabilities_webhook` workflow and normalize findings into your queue.
+
+### 4. Polling Scanners (Scheduled Pull)
+Connect vulnerability scanners (such as Snyk, Qualys, Tenable, or Rapid7) using the source icons in the `/vulnerabilities` header bar. Scheduled workflows (such as `Ingest Vulnerabilities`) pull findings on a regular cadence, deduplicate advisories, and update affected hosts.
+
+<!-- TODO: Add step-by-step scanner integration guides for specific vendor API mappings (Snyk, Qualys, Tenable, Defender) -->
+
+<!-- TODO: Screenshot Needed: Ingestion Webhook Dialog
+- Location: /vulnerabilities -> Webhook button in header
+- What to capture: Modal showing the webhook URL, toggle switch, and curl command
+- Target path: assets/vulnerabilities-webhook-modal.png -->
 
 ---
 
 ## Vulnerability categories
 
-Shuffle categorizes findings into four distinct types:
+Shuffle organizes findings into four categories so you can filter by remediation owner (SecOps, IT/Endpoint, Cloud Engineering, or Application Developers):
 
 | Category | Identifier Key | Scope & Typical Sources |
 | :--- | :--- | :--- |
@@ -44,30 +117,85 @@ Shuffle categorizes findings into four distinct types:
 
 ---
 
+## Host & package correlation
+
+A vulnerability finding is much easier to remediate when you know exactly which machines and repositories are affected.
+
+When Host Monitors or asset scans detect a vulnerable package, Shuffle links the finding to each affected host:
+- **Hostname & Asset ID**: Identifies the exact endpoint or server running the vulnerable software or dependency.
+- **Filesystem Paths**: Shows the exact path where the binary or manifest was found (e.g. `/home/user/projects/web-api/package.json` or `/usr/lib/x86_64-linux-gnu/liblzma.so.5.6.0`).
+- **Installed vs. Fixed Version**: Compares the currently installed version on the host against the minimum patched version from the advisory.
+
+### Per-Host Resolution Status
+Because a vulnerability may affect dozens of machines that get patched at different times, you can update the resolution status individually for each host inside `/vulnerabilities/:id`:
+
+| Resolution Reason | Meaning |
+| :--- | :--- |
+| **Patched** | The dependency or software package on this host has been upgraded to a non-vulnerable version. |
+| **Mitigated** | Compensating controls (such as network ACLs or disabled features) neutralize the flaw on this host. |
+| **Accepted** | Risk is formally accepted for this host. |
+| **False Positive** | The detected package is not exploitable in this specific environment. |
+| **Not Applicable** | The vulnerable function or subcomponent is not used on this host. |
+
+---
+
+## Automating vulnerability management
+
+Shuffle Security verifies whether your core vulnerability ingestion, correlation, and response workflows are active:
+
+<!-- component:automation-readiness category="vulnerabilities" -->
+
+| Readiness Pillar | Verification Check | Target Workflow | Status | Purpose & Configuration |
+| :--- | :--- | :--- | :--- | :--- |
+| **Vulnerability Webhook** | Inbound webhook trigger running | `vulnerabilities_webhook` | Active | Ingests findings pushed from external scanners. Configure at `/vulnerabilities` -> **Webhook**. |
+| **Vulnerability Ingestion** | Schedule trigger running | `Ingest Vulnerabilities` | Active | Regularly polls external vulnerability APIs on a recurring schedule. Activate in [`/usecases`](/usecases). |
+| **Vulnerability Correlation** | Workflow exists with actions | `Vulnerability Correlation` | Active | Compares scanner results across runs and correlates findings with assets. Activate in [`/usecases`](/usecases). |
+| **Vulnerability Response** | Automated remediation | `asset_management_case_management_vuln_response_1` | In Development | Automated remediation, ticketing, and containment actions for detected vulnerabilities (coming soon). |
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                   Vulnerability Automation Readiness                   │
+├────────────────────────┬───────────────────────────────────────────────┤
+│ Vulnerability Webhook  │ [Active]         api/v1/hooks/webhook_<id>    │
+│ Vulnerability Ingest   │ [Active]         Ingest Vulnerabilities       │
+│ Vuln Correlation       │ [Active]         Vulnerability Correlation    │
+│ Vulnerability Response │ [In Development] Coming soon                  │
+└────────────────────────┴───────────────────────────────────────────────┘
+```
+
+<!-- TODO: Add automated remediation workflow documentation once vulnerability response actions are generally available -->
+
+> [!TIP]
+> **Enabling Automations**  
+> Click **Enable all** on the readiness banner at `/vulnerabilities` (or click the rocket button in the `/vulnerabilities` header bar) to configure automatic ingestion and response workflows.
+
+### Vulnerability Use Cases
+
+<!-- component:usecases category="vulnerabilities" -->
+
+---
+
 ## Datastore architecture & finding schema
 
-All vulnerability findings are stored inside Shuffle's Datastore under the **`shuffle-security_vulns`** category. Each entry is keyed by its primary advisory identifier (e.g. `CVE-2024-3094` or `GHSA-7867-xwm8-2v3q`) and stores a structured JSON document.
+Under the hood, all vulnerability findings are stored in Shuffle's Datastore under the **`shuffle-security_vulns`** category. Each entry is keyed by its primary advisory identifier (e.g. `CVE-2024-3094` or `GHSA-7867-xwm8-2v3q`) and stores a structured JSON document.
 
 <!-- component:datastore category="shuffle-security_vulns" -->
 
-You can inspect, query, and modify records in the Datastore console:
-- **Shuffle Security Datastore**: Navigate to [`/admin/datastore?category=shuffle-security_vulns`](/admin/datastore?category=shuffle-security_vulns). Automatically queries the local datastore if configured, and falls back to Shuffle Core if local storage is not initialized.
-- **Shuffle Core Datastore**: [Open in Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns) (`https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns` or `/admin?tab=datastore&category=shuffle-security_vulns` on self-hosted Core).
+You can inspect, query, and modify raw records in the Datastore console:
+- **Shuffle Security Datastore**: Navigate to [`/admin/datastore?category=shuffle-security_vulns`](/admin/datastore?category=shuffle-security_vulns). Queries the local datastore if configured, and falls back to Shuffle Core if local storage is not initialized.
+- **Shuffle Datastore**: [Open in Shuffle Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns) (`https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns` or `/admin?tab=datastore&category=shuffle-security_vulns` on self-hosted instances).
 - **Manual UI Navigation**: Go to **Admin** -> **Datastore** -> select category **`shuffle-security_vulns`**.
 
 ### Deleting Erroneously Ingested Vulnerabilities (Admin Only)
 
-We've all had a scanner misbehave, an API misfire, or a test script accidentally dump dummy CVEs into production. When that happens, you might notice that the main queue at [`/vulnerabilities`](/vulnerabilities) doesn't have a big red "Delete" button. That's intentional—in day-to-day triage you usually want to resolve, mitigate, or accept findings rather than deleting historical records.
+In day-to-day triage at [`/vulnerabilities`](/vulnerabilities), findings are resolved, mitigated, or accepted rather than deleted so your audit history stays intact.
 
-If you ingested bad data and need to wipe it out completely, an admin can do that directly in the Datastore:
+If a scanner misbehaved or a test script ingested dummy CVEs that need to be permanently removed, an admin (`isAdmin`) can delete them in the Datastore:
 
-1. Head over to **Admin** in the top navigation bar.
-2. Click the **Datastore** tab, or jump straight to [`/admin/datastore?category=shuffle-security_vulns`](/admin/datastore?category=shuffle-security_vulns) (if you're on self-hosted Shuffle Core, that's `/admin?tab=datastore&category=shuffle-security_vulns`).
-3. Search for the vulnerability key you want to remove (like `CVE-2024-3094`).
-4. **Delete one finding**: Click the trash button on the right side of the row and confirm.
-5. **Bulk cleanup**: Check the boxes next to the ones you want gone, and click **Delete** up in the table header.
-
-A quick heads-up: inside the Shuffle Security UI, `/admin/datastore` is restricted to admins (`isAdmin`). If you don't have admin permissions, you'll see a notice asking you to reach out to an admin on your team to clear it out.
+1. Navigate to **Admin** -> **Datastore**, or open [`/admin/datastore?category=shuffle-security_vulns`](/admin/datastore?category=shuffle-security_vulns).
+2. Search for the vulnerability key you want to remove (such as `CVE-2024-3094`).
+3. **Delete one finding**: Click the delete button on the right side of the row and confirm.
+4. **Bulk cleanup**: Select the checkboxes next to the records you want to remove and click **Delete Selected** in the bulk action bar.
 
 ### Vulnerability Record Schema
 
@@ -113,12 +241,12 @@ self.set_cache(
 )
 ```
 
-### Key revisions, audit trail & rollback protection
+### Key Revisions, Audit Trail & Rollback Protection
 
-All vulnerability records stored in `shuffle-security_vulns` are automatically versioned with immutable revisions. Every scanner sweep, automated triage run, or manual status change preserves historical snapshots:
+All vulnerability records stored in `shuffle-security_vulns` are versioned with immutable revisions. Every scanner sweep, automated triage run, or manual status change preserves historical snapshots:
 
-- **Protection Against Ingestion Drift & Overwrites**: If an external vulnerability scanner runs an incomplete scan that accidentally drops existing CVE findings or marks active flaws as cleared, previous revisions remain accessible. Analysts can inspect historical snapshots and restore missing findings immediately.
-- **Audit Attribution**: Tracks which workflow execution or analyst changed the finding's severity, updated the CVSS score, marked a host as mitigated, or accepted risk, complete with timestamps and execution IDs.
+- **Protection Against Ingestion Drift & Overwrites**: If an external scanner runs an incomplete scan that drops existing CVE findings or overwrites host resolutions, previous revisions remain accessible and can be restored.
+- **Audit Attribution**: Tracks which workflow execution or analyst changed the finding's severity, updated the CVSS score, or marked a host as mitigated, complete with timestamps and execution IDs.
 - **Rollback via API & Workflows**:
   - Fetch all revisions for a vulnerability advisory:
     ```bash
@@ -127,10 +255,7 @@ All vulnerability records stored in `shuffle-security_vulns` are automatically v
     ```
   - Roll back or restore in Python:
     ```python
-    # Retrieve revision history
     revisions = self.get_cache_revisions(key="CVE-2024-3094", category="shuffle-security_vulns")
-
-    # Revert to earlier verified snapshot if scan corrupted data
     if len(revisions) > 1:
         self.set_cache(
             key="CVE-2024-3094",
@@ -141,141 +266,9 @@ All vulnerability records stored in `shuffle-security_vulns` are automatically v
 
 ---
 
-## Ingestion: webhooks, scanners & OSV
-
-Shuffle supports multiple paths to ingest and look up vulnerabilities:
-
-<!-- component:cve-lookup title="Live OSV Advisory Lookup" placeholder="e.g. CVE-2024-3094, GHSA-xxxx, or package name" -->
-
-### 1. Inbound Webhook
-You can push findings from CI/CD pipelines, container scanners, or external security tools directly into Shuffle:
-- Go to **`/vulnerabilities`** in the web app.
-- Click the **"Webhook"** button in the header bar to open the configuration modal.
-- The modal displays your dynamic inbound endpoint:
-  ```
-  https://<instance>/api/v1/hooks/webhook_<hook_id>
-  ```
-- Payloads sent to this webhook trigger the `vulnerabilities_webhook` workflow, which normalizes findings and writes them to the datastore.
-
-### 2. Live OSV.dev Lookup
-You can query the open-source vulnerability database directly from the Shuffle UI:
-- Enter a CVE ID (e.g. `CVE-2024-3094`), a GitHub Advisory ID (e.g. `GHSA-xxxx-xxxx-xxxx`), or an affected package name into the search bar at `/vulnerabilities`.
-- The system queries `https://api.osv.dev/v1/vulns/<id>` to display advisory details, severity, affected versions, and published fixes.
-
-### 3. Host Monitor Code Scanner
-When endpoints run Shuffle [Host Monitors](/docs/monitors) with the Code Package Scanner enabled, the local agent scans project directories for manifest files (`package.json`, `requirements.txt`, `Cargo.toml`, `go.mod`). Discovered dependencies are evaluated against OSV.dev and registered in `shuffle-security_vulns` with the host's identity and file path.
-
-### 4. Polling Workflows
-For external scanners with REST APIs, scheduled Shuffle workflows (such as `Ingest Vulnerabilities`) regularly pull findings, deduplicate entries, and write them to the datastore.
-
-<!-- TODO: Add step-by-step scanner integration guides for specific vendor API mappings (Snyk, Qualys, Tenable, Defender) -->
-
-<!-- TODO: Screenshot Needed: Ingestion Webhook Dialog
-- Location: /vulnerabilities -> Webhook button in header
-- What to capture: Modal showing the webhook URL, toggle switch, and curl command
-- Target path: assets/vulnerabilities-webhook-modal.png -->
-
----
-
-## Host & package correlation
-
-A vulnerability finding is actionable when you know which systems are affected.
-
-When Host Monitors discover a vulnerable package on an endpoint, Shuffle stores the finding with host-level granularity:
-
-- **Hostname & Asset ID**: Identifies the exact machine running the vulnerable code or package.
-- **Filesystem Paths**: Lists the specific directory where the dependency was found (e.g. `/home/user/projects/web-api/package.json`).
-- **Installed Version**: Records the current version versus the fixed version from the advisory.
-
-### Per-Host Resolution Status
-Because a vulnerability may exist across multiple servers or laptops, you can track resolution status individually for each host in the vulnerability detail view:
-
-| Resolution Reason | Meaning |
-| :--- | :--- |
-| **Patched** | The dependency or software package has been upgraded to a non-vulnerable version. |
-| **Mitigated** | Compensating controls (e.g. network ACLs or disabled features) neutralize the flaw. |
-| **Accepted** | Risk is formally accepted by the tenant. |
-| **False Positive** | The detected package is not exploitable in this specific environment. |
-| **Not Applicable** | The vulnerable function or subcomponent is not utilized. |
-
----
-
-## The Vulnerabilities dashboard
-
-The dashboard at **`/vulnerabilities`** provides an operational overview of all recorded findings:
-
-<!-- component:vulnerabilities-status title="Vulnerabilities Posture" subtitle="Active vulnerability findings tracked across your tenant." -->
-
-### Navigation & Filtering
-- **Category Tabs**: Switch between `All`, `Software / CVE`, `User / Identity`, `Cloud Misconfig`, and `Code / Deps`.
-- **Severity Filter**: Filter by `Critical`, `High`, `Medium`, `Low`, or `Info`.
-- **Status Filter**: View `Open`, `In Progress`, `Resolved`, or `Accepted` findings.
-- **Search Bar**: Query by identifier, package name, or keywords.
-
-### Table Columns
-- **Severity**: Normalized severity indicator (`Critical`, `High`, `Medium`, `Low`, `Info`).
-- **Identifier / Title**: CVE or GHSA identifier with a summary of the advisory.
-- **Category**: Finding category pill (`code_dependency`, `software_cve`, etc.).
-- **Source**: Ingestion origin (e.g. `osv:npm`, `osv:pypi`, or scanner name).
-- **Status**: Lifecycle status (`Open`, `In Progress`, `Resolved`, `Accepted`).
-- **First Seen**: Timestamp when the finding was first ingested or discovered.
-
-### Detail View
-Clicking any finding navigates to `/vulnerabilities/:id`, displaying:
-- Complete advisory text, published and modified dates, and references.
-- Affected package ecosystems, package names, and version ranges.
-- List of affected hosts with install paths and per-host resolution controls.
-- AI investigation panel for questions about the advisory.
-
-<!-- TODO: Screenshot Needed: Vulnerabilities Dashboard Table & Filters
-- Route / UI Location: /vulnerabilities
-- What to capture: Full view of the /vulnerabilities table showing category tabs, search input, and severity breakdown.
-- Target path: assets/vulnerabilities-dashboard-overview.png -->
-
----
-
-## Automation readiness
-
-Shuffle Security checks whether your core vulnerability automation workflows are configured:
-
-<!-- component:automation-readiness category="vulnerabilities" -->
-
-| Readiness Pillar | Verification Check | Target Workflow | Status | Purpose & Configuration |
-| :--- | :--- | :--- | :--- | :--- |
-| **Vulnerability Webhook** | Inbound webhook trigger running | `vulnerabilities_webhook` | Active | Ingests findings pushed from external scanners. Configure at `/vulnerabilities` -> **Webhook**. |
-| **Vulnerability Ingestion** | Schedule trigger running | `Ingest Vulnerabilities` | Active | Regularly polls external vulnerability APIs on a recurring schedule. Activate in [`/usecases`](/usecases). |
-| **Vulnerability Correlation** | Workflow exists with actions | `Vulnerability Correlation` | Active | Compares scanner results across runs and correlates findings with assets. Activate in [`/usecases`](/usecases). |
-| **Vulnerability Response** | Automated remediation | `asset_management_case_management_vuln_response_1` | In Development | Automated remediation, ticketing, and containment actions for detected vulnerabilities (coming soon). |
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                   Vulnerability Automation Readiness                   │
-├────────────────────────┬───────────────────────────────────────────────┤
-│ Vulnerability Webhook  │ [Active]         api/v1/hooks/webhook_<id>    │
-│ Vulnerability Ingest   │ [Active]         Ingest Vulnerabilities       │
-│ Vuln Correlation       │ [Active]         Vulnerability Correlation    │
-│ Vulnerability Response │ [In Development] Coming soon                  │
-└────────────────────────┴───────────────────────────────────────────────┘
-```
-
-<!-- TODO: Add automated remediation workflow documentation once vulnerability response actions are generally available -->
-
-> [!TIP]
-> **Enabling Automations**  
-> Click **"Enable all"** on the readiness card to generate and activate the foundational ingestion and correlation workflows, or manage them individually from the `/usecases` page.
-
----
-
 ## API & Datastore reference
 
-All vulnerability findings are stored directly in Shuffle's Datastore under the **`shuffle-security_vulns`** category. You can query, ingest, and update findings via the REST API, inspect them in the Datastore web console, or access them inside custom Shuffle Python apps.
-
 <!-- component:datastore-link category="shuffle-security_vulns" -->
-
-Inspect and manage vulnerability records in the Datastore console:
-- Shuffle Security Datastore: Navigate to [`/admin/datastore?category=shuffle-security_vulns`](/admin/datastore?category=shuffle-security_vulns). Uses the local datastore if available, and automatically redirects to Shuffle Core if local datastore is not configured.
-- Shuffle Core Datastore: [Open in Shuffle Core Datastore](https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns) (`https://shuffler.io/admin?tab=datastore&category=shuffle-security_vulns`).
-- Manual UI Navigation: Go to **Admin** -> **Datastore** -> select category **`shuffle-security_vulns`**.
 
 ### REST API Endpoints
 
