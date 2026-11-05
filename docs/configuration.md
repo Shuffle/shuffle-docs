@@ -32,6 +32,7 @@ Documentation for configuring Shuffle. Most information is related to onprem and
 * [Docker Version error](/docs/troubleshooting#docker-client-version-too-new)
 * [Database indexes](#database-indexes-opensearch)
 * [Re-indexing & Index Management](#re-indexing--index-management)
+* [Backup & Restore](#backup--restore)
 * [Uptime monitoring](#uptime-monitoring)
 * [Debugging](#debugging)
 * [Execution Debugging](#execution-debugging)
@@ -165,6 +166,7 @@ docker compose up -d
 
 As long as you use Docker, updating Shuffle is straight forward. To use a specific version of Shuffle, check out [specific version](/docs/configuration#specific-versioning). We recommend always sticking to the `latest` tag, and if you want experimental changes, use the `nightly` tag. You may however in specific cases want to use a static tag, such as `2.1.1`
 
+Before updating a production instance, take a backup (see [Backup & Restore](#backup--restore)) so that you can roll back if something goes wrong.
 While being in the main repository, here is how to update Shuffle:
 
 ```
@@ -2753,7 +2755,159 @@ curl -X GET "https://localhost:9200/_cat/indices/workflowexecution-*?v"
 curl -X DELETE "https://localhost:9200/workflowexecution-000001"
 ```
 
-**Warning:** Always backup data before re-indexing or deleting indexes. Use OpenSearch snapshots for production environments.
+**Warning:** Always backup data before re-indexing or deleting indexes.    Use OpenSearch snapshots for production environments (see [Backup & Restore](#backup--restore)).
+
+### Backup & Restore
+
+A highly available setup (see [Disaster Recovery/High Availability](#disaster-recoveryhigh-availability)) protects you against a node failing. It does not protect you against deleted workflows, a broken upgrade, a corrupted index or ransomware, because those changes are replicated to every node. For that you need backups that live outside the Shuffle server, and a restore procedure you have actually tested.
+
+#### What to back up
+
+| What | Default location (Docker) | Why it matters |
+| ---- | ------------------------- | -------------- |
+| OpenSearch data | `DB_LOCATION` (`./shuffle-database`) | Workflows, executions, users, organizations, app authentication (encrypted), datastore |
+| `.env` | Shuffle root folder | Holds `SHUFFLE_ENCRYPTION_MODIFIER` and all other configuration |
+| Uploaded files | `SHUFFLE_FILE_LOCATION` (`./shuffle-files`) | Files used and created by workflows |
+| Custom apps | `SHUFFLE_APP_HOTLOAD_LOCATION` (`./shuffle-apps`) | Apps you built or modified locally |
+| `docker-compose.yml` | Shuffle root folder | Any changes you made to ports, volumes or images |
+
+> [!CAUTION]
+> A database backup without the matching `SHUFFLE_ENCRYPTION_MODIFIER` restores your workflows, but every saved app authentication will be unusable. Keep the key in a password manager or secrets vault, **separately** from the database backups, so that a leaked backup alone does not expose your credentials.
+
+There are two ways to back up the database. The cold backup is the simplest; snapshots avoid downtime and are the better choice for production.
+
+#### Option 1: Cold backup (short downtime)
+
+Copying the OpenSearch data folder while OpenSearch is running can produce an inconsistent copy, so stop Shuffle first:
+
+```bash
+cd Shuffle
+docker compose stop
+sudo tar -czpf shuffle-backup-$(date +%F).tar.gz \
+  shuffle-database shuffle-files shuffle-apps .env docker-compose.yml
+docker compose start
+```
+
+Move the archive to another machine or to object storage. Restoring is the reverse: stop Shuffle, extract the archive into the Shuffle folder, make sure `shuffle-database` is owned by user 1000 (`sudo chown -R 1000:1000 shuffle-database`), and start Shuffle again.
+
+#### Option 2: OpenSearch snapshots (no downtime)
+
+Snapshots are taken while Shuffle is running and are incremental, so frequent snapshots are cheap.
+
+**1. Give OpenSearch a snapshot folder.** Create the folder on the host:
+
+```bash
+mkdir -p shuffle-snapshots
+sudo chown -R 1000:1000 shuffle-snapshots
+```
+
+Then add the setting and the volume to the `opensearch` service in `docker-compose.yml`:
+
+```yaml
+  opensearch:
+    environment:
+      # ... keep the existing variables
+      - path.repo=/usr/share/opensearch/snapshots
+    volumes:
+      - shuffle-database:/usr/share/opensearch/data:z
+      - ./shuffle-snapshots:/usr/share/opensearch/snapshots:z
+```
+
+Recreate the container with `docker compose up -d opensearch`.
+
+**2. Register the snapshot repository** (once). Replace the password with `SHUFFLE_OPENSEARCH_PASSWORD` from your `.env`:
+
+```bash
+curl -k -u admin:'<password>' -X PUT "https://localhost:9200/_snapshot/shuffle-backup" \
+  -H 'Content-Type: application/json' -d'
+{
+  "type": "fs",
+  "settings": { "location": "/usr/share/opensearch/snapshots" }
+}'
+```
+
+**3. Take a snapshot.** The pattern `*,-.*` includes every Shuffle index and leaves out OpenSearch's own system indexes such as `.opendistro_security`, which [cannot be restored](https://docs.opensearch.org/latest/tuning-your-cluster/availability-and-recovery/snapshots/snapshot-restore/#security-considerations) while the security plugin is enabled. If you use `SHUFFLE_OPENSEARCH_INDEX_PREFIX`, you can use `<prefix>*` instead.
+
+```bash
+curl -k -u admin:'<password>' -X PUT \
+  "https://localhost:9200/_snapshot/shuffle-backup/shuffle-$(date +%Y%m%d-%H%M)?wait_for_completion=true" \
+  -H 'Content-Type: application/json' -d'
+{
+  "indices": "*,-.*",
+  "include_global_state": false
+}'
+
+# List snapshots
+curl -k -u admin:'<password>' "https://localhost:9200/_cat/snapshots/shuffle-backup?v"
+```
+
+**4. Schedule it.** OpenSearch can create and prune snapshots on its own with a [Snapshot Management policy](https://docs.opensearch.org/latest/tuning-your-cluster/availability-and-recovery/snapshots/sm-api/). This one takes a snapshot every night at 02:00 UTC and keeps between 7 and 30 of them, deleting those older than 30 days:
+
+```bash
+curl -k -u admin:'<password>' -X POST "https://localhost:9200/_plugins/_sm/policies/shuffle-daily" \
+  -H 'Content-Type: application/json' -d'
+{
+  "description": "Nightly Shuffle snapshot",
+  "creation": {
+    "schedule": { "cron": { "expression": "0 2 * * *", "timezone": "UTC" } }
+  },
+  "deletion": {
+    "schedule": { "cron": { "expression": "0 3 * * *", "timezone": "UTC" } },
+    "condition": { "max_age": "30d", "max_count": 30, "min_count": 7 }
+  },
+  "snapshot_config": {
+    "repository": "shuffle-backup",
+    "indices": "*,-.*",
+    "include_global_state": false,
+    "date_format": "yyyy-MM-dd-HH-mm"
+  }
+}'
+```
+
+**5. Copy snapshots off the server.** A snapshot on the same disk as the database is lost together with it. Sync `shuffle-snapshots` (and your `shuffle-files` and `shuffle-apps` folders) to another machine or to object storage, for example with `rsync` or `rclone` from a cron job. OpenSearch can also write snapshots straight to S3, Azure Blob Storage or Google Cloud Storage with the [repository plugins](https://docs.opensearch.org/latest/tuning-your-cluster/availability-and-recovery/snapshots/snapshot-restore/).
+
+#### Restoring from a snapshot
+
+To restore onto a new server (or after wiping a broken one):
+
+1. Install the **same Shuffle version** you backed up, and put back `.env` (with the same `SHUFFLE_ENCRYPTION_MODIFIER`), `docker-compose.yml`, `shuffle-files` and `shuffle-apps`.
+2. Copy the snapshot files into `shuffle-snapshots` (owned by user 1000, as above) and start **only** OpenSearch. If the backend is running, it keeps writing to the indexes and can recreate them while you restore.
+   ```bash
+   docker compose up -d opensearch
+   ```
+3. Register the repository again (step 2 above), then restore:
+   ```bash
+   curl -k -u admin:'<password>' -X POST \
+     "https://localhost:9200/_snapshot/shuffle-backup/<snapshot-name>/_restore?wait_for_completion=true" \
+     -H 'Content-Type: application/json' -d'
+   {
+     "indices": "*,-.*",
+     "include_global_state": false
+   }'
+   ```
+   The restore fails for any index that already exists and is open. When you restore onto an existing instance, stop the backend and delete those indexes first (or restore into a fresh database folder).
+4. Start the rest of Shuffle with `docker compose up -d`.
+
+#### Verify the restore
+
+A restore that has never been tested is not a backup. After every test restore, check each of these before you call it a success:
+
+1. **Data:** Compare document counts with the source. Record them when you take the backup, so you have something to compare against:
+   ```bash
+   curl -k -u admin:'<password>' "https://localhost:9200/_cat/indices?h=index,docs.count&s=index"
+   ```
+2. **Platform:** Log in, open a few workflows and check that execution history is there. The API should answer with your user information:
+   ```bash
+   curl http://localhost:5001/api/v1/getinfo -H "Authorization: Bearer <apikey>"
+   ```
+3. **Credentials:** Run a workflow that uses a saved app authentication. If it fails to authenticate, the `SHUFFLE_ENCRYPTION_MODIFIER` does not match the one the backup was made with.
+
+Run this test on a separate machine regularly, and also after big changes, such as a Shuffle upgrade, many new workflows or new app authentications. The longer it has been since your last successful restore test, and the more has changed since, the less you can rely on it. A good habit is to take a snapshot right before every upgrade (see [Updating Shuffle](#updating-shuffle)).
+
+#### Kubernetes
+
+The same snapshot API works with the OpenSearch used by the Helm chart. Use a repository backed by a persistent volume or by object storage, back up the `shuffle-files` and `shuffle-apps` persistent volume claims (for example with Velero), and keep a copy of the Kubernetes secret that holds `SHUFFLE_ENCRYPTION_MODIFIER`.
+
 
 ## Debugging
 
