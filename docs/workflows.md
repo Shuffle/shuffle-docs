@@ -680,6 +680,19 @@ curl -X POST https://shuffler.io/api/v1/webhooks/webhook_336a7aa2-e785-47cc-85f4
   -d '{"test": "testing"}'
 ```
 
+### Getting the Result of the Last Node with Webhook
+
+If you want to receive the result of the last node through a webhook, follow these steps:
+
+1. Click on the **Webhook** node.
+2. In the right sidebar, scroll down to the **Wait for Response** option.
+3. Enable the checkbox.
+
+Once this option is enabled, triggering the webhook will return the result of the last node in the workflow execution.
+
+<img width="1664" height="1100" alt="image" src="https://github.com/user-attachments/assets/fdaac466-e6a7-4853-8c1e-5232ef3a2a86" />
+
+
 ### Schedule
 
 Schedules run workflows on a recurring basis. Shuffle provides two scheduling engines depending on your deployment:
