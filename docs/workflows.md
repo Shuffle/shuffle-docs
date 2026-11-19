@@ -605,8 +605,6 @@ Every execution generates a random authorization key. Execution data can only be
 
 Triggers are the operators used to execute a workflow automatically. They connect to actions within workflows — often the starting node. Triggers take an execution argument that will be used to initialize the workflow run.
 
-[Watch the Triggers Walkthrough Video](https://www.loom.com/share/9811d94782c249f899703491f286004c)
-
 ### About Triggers
 
 Triggers, alongside apps and variables, can be found on the left-hand panel under the "Triggers" tab.
