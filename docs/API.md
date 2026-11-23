@@ -340,6 +340,41 @@ curl https://shuffler.io/api/v2/workflows/{workflow_id}/executions -H "Authoriza
 }
 ```
 
+### Get Execution Details
+
+To retrieve the details of a specific execution, use this API. You need to provide the execution ID in the URL, along with your user API key and tenant ID in the request headers.
+
+**Method:** GET
+
+**Endpoint:**
+```http
+/api/v1/executions/<execution_id>
+```
+
+**Request:**
+```bash
+curl -X GET "TENANT_REGION_URL/api/v1/executions/<execution_id>" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Org-Id: YOUR_TENANT_ID" \
+  -H "Content-Type: application/json"
+```
+
+**Parameters:**
+
+| Parameter | Location | Description |
+|---|---|---|
+| `execution_id` | URL | The ID of the execution you want to retrieve. |
+| `Authorization` | Header | Your API key in Bearer token format. |
+| `Org-Id` | Header | The ID of your tenant. |
+| `Content-Type` | Header | Set to `application/json`. |
+
+**Notes:**
+- Replace `<execution_id>` with the ID of the execution you want to retrieve.
+- Replace `TENANT_REGION_URL` with your tenant's regional URL. The default tenant region is the UK, so if your tenant is hosted in the UK, use `uk.shuffler.io`.
+- Replace `YOUR_API_KEY` with your API key.
+- Replace `YOUR_TENANT_ID` with your tenant ID.
+- The API retrieves execution details for the specified execution within the given organization.
+
 ### Search workflow executions
 Search workflow execution runs across single workflows, all workflows, or sub-tenants.
 
