@@ -340,7 +340,7 @@ curl https://shuffler.io/api/v2/workflows/{workflow_id}/executions -H "Authoriza
 }
 ```
 
-### Get Execution Details
+### Get Execution Results
 
 To retrieve the details of a specific execution, use this API. You need to provide the execution ID in the URL, along with your user API key and tenant ID in the request headers.
 
